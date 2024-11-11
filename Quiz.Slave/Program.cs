@@ -1,4 +1,6 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Quiz.Slave.Hubs;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -44,4 +46,6 @@ app.Run();
 public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy = true);
 
 [JsonSerializable(typeof(Health))]
-internal partial class AppJsonSerializerContext : JsonSerializerContext { }
+internal partial class AppJsonSerializerContext : JsonSerializerContext
+{
+}
