@@ -1,7 +1,11 @@
+using Quiz.Common.Broker.Builder;
+using Quiz.Common.Broker.Publisher;
+using Quiz.Common.Broker.QueueDefinitions;
+using Quiz.Common.Messages;
+using Quiz.Common.Messages.PingPong;
+using Quiz.Slave.Consumers;
 using Quiz.Slave.Hubs;
 using System.Text.Json.Serialization;
-using Quiz.CommonLib.MessageBroker.Publisher;
-using Quiz.CommonLib.MessageBroker.Builder;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -12,10 +16,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.AddSingleton<JsonSerializerContext>(AppJsonSerializerContext.Default);
 builder.Services
-    .AddMessageBroker(builder.Configuration.GetConnectionString("RabbitMq")!)
-    .AddMessages(opts =>
+    .AddMessageBroker(builder.Configuration.GetConnectionString("RabbitMq")!, opts =>
     {
-        opts.AddFanout("quiz-exchange", "quiz-queue");
+        opts.AddDefinition<Ping, PingQueueDefinition>();
+        opts.AddDefinition<Pong, PongQueueDefinition>();
+        opts.AddConsumer<PingConsumer>();
+        opts.AddConsumer<PongConsumer>();
     });
 
 // Register the GPIO hosted service with configuration
@@ -45,10 +51,10 @@ var app = builder.Build();
 app.UseCors();
 
 app.MapGet("/health", () => new Health("Healthy", DateTime.Now));
-app.MapGet("/publish", async (IPublisher publisher, JsonSerializerContext jsonSerializerContext) =>
+app.MapGet("/ping", async (IPublisher publisher, IQueueDefinition<Ping> definition, CancellationToken cancellationToken = default) =>
 {
-    var message = new TestMessage("Hello, World!", 42, DateTime.Now);
-    await publisher.PublishAsync(message);
+    var message = new Ping("Hello, World!");
+    await publisher.PublishAsync(message, definition, cancellationToken);
     return Results.Ok();
 });
 
@@ -62,7 +68,8 @@ app.Run();
 public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy = true);
 
 [JsonSerializable(typeof(Health))]
-[JsonSerializable(typeof(TestMessage))]
+[JsonSerializable(typeof(Ping))]
+[JsonSerializable(typeof(Pong))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

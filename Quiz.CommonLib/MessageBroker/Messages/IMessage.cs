@@ -1,4 +1,4 @@
-namespace Quiz.CommonLib.MessageBroker.Messages;
+namespace Quiz.CommonLib.Messages;
 
 public interface IMessage
 {

@@ -3,20 +3,32 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
-using Quiz.CommonLib.Messages;
+using Quiz.Common.Broker.Messages;
+using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Quiz.CommonLib.Consumer;
+namespace Quiz.Common.Broker.Consumer;
 
-public abstract class ConsumerBase<TMessage>(IChannel channel, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer<TMessage>, IDisposable
+public abstract class ConsumerBase<TMessage>(IConnection connection, IQueueDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer
 where TMessage : IMessage
 {
-    public static Type GetMessageTypeInfo() => typeof(TMessage);
-    public async Task ConsumeAsync(string queueName, CancellationToken cancellationToken = default)
+    private IChannel? _channel = null;
+    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+    public async Task ConsumeAsync(CancellationToken cancellationToken = default)
     {
+        if (_channel == null || _channel.IsClosed)
+        {
+            await _semaphore.WaitAsync(cancellationToken);
+            if (_channel == null || _channel.IsClosed)
+            {
+                _channel = await connection.CreateChannelAsync();
+            }
+        }
+
         var jsonTypeInfo = jsonSerializerContext.GetTypeInfo(typeof(TMessage)) as JsonTypeInfo<TMessage>;
-        var consumer = new AsyncEventingBasicConsumer(channel);
+        var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -27,12 +39,12 @@ where TMessage : IMessage
                 logger.LogInformation($"[{GetType().Name}] received message: {messageJson}");
                 var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo!);
                 await ProcessMessageAsync(message!, cancellationToken);
-                await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
+                await _channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                await channel.BasicNackAsync(ea.DeliveryTag, false, true, cancellationToken);
+                await _channel.BasicNackAsync(ea.DeliveryTag, false, true, cancellationToken);
             }
             finally
             {
@@ -41,12 +53,12 @@ where TMessage : IMessage
             }
         };
 
-        await channel.BasicConsumeAsync(queueName, false, consumer, cancellationToken);
+        await _channel.BasicConsumeAsync(queueDefinition.QueueName, false, consumer, cancellationToken);
     }
 
     public void Dispose()
     {
-        channel.Dispose();
+        _channel?.Dispose();
     }
 
     protected abstract Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken = default);

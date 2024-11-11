@@ -1,31 +1,12 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Quiz.CommonLib.Publisher;
-using Quiz.CommonLib.QueueDefinitions;
+using Quiz.Common.Broker.Publisher;
+using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
 
-namespace Quiz.CommonLib.Builder;
+namespace Quiz.Common.Broker.Builder;
 
 public class MessageBrokerBuilder
 {
-    private readonly IServiceCollection _services;
-
-    public MessageBrokerBuilder(IServiceCollection services)
-    {
-        _services = services;
-    }
-
-    public MessageBrokerBuilder AddMessages(Action<QueueConfig> configure)
-    {
-        var config = new QueueConfig(_services);
-        configure(config);
-
-        using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        var cancellationToken = cancellationTokenSource.Token;
-
-        return this;
-    }
-
     public static async Task Invoke(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
     {
         var queueDefinitions = serviceProvider.GetServices<IQueueDefinition>();
@@ -42,7 +23,7 @@ public class MessageBrokerBuilder
 
 public static class MessageBrokerBuilderExtensions
 {
-    public static MessageBrokerBuilder AddMessageBroker(this IServiceCollection services, string connectionString)
+    public static void AddMessageBroker(this IServiceCollection services, string connectionString, Action<QueueConfig> configure)
     {
         services.AddSingleton<IPublisher, RabbitMQPublisher>();
         services.AddSingleton(new ConnectionFactory() { Uri = new Uri(connectionString) });
@@ -52,6 +33,7 @@ public static class MessageBrokerBuilderExtensions
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
         });
 
-        return new MessageBrokerBuilder(services);
+        var config = new QueueConfig(services);
+        configure(config);
     }
 }

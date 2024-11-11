@@ -11,12 +11,14 @@ WORKDIR /src
 
 # Restore any dependencies (via `dotnet restore`)
 COPY ./Quiz.Slave/Quiz.Slave.csproj ./Quiz.Slave/Quiz.Slave.csproj
-COPY ./Quiz.CommonLib/Quiz.CommonLib.csproj ./Quiz.CommonLib/Quiz.CommonLib.csproj
+COPY ./Quiz.Common.Broker/Quiz.Common.Broker.csproj ./Quiz.Common.Broker/Quiz.Common.Broker.csproj
+COPY ./Quiz.Common.Messages/Quiz.Common.Messages.csproj ./Quiz.Common.Messages/Quiz.Common.Messages.csproj
 RUN dotnet restore ./Quiz.Slave/Quiz.Slave.csproj
 
 # Copy all project files into the container's /src directory
 COPY ./Quiz.Slave/ ./Quiz.Slave/
-COPY ./Quiz.CommonLib/ ./Quiz.CommonLib/
+COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
+COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
 
 # Publish the project in release mode for ARM64
 RUN dotnet publish \
