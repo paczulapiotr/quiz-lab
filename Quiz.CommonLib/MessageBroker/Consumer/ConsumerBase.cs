@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
+using Quiz.CommonLib.MessageBroker.Messages;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Quiz.CommonLib.MessageBroker;
 using Quiz.CommonLib.MessageBroker.Consumer;
+using Quiz.CommonLib.MessageBroker.Messages;
 using RabbitMQ.Client;
 
 public class ConsumerHostedService(
@@ -27,7 +28,12 @@ public class ConsumerHostedService(
     }
 }
 
-public record TestMessage(string Message, int Number, DateTime Timestamp) : Message(Exchange: "quiz-exchange");
+public record TestMessage(string Message, int Number, DateTime Timestamp) : IMessage
+{
+    public MessageDest Destination() => new MessageDest("quiz-exchange");
+
+    public MessageSrc Source() => new MessageSrc("quiz-queue");
+}
 
 public class TestConsumer : ConsumerBase<TestMessage>
 {

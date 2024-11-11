@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Quiz.CommonLib.MessageBroker.Messages;
 using RabbitMQ.Client;
 
 namespace Quiz.CommonLib.MessageBroker.Publisher;
@@ -24,6 +25,7 @@ public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jso
         var jsonTypeInfo = jsonSerializerContext.GetTypeInfo(typeof(T))!;
         var stringBody = JsonSerializer.Serialize(message, jsonTypeInfo);
         var body = Encoding.UTF8.GetBytes(stringBody);
-        await _channel.BasicPublishAsync(message.Exchange, message.RoutingKey, body, cancellationToken);
+        var dest = message.Destination();
+        await _channel.BasicPublishAsync(dest.Exchange, dest.RoutingKey, body, cancellationToken);
     }
 }

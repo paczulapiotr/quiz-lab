@@ -1,3 +1,5 @@
+using Quiz.CommonLib.MessageBroker.Messages;
+
 namespace Quiz.CommonLib.MessageBroker.Publisher;
 
 public interface IPublisher
