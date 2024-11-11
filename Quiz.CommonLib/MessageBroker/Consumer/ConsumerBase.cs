@@ -1,16 +1,20 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
-using Quiz.CommonLib.MessageBroker;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-public abstract class Consumer<TMessage>(IChannel channel, ILogger logger, JsonTypeInfo<TMessage> jsonTypeInfo) : IConsumer<TMessage>
+namespace Quiz.CommonLib.MessageBroker.Consumer;
+
+public abstract class ConsumerBase<TMessage>(IChannel channel, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer<TMessage>, IDisposable
 where TMessage : IMessage
 {
-    public async Task ConsumeAsync(TMessage message, CancellationToken cancellationToken = default)
+    public static Type GetMessageTypeInfo() => typeof(TMessage);
+    public async Task ConsumeAsync(string queueName, CancellationToken cancellationToken = default)
     {
+        var jsonTypeInfo = jsonSerializerContext.GetTypeInfo(typeof(TMessage)) as JsonTypeInfo<TMessage>;
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
@@ -19,8 +23,8 @@ where TMessage : IMessage
             {
                 var body = ea.Body.ToArray();
                 var messageJson = Encoding.UTF8.GetString(body);
-                logger.LogDebug($"[{GetType().Name}] received message: {messageJson}");
-                var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo);
+                logger.LogInformation($"[{GetType().Name}] received message: {messageJson}");
+                var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo!);
                 await ProcessMessageAsync(message!, cancellationToken);
                 await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
             }
@@ -32,11 +36,16 @@ where TMessage : IMessage
             finally
             {
                 stopwatch.Stop();
-                logger.LogDebug($"[{GetType().Name}] processed message in {stopwatch.ElapsedMilliseconds}ms");
+                logger.LogInformation($"[{GetType().Name}] processed message in {stopwatch.ElapsedMilliseconds}ms");
             }
         };
 
-        await channel.BasicConsumeAsync(message.Queue, false, consumer, cancellationToken);
+        await channel.BasicConsumeAsync(queueName, false, consumer, cancellationToken);
+    }
+
+    public void Dispose()
+    {
+        channel.Dispose();
     }
 
     protected abstract Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken = default);

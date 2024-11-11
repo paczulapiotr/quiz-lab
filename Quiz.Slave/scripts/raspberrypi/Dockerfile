@@ -10,11 +10,13 @@ RUN apt update \
 WORKDIR /src
 
 # Restore any dependencies (via `dotnet restore`)
-COPY ./Quiz.Slave.csproj ./Quiz.Slave.csproj
-RUN dotnet restore
+COPY ./Quiz.Slave/Quiz.Slave.csproj ./Quiz.Slave/Quiz.Slave.csproj
+COPY ./Quiz.CommonLib/Quiz.CommonLib.csproj ./Quiz.CommonLib/Quiz.CommonLib.csproj
+RUN dotnet restore ./Quiz.Slave/Quiz.Slave.csproj
 
 # Copy all project files into the container's /src directory
-COPY . .
+COPY ./Quiz.Slave/ ./Quiz.Slave/
+COPY ./Quiz.CommonLib/ ./Quiz.CommonLib/
 
 # Publish the project in release mode for ARM64
 RUN dotnet publish \
@@ -23,7 +25,7 @@ RUN dotnet publish \
 -p:DebugType=None \
 -p:DebugSymbols=false \
 -o /app/dist \
-./Quiz.Slave.csproj
+./Quiz.Slave/Quiz.Slave.csproj
 
 # Define the output directory where the compiled app will be
 WORKDIR /app

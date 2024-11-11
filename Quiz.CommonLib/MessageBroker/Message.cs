@@ -1,7 +1,5 @@
 namespace Quiz.CommonLib.MessageBroker;
 
-public abstract class Message(string queueName, string exchange) : IMessage
+public abstract record Message(string Exchange, string RoutingKey = "") : IMessage
 {
-    public string Queue { get; init; } = queueName;
-    public string Exchange { get; init; } = exchange;
 }
