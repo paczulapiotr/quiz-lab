@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
@@ -23,8 +24,9 @@ public class MessageBrokerBuilder
 
 public static class MessageBrokerBuilderExtensions
 {
-    public static void AddMessageBroker(this IServiceCollection services, string connectionString, Action<QueueConfig> configure)
+    public static void AddMessageBroker(this IServiceCollection services, string connectionString, JsonSerializerContext jsonSerializerContext, Action<QueueConfig> configure)
     {
+        services.AddSingleton<JsonSerializerContext>(jsonSerializerContext);
         services.AddSingleton(new ConnectionFactory() { Uri = new Uri(connectionString) });
         services.AddSingleton(sp =>
         {

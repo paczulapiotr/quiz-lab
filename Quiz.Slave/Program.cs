@@ -1,7 +1,5 @@
 using Quiz.Common.Broker.Builder;
 using Quiz.Common.Broker.Publisher;
-using Quiz.Common.Broker.QueueDefinitions;
-using Quiz.Common.Messages;
 using Quiz.Common.Messages.PingPong;
 using Quiz.Slave.Consumers;
 using Quiz.Slave.Hubs;
@@ -14,15 +12,17 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
-builder.Services.AddSingleton<JsonSerializerContext>(AppJsonSerializerContext.Default);
 builder.Services
-    .AddMessageBroker(builder.Configuration.GetConnectionString("RabbitMq")!, opts =>
-    {
-        opts.AddDefinition<Ping, PingQueueDefinition>();
-        opts.AddDefinition<Pong, PongQueueDefinition>();
-        opts.AddConsumer<PingConsumer>();
-        opts.AddConsumer<PongConsumer>();
-    });
+    .AddMessageBroker(
+        builder.Configuration.GetConnectionString("RabbitMq")!,
+        AppJsonSerializerContext.Default,
+        opts =>
+        {
+            opts.AddDefinition<Ping, PingQueueDefinition>();
+            opts.AddDefinition<Pong, PongQueueDefinition>();
+            opts.AddConsumer<PingConsumer>();
+            opts.AddConsumer<PongConsumer>();
+        });
 
 // Register the GPIO hosted service with configuration
 builder.Services.Configure<GpioSettings>(builder.Configuration.GetSection("GpioSettings"));
