@@ -17,4 +17,8 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
+  </ItemGroup>
+
 </Project>

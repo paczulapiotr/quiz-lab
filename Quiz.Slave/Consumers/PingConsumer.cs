@@ -9,25 +9,22 @@ namespace Quiz.Slave.Consumers;
 
 public class PingConsumer : ConsumerBase<Ping>
 {
-    private readonly IQueueDefinition<Pong> pongQueueDefinition;
-    private readonly IPublisher publisher;
+    private readonly IPublisher _publisher;
 
     public PingConsumer(
         IQueueDefinition<Ping> queueDefinition,
         IConnection connection,
         ILogger<PingConsumer> logger,
         JsonSerializerContext jsonSerializerContext,
-        IQueueDefinition<Pong> pongQueueDefinition,
         IPublisher publisher)
     : base(connection, queueDefinition, logger, jsonSerializerContext)
     {
-        this.pongQueueDefinition = pongQueueDefinition;
-        this.publisher = publisher;
+        _publisher = publisher;
     }
 
     protected override async Task ProcessMessageAsync(Ping message, CancellationToken cancellationToken = default)
     {
         Console.WriteLine($"Ping message: {message.Message}");
-        await publisher.PublishAsync(new Pong("Hello, Pong!"), pongQueueDefinition, cancellationToken);
+        await _publisher.PublishAsync(new Pong("Hello, Pong!"), cancellationToken);
     }
 }

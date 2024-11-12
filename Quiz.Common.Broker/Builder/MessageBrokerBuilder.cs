@@ -25,7 +25,6 @@ public static class MessageBrokerBuilderExtensions
 {
     public static void AddMessageBroker(this IServiceCollection services, string connectionString, Action<QueueConfig> configure)
     {
-        services.AddSingleton<IPublisher, RabbitMQPublisher>();
         services.AddSingleton(new ConnectionFactory() { Uri = new Uri(connectionString) });
         services.AddSingleton(sp =>
         {
@@ -33,7 +32,11 @@ public static class MessageBrokerBuilderExtensions
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
         });
 
+        // Configure queue definitions and consumers
         var config = new QueueConfig(services);
         configure(config);
+
+        services.AddSingleton<IQueueDefinitionProvider, QueueDefinitionProvider>();
+        services.AddSingleton<IPublisher, RabbitMQPublisher>();
     }
 }

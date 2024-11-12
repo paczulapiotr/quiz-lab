@@ -51,11 +51,11 @@ var app = builder.Build();
 app.UseCors();
 
 app.MapGet("/health", () => new Health("Healthy", DateTime.Now));
-app.MapGet("/ping", async (IPublisher publisher, IQueueDefinition<Ping> definition, CancellationToken cancellationToken = default) =>
+app.MapGet("/ping", async (IPublisher publisher, CancellationToken cancellationToken = default) =>
 {
     var message = new Ping("Hello, World!");
-    await publisher.PublishAsync(message, definition, cancellationToken);
-    return Results.Ok();
+    await publisher.PublishAsync(message, cancellationToken);
+    return Results.Ok("Ping message sent");
 });
 
 // Map the PingPongHub

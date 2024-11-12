@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Quiz.Common.Broker\Quiz.Common.Broker.csproj" />
     <ProjectReference Include="..\Quiz.Common.Messages\Quiz.Common.Messages.csproj" />
+    <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
   </ItemGroup>
 
 </Project>

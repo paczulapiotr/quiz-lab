@@ -31,25 +31,31 @@ where TMessage : IMessage
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
+            string? messageId = null;
+            string? correlationId = null;
+
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
                 var body = ea.Body.ToArray();
                 var messageJson = Encoding.UTF8.GetString(body);
-                logger.LogInformation($"[{GetType().Name}] received message: {messageJson}");
                 var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo!);
+                messageId = message?.MessageId;
+                correlationId = message?.CorrelationId;
+
+                logger.LogInformation($"[{correlationId}/{messageId}] received message: {messageJson}");
                 await ProcessMessageAsync(message!, cancellationToken);
                 await _channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                await _channel.BasicNackAsync(ea.DeliveryTag, false, true, cancellationToken);
+                await _channel.BasicNackAsync(ea.DeliveryTag, false, false, cancellationToken); // TODO: requeue mechanism
             }
             finally
             {
                 stopwatch.Stop();
-                logger.LogInformation($"[{GetType().Name}] processed message in {stopwatch.ElapsedMilliseconds}ms");
+                logger.LogInformation($"[{correlationId}/{messageId}] processed message in {stopwatch.ElapsedMilliseconds}ms");
             }
         };
 

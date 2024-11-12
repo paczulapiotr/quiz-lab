@@ -7,7 +7,7 @@ using RabbitMQ.Client;
 
 namespace Quiz.Common.Broker.Publisher;
 
-public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jsonSerializerContext) : IPublisher
+public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jsonSerializerContext, IQueueDefinitionProvider queueDefinitionProvider) : IPublisher
 {
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -28,5 +28,14 @@ public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jso
         var body = Encoding.UTF8.GetBytes(stringBody);
 
         await _channel.BasicPublishAsync(queueDefinition.ExchangeName, queueDefinition.RoutingKey, body, cancellationToken);
+    }
+
+    public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default) where T : IMessage
+    {
+        var queueDefinition = queueDefinitionProvider.GetQueueDefinition<T>();
+
+        ArgumentNullException.ThrowIfNull(queueDefinition, nameof(queueDefinition));
+
+        await PublishAsync(message, queueDefinition, cancellationToken);
     }
 }

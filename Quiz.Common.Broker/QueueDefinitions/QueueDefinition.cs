@@ -19,6 +19,8 @@ public abstract class QueueDefinition<TMessage>(string exchangeName, string queu
 
     public string RoutingKey => routingKey;
 
+    public Type MessageType => typeof(TMessage);
+
     public async Task RegisterAsync(IChannel channel, CancellationToken cancellationToken = default)
     {
         var exchange = exchangeType switch
@@ -32,4 +34,5 @@ public abstract class QueueDefinition<TMessage>(string exchangeName, string queu
         await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
         await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: RoutingKey, arguments: null, cancellationToken: cancellationToken);
     }
+
 }

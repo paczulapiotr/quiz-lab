@@ -10,6 +10,7 @@ public interface IQueueDefinition
     public string RoutingKey { get; }
 
     Task RegisterAsync(IChannel channel, CancellationToken cancellationToken = default);
+    Type MessageType { get; }
 }
 
 public interface IQueueDefinition<TMessage> : IQueueDefinition where TMessage : IMessage
