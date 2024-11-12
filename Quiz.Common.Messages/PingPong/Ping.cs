@@ -3,7 +3,7 @@ using Quiz.Common.Broker.QueueDefinitions;
 
 namespace Quiz.Common.Messages.PingPong;
 
-public record Ping(string Message) : IMessage
+public record Ping(string Message, string? CorrelationId = null) : MessageBase(CorrelationId)
 {
 }
 
