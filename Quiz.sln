@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Common.Messages", "Qui
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Common", "Quiz.Common\Quiz.Common.csproj", "{6485AE53-359D-472A-9846-DC598F2E2837}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master", "Quiz.Master\Quiz.Master.csproj", "{D4334FC7-DA10-403E-8DCB-626F9F3D22E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{6485AE53-359D-472A-9846-DC598F2E2837}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6485AE53-359D-472A-9846-DC598F2E2837}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6485AE53-359D-472A-9846-DC598F2E2837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4334FC7-DA10-403E-8DCB-626F9F3D22E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4334FC7-DA10-403E-8DCB-626F9F3D22E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4334FC7-DA10-403E-8DCB-626F9F3D22E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4334FC7-DA10-403E-8DCB-626F9F3D22E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

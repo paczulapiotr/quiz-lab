@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PublishAot>true</PublishAot>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RootNamespace>Quiz.Master</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Quiz.Common.Broker\Quiz.Common.Broker.csproj" />
+    <ProjectReference Include="..\Quiz.Common.Messages\Quiz.Common.Messages.csproj" />
+    <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
+  </ItemGroup>
+
+</Project>

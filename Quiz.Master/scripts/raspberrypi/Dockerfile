@@ -10,14 +10,14 @@ RUN apt update \
 WORKDIR /src
 
 # Restore any dependencies (via `dotnet restore`)
-COPY ./Quiz.Slave/Quiz.Slave.csproj ./Quiz.Slave/Quiz.Slave.csproj
+COPY ./Quiz.Master/Quiz.Master.csproj ./Quiz.Master/Quiz.Master.csproj
 COPY ./Quiz.Common/Quiz.Common.csproj ./Quiz.Common/Quiz.Common.csproj
 COPY ./Quiz.Common.Broker/Quiz.Common.Broker.csproj ./Quiz.Common.Broker/Quiz.Common.Broker.csproj
 COPY ./Quiz.Common.Messages/Quiz.Common.Messages.csproj ./Quiz.Common.Messages/Quiz.Common.Messages.csproj
-RUN dotnet restore ./Quiz.Slave/Quiz.Slave.csproj
+RUN dotnet restore ./Quiz.Master/Quiz.Master.csproj
 
 # Copy all project files into the container's /src directory
-COPY ./Quiz.Slave/ ./Quiz.Slave/
+COPY ./Quiz.Master/ ./Quiz.Master/
 COPY ./Quiz.Common/ ./Quiz.Common/
 COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
 COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
@@ -29,7 +29,7 @@ RUN dotnet publish \
 -p:DebugType=None \
 -p:DebugSymbols=false \
 -o /app/dist \
-./Quiz.Slave/Quiz.Slave.csproj
+./Quiz.Master/Quiz.Master.csproj
 
 # Define the output directory where the compiled app will be
 WORKDIR /app
