@@ -1,0 +1,51 @@
+@import "/src/variables";
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+
+  .progress-bar {
+    width: 100%;
+    height: 1rem;
+    background-color: $white;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    box-shadow: 0.3rem 0.4rem 0 $pastell-blue-dark;
+
+    .progress-fill {
+      transition:
+        width 1s linear,
+        background-color 1s linear;
+      height: 100%;
+      border-radius: 2rem;
+
+      &.green {
+        background-color: $pastell-green;
+      }
+
+      &.yellow {
+        background-color: $pastell-yellow;
+      }
+
+      &.red {
+        background-color: $pastell-red;
+      }
+    }
+  }
+
+  .display {
+    color: $pastell-purple;
+    background-color: $white;
+    border-radius: 10rem;
+    width: 10rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
+    font-weight: 600;
+  }
+}

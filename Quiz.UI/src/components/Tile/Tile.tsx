@@ -1,11 +1,12 @@
+import classNames from "classnames";
 import styles from "./Tile.module.scss";
 
-type Props = { text: string; className?: string };
+type Props = { text: string; blue?: boolean; className?: string };
 
-const Tile = ({ text }: Props) => {
+const Tile = ({ text, blue = false }: Props) => {
   return (
-    <div>
-      <p></p>
+    <div className={classNames(styles.tile, { [styles.blue]: blue })}>
+      <p>{text}</p>
     </div>
   );
 };

@@ -1,0 +1,21 @@
+@import "/src/variables";
+
+.tile {
+  background-color: rgba($color: #fff, $alpha: 0.9);
+  box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
+  padding: 3rem;
+
+  p {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: $pastell-purple;
+  }
+
+  &.blue {
+    background-color: $pastell-blue;
+    p {
+      color: $white;
+    }
+  }
+}

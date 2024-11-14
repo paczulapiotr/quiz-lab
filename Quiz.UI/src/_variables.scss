@@ -5,4 +5,7 @@ $pastell-purple-light: #d4b5ff;
 $pastell-purple: #6149e5;
 $pastell-blue: #4678ff;
 $pastell-blue-dark: #3430b5;
-$white: #ffffff;
+$white: rgba(
+  $color: #fff,
+  $alpha: 0.9,
+);
