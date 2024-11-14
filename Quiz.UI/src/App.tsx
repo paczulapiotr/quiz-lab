@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import "./App.scss";
 import * as signalR from "@microsoft/signalr";
+import StandardQuestionPage from "./pages/StandardQuestionPage";
+import { FlyingSquare } from "./components/FlyingSquare";
 
 const apiUrl = "http://192.168.0.247:5123";
 
@@ -38,7 +40,12 @@ function App() {
       .catch((err) => console.error("Error connecting to SignalR hub:", err));
   }, []);
 
-  return <h1>Vite + React</h1>;
+  return (
+    <>
+      <FlyingSquare count={5} />
+      <StandardQuestionPage />
+    </>
+  );
 }
 
 export default App;
