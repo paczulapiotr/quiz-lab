@@ -1,8 +1,8 @@
-@import "/src/variables";
+@use "/src/variables" as vars;
 
 .score {
-  color: $pastell-purple;
-  background-color: $white;
+  color: vars.$pastell-purple;
+  background-color: vars.$white;
   border-radius: 10rem;
   width: fit-content;
   padding: 1rem 1rem 1rem 2rem;
@@ -10,11 +10,8 @@
   justify-content: center;
   align-items: center;
   font-size: 2rem;
-  box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
+  box-shadow: 0.3rem 0.4rem 0 0.2em vars.$pastell-blue-dark;
   font-weight: 600;
-
-  span {
-  }
 
   img {
     animation: pulse 10s linear infinite;

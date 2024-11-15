@@ -3,6 +3,7 @@ using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Messages.PingPong;
 using Quiz.Slave.Consumers;
 using Quiz.Slave.Hubs;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -23,14 +24,16 @@ builder.Services
             opts.AddConsumer<PingConsumer>();
             opts.AddConsumer<PongConsumer>();
         });
-
 // Register the GPIO hosted service with configuration
 builder.Services.Configure<GpioSettings>(builder.Configuration.GetSection("GpioSettings"));
 // builder.Services.AddHostedService<GpioHostedService>();
 builder.Services.AddHostedService<ConsumerHostedService>();
 
-// Add SignalR services
-builder.Services.AddSignalR();
+// Add SignalR services with custom JsonSerializerOptions
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions = new JsonSerializerOptions(AppJsonSerializerContext.Default.Options);
+});
 
 // Add CORS services
 builder.Services.AddCors(options =>
@@ -59,7 +62,7 @@ app.MapGet("/ping", async (IPublisher publisher, CancellationToken cancellationT
 });
 
 // Map the PingPongHub
-app.MapHub<PingPongHub>("/pingpong");
+app.MapHub<SyncHub>("/sync");
 await MessageBrokerBuilder.Invoke(app.Services);
 
 app.Run();
@@ -67,9 +70,15 @@ app.Run();
 
 public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy = true);
 
+// HTTP REST messages
 [JsonSerializable(typeof(Health))]
+// Message Broker messages
 [JsonSerializable(typeof(Ping))]
 [JsonSerializable(typeof(Pong))]
+// Hub messages
+[JsonSerializable(typeof(PingHubMessage))]
+[JsonSerializable(typeof(PongHubMessage))]
+
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

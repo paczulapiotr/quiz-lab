@@ -1,4 +1,4 @@
-@import "/src/variables";
+@use "/src/variables" as vars;
 
 .timer {
   display: flex;
@@ -8,11 +8,11 @@
   .progress-bar {
     width: 100%;
     height: 1rem;
-    background-color: $white;
+    background-color: vars.$white;
     overflow: hidden;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 2rem;
-    box-shadow: 0.3rem 0.4rem 0 $pastell-blue-dark;
+    box-shadow: 0.3rem 0.4rem 0 vars.$pastell-blue-dark;
 
     .progress-fill {
       transition:
@@ -22,22 +22,22 @@
       border-radius: 2rem;
 
       &.green {
-        background-color: $pastell-green;
+        background-color: vars.$pastell-green;
       }
 
       &.yellow {
-        background-color: $pastell-yellow;
+        background-color: vars.$pastell-yellow;
       }
 
       &.red {
-        background-color: $pastell-red;
+        background-color: vars.$pastell-red;
       }
     }
   }
 
   .display {
-    color: $pastell-purple;
-    background-color: $white;
+    color: vars.$pastell-purple;
+    background-color: vars.$white;
     border-radius: 10rem;
     width: 10rem;
     padding: 1rem;
@@ -45,7 +45,7 @@
     justify-content: center;
     align-items: center;
     font-size: 2rem;
-    box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
+    box-shadow: 0.3rem 0.4rem 0 0.2em vars.$pastell-blue-dark;
     font-weight: 600;
   }
 }

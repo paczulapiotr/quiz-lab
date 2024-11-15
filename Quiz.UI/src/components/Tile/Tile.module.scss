@@ -1,8 +1,8 @@
-@import "/src/variables";
+@use "/src/variables" as vars;
 
 .tile {
-  background-color: $white;
-  box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
+  background-color: vars.$white;
+  box-shadow: 0.3rem 0.4rem 0 0.2em vars.$pastell-blue-dark;
   padding: 1rem;
   border: 2rem solid transparent;
   transition: border-color 0.1s ease-out;
@@ -11,23 +11,23 @@
     margin: 0;
     font-size: 2.5rem;
     font-weight: 600;
-    color: $pastell-purple;
+    color: vars.$pastell-purple;
   }
 
   &.blue {
-    background-color: $pastell-blue;
+    background-color: vars.$pastell-blue;
     p {
-      color: $white;
+      color: vars.$white;
     }
   }
 
   &.success {
-    border: 2rem solid $pastell-green;
+    border: 2rem solid vars.$pastell-green;
   }
   &.failure {
-    border: 2rem solid $pastell-red;
+    border: 2rem solid vars.$pastell-red;
   }
   &.selected {
-    border: 2rem solid $pastell-yellow;
+    border: 2rem solid vars.$pastell-yellow;
   }
 }
