@@ -1,9 +1,11 @@
 @import "/src/variables";
 
 .tile {
-  background-color: rgba($color: #fff, $alpha: 0.9);
+  background-color: $white;
   box-shadow: 0.3rem 0.4rem 0 0.2em $pastell-blue-dark;
-  padding: 3rem;
+  padding: 1rem;
+  border: 2rem solid transparent;
+  transition: border-color 0.1s ease-out;
 
   p {
     margin: 0;
@@ -17,5 +19,15 @@
     p {
       color: $white;
     }
+  }
+
+  &.success {
+    border: 2rem solid $pastell-green;
+  }
+  &.failure {
+    border: 2rem solid $pastell-red;
+  }
+  &.selected {
+    border: 2rem solid $pastell-yellow;
   }
 }

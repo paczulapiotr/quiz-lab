@@ -9,9 +9,9 @@ const StandardQuestionPage = () => {
       <br />
       <Tile text="What is the capital of France?" blue />
       <div className={styles.answers}>
-        <Tile text="What is the capital of France?" />
-        <Tile text="What is the capital of France?" />
-        <Tile text="What is the capital of France?" />
+        <Tile text="What is the capital of France?" selected />
+        <Tile text="What is the capital of France?" success />
+        <Tile text="What is the capital of France?" failure />
         <Tile text="What is the capital of France?" />
       </div>
       <Timer startSeconds={10} />
