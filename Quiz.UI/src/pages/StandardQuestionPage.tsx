@@ -3,19 +3,28 @@ import { Tile } from "@/components/Tile";
 import { Timer } from "@/components/Timer";
 import styles from "./StandardQuestionPage.module.scss";
 import { useLocalSyncService } from "@/hooks/useLocalSyncService";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const StandardQuestionPage = () => {
   const { connected, sendSync, onSync, offSync } = useLocalSyncService();
+  const [selected, setSelected] = useState("");
 
   useEffect(() => {
     onSync("Pong", (data) => {
       alert("Pong: " + JSON.stringify(data));
     });
+    onSync("SelectAnswer", (data) => {
+      setSelected(data.Answer === selected ? "" : data.Answer);
+    });
     return () => {
       offSync("Pong");
     };
-  }, [offSync, onSync]);
+  }, [offSync, onSync, selected]);
+
+  const selectAnswer = async (answer: string) => {
+    setSelected(answer === selected ? "" : answer);
+    await sendSync("SelectAnswer", { Answer: answer });
+  };
 
   return (
     <div>
@@ -23,10 +32,26 @@ const StandardQuestionPage = () => {
       <br />
       <Tile text="What is the capital of France?" blue />
       <div className={styles.answers}>
-        <Tile text="What is the capital of France?" selected />
-        <Tile text="What is the capital of France?" success />
-        <Tile text="What is the capital of France?" failure />
-        <Tile text="What is the capital of France?" />
+        <Tile
+          text="What is the capital of France?"
+          selected={selected === "A"}
+          onClick={() => selectAnswer("A")}
+        />
+        <Tile
+          text="What is the capital of France?"
+          selected={selected === "B"}
+          onClick={() => selectAnswer("B")}
+        />
+        <Tile
+          text="What is the capital of France?"
+          selected={selected === "C"}
+          onClick={() => selectAnswer("C")}
+        />
+        <Tile
+          text="What is the capital of France?"
+          selected={selected === "D"}
+          onClick={() => selectAnswer("D")}
+        />
       </div>
       <Timer startSeconds={10} />
       <p>{connected ? "✅ Connected" : "❌ Disconnected"}</p>

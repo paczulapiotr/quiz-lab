@@ -8,6 +8,7 @@ type Props = {
   selected?: boolean;
   success?: boolean;
   failure?: boolean;
+  onClick?: () => void;
 };
 
 const Tile = ({
@@ -16,9 +17,11 @@ const Tile = ({
   selected = false,
   success = false,
   failure = false,
+  onClick,
 }: Props) => {
   return (
     <div
+      onClick={onClick}
       className={classNames(styles.tile, {
         [styles.blue]: blue,
         [styles.selected]: selected,

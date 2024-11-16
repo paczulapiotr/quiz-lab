@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.SignalR;
 using Quiz.Common.Broker.Builder;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Messages.PingPong;
 using Quiz.Slave.Consumers;
 using Quiz.Slave.Hubs;
+using Quiz.Slave.Hubs.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -35,6 +37,9 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
     options.PayloadSerializerOptions = new JsonSerializerOptions(AppJsonSerializerContext.Default.Options);
 });
 
+// Add services
+builder.Services.AddScoped<ISyncHubClient, SyncHubClient>();
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -60,6 +65,11 @@ app.MapGet("/ping", async (IPublisher publisher, CancellationToken cancellationT
     await publisher.PublishAsync(message, cancellationToken);
     return Results.Ok("Ping message sent");
 });
+app.MapGet("/select-answer", async (string answer, ISyncHubClient syncClient, CancellationToken cancellationToken = default) =>
+{
+    await syncClient.SelectAnswer(new SelectAnswer(answer), cancellationToken);
+    return Results.Ok("Answer selected");
+});
 
 // Map the PingPongHub
 app.MapHub<SyncHub>("/sync");
@@ -78,6 +88,7 @@ public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy 
 // Hub messages
 [JsonSerializable(typeof(PingHubMessage))]
 [JsonSerializable(typeof(PongHubMessage))]
+[JsonSerializable(typeof(SelectAnswer))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {

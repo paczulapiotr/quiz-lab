@@ -9,13 +9,16 @@ export type SyncReceiveCallback<T extends SyncReceiveDefinitionNames> = (
 //#endregion
 
 // Extendable
-export type SyncSendDefinitionNames = "Ping";
-export type SyncReceiveDefinitionNames = "Pong";
+export type SyncSendDefinitionNames = "Ping" | "SelectAnswer";
+export type SyncReceiveDefinitionNames = "Pong" | "SelectAnswer";
 
 export interface SyncSendData {
   Ping: {
     Message: string;
     Amount: number;
+  };
+  SelectAnswer: {
+    Answer: string;
   };
 }
 
@@ -23,5 +26,8 @@ export interface SyncReceiveData {
   Pong: {
     Message: string;
     Amount: number;
+  };
+  SelectAnswer: {
+    Answer: string;
   };
 }
