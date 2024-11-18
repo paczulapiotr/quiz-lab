@@ -16,7 +16,6 @@ public class PongConsumer : ConsumerBase<Pong>
 
     protected override Task ProcessMessageAsync(Pong message, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine($"Pong message: {message.Message}");
         return Task.CompletedTask;
     }
 }

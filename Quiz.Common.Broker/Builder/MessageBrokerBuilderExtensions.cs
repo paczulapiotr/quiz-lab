@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
@@ -6,10 +7,11 @@ using RabbitMQ.Client;
 
 namespace Quiz.Common.Broker.Builder;
 
-public class MessageBrokerBuilder
+public static class MessageBrokerBuilderExtensions
 {
-    public static async Task Invoke(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+    public static async Task UseMessageBroker(this IApplicationBuilder app, CancellationToken cancellationToken = default)
     {
+        var serviceProvider = app.ApplicationServices;
         var queueDefinitions = serviceProvider.GetServices<IQueueDefinition>();
         var connection = serviceProvider.GetRequiredService<IConnection>();
         using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
@@ -20,10 +22,6 @@ public class MessageBrokerBuilder
         }
         cancellationToken.ThrowIfCancellationRequested();
     }
-}
-
-public static class MessageBrokerBuilderExtensions
-{
     public static void AddMessageBroker(this IServiceCollection services, string connectionString, JsonSerializerContext jsonSerializerContext, Action<QueueConfig> configure)
     {
         services.AddSingleton<JsonSerializerContext>(jsonSerializerContext);

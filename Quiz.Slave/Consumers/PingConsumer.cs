@@ -24,7 +24,6 @@ public class PingConsumer : ConsumerBase<Ping>
 
     protected override async Task ProcessMessageAsync(Ping message, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine($"Ping message: {message.Message}");
-        await _publisher.PublishAsync(new Pong("Hello, Pong!"), cancellationToken);
+        await _publisher.PublishAsync(new Pong("Hello, Pong!", message.CorrelationId), cancellationToken);
     }
 }

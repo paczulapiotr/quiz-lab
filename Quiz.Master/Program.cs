@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Builder;
+using Quiz.Common.WebApplication;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-
+builder.Services.AddQuizCommonServices(opts => { });
 builder.Services
     .AddMessageBroker(
         builder.Configuration.GetConnectionString("RabbitMq")!,
@@ -20,14 +21,11 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 var app = builder.Build();
 
-app.MapGet("/health", () => new Health("Healthy", DateTime.Now));
-
-await MessageBrokerBuilder.Invoke(app.Services);
+app.UseQuizCommonServices();
+await app.UseMessageBroker();
 app.Run();
 
-public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy = true);
-
-[JsonSerializable(typeof(Health))]
+[JsonSerializable(typeof(string))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

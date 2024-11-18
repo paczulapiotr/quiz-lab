@@ -43,7 +43,7 @@ where TMessage : IMessage
                 messageId = message?.MessageId;
                 correlationId = message?.CorrelationId;
 
-                logger.LogInformation($"[{correlationId}/{messageId}] received message: {messageJson}");
+                logger.LogTrace($"[{correlationId}/{messageId}] received message: {messageJson}");
                 await ProcessMessageAsync(message!, cancellationToken);
                 await _channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
             }
@@ -55,7 +55,7 @@ where TMessage : IMessage
             finally
             {
                 stopwatch.Stop();
-                logger.LogInformation($"[{correlationId}/{messageId}] processed message in {stopwatch.ElapsedMilliseconds}ms");
+                logger.LogTrace($"[{correlationId}/{messageId}] processed message in {stopwatch.ElapsedMilliseconds}ms");
             }
         };
 
