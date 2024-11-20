@@ -1,7 +1,7 @@
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 
-namespace Quiz.Common.Messages.PingPong;
+namespace Quiz.Common.Messages;
 
 public record PlayerRegister(string UniqueId, string PlayerName, string? CorrelationId = null) : MessageBase(CorrelationId)
 {

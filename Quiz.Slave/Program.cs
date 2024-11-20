@@ -10,7 +10,7 @@ using Quiz.Common.WebApplication;
 using Quiz.Common;
 using Quiz.Slave.ApiModels.Ping;
 using Quiz.Slave;
-using System.ComponentModel;
+using Quiz.Common.Messages;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
@@ -55,9 +55,6 @@ builder.Services
 
 
             opts.AddPublisher(PlayerRegisterDefinition.Publisher());
-            opts.AddConsumer<PlayerRegisterConsumer, PlayerRegister>(PlayerRegisterDefinition.Consumer());
-
-            opts.AddPublisher(PlayerRegisteredDefinition.Publisher());
             opts.AddConsumer<PlayerRegisteredConsumer, PlayerRegistered>(PlayerRegisteredDefinition.Consumer(uniqueId));
         });
 

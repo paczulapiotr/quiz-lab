@@ -2,10 +2,10 @@ using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
-using Quiz.Common.Messages.PingPong;
+using Quiz.Common.Messages;
 using RabbitMQ.Client;
 
-namespace Quiz.Slave.Consumers
+namespace Quiz.Master.Consumers
 {
     public class PlayerRegisterConsumer : ConsumerBase<PlayerRegister>
     {

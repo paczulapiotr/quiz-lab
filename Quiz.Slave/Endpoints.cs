@@ -1,6 +1,6 @@
 using Quiz.Common;
 using Quiz.Common.Broker.Publisher;
-using Quiz.Common.Messages.PingPong;
+using Quiz.Common.Messages;
 using Quiz.Slave.ApiModels.Ping;
 using Quiz.Slave.Commands;
 using Quiz.Slave.Hubs;
