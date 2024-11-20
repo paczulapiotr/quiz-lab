@@ -10,6 +10,7 @@ using Quiz.Common.WebApplication;
 using Quiz.Common;
 using Quiz.Slave.ApiModels.Ping;
 using Quiz.Slave;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
@@ -46,11 +47,18 @@ builder.Services
         AppJsonSerializerContext.Default,
         opts =>
         {
-            var uniqueId = DeviceIdHelper.GetDeviceUniqueId;
-            opts.AddPublisher<PingQueueDefinition, Ping>(PingQueueDefinition.Publisher());
-            opts.AddPublisher<PongQueueDefinition, Pong>(PongQueueDefinition.Publisher());
-            opts.AddConsumer<PingConsumer, PingQueueDefinition, Ping>(PingQueueDefinition.Consumer(uniqueId));
-            opts.AddConsumer<PongConsumer, PongQueueDefinition, Pong>(PongQueueDefinition.Consumer(uniqueId));
+            var uniqueId = DeviceIdHelper.DeviceUniqueId;
+            opts.AddPublisher(PingQueueDefinition.Publisher());
+            opts.AddPublisher(PongQueueDefinition.Publisher());
+            opts.AddConsumer<PingConsumer, Ping>(PingQueueDefinition.Consumer(uniqueId));
+            opts.AddConsumer<PongConsumer, Pong>(PongQueueDefinition.Consumer(uniqueId));
+
+
+            opts.AddPublisher(PlayerRegisterDefinition.Publisher());
+            opts.AddConsumer<PlayerRegisterConsumer, PlayerRegister>(PlayerRegisterDefinition.Consumer());
+
+            opts.AddPublisher(PlayerRegisteredDefinition.Publisher());
+            opts.AddConsumer<PlayerRegisteredConsumer, PlayerRegistered>(PlayerRegisteredDefinition.Consumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
@@ -80,6 +88,8 @@ app.Run();
 // Message Broker messages
 [JsonSerializable(typeof(Ping))]
 [JsonSerializable(typeof(Pong))]
+[JsonSerializable(typeof(PlayerRegistered))]
+[JsonSerializable(typeof(PlayerRegister))]
 
 // Hub messages
 [JsonSerializable(typeof(PingHubMessage))]

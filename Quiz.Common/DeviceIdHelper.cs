@@ -6,7 +6,7 @@ public static class DeviceIdHelper
 {
     private static readonly object _lock = new object();
     private static string? _deviceId = null;
-    public static string GetDeviceUniqueId
+    public static string DeviceUniqueId
     {
         get
         {

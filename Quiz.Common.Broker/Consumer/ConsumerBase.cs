@@ -10,11 +10,23 @@ using RabbitMQ.Client.Events;
 
 namespace Quiz.Common.Broker.Consumer;
 
-public abstract class ConsumerBase<TMessage>(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer<TMessage>
+public abstract class ConsumerBase<TMessage> : IConsumer<TMessage>
 where TMessage : IMessage
 {
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+    private readonly IConnection _connection;
+    private readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
+    protected readonly JsonSerializerContext jsonSerializerContext;
+    protected readonly ILogger logger;
+
+    public ConsumerBase(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext)
+    {
+        _connection = connection;
+        _queueDefinition = queueDefinition;
+        this.logger = logger;
+        this.jsonSerializerContext = jsonSerializerContext;
+    }
 
     public async Task ConsumeAsync(CancellationToken cancellationToken = default)
     {
@@ -23,7 +35,7 @@ where TMessage : IMessage
             await _semaphore.WaitAsync(cancellationToken);
             if (_channel == null || _channel.IsClosed)
             {
-                _channel = await connection.CreateChannelAsync();
+                _channel = await _connection.CreateChannelAsync();
             }
         }
 
@@ -59,7 +71,7 @@ where TMessage : IMessage
             }
         };
 
-        await _channel.BasicConsumeAsync(queueDefinition.QueueName, false, consumer, cancellationToken);
+        await _channel.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
     }
 
     public void Dispose()

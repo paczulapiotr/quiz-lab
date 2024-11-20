@@ -17,10 +17,8 @@ public class QueueConfig
 
     public QueueConfig AddConsumer<
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConsumer,
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TQueueDefinition,
-    TMessage>(TQueueDefinition queueDefinition)
+    TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition)
     where TConsumer : class, IConsumer<TMessage>
-    where TQueueDefinition : class, IQueueDefinition<TMessage>
     where TMessage : IMessage
     {
         _services.AddSingleton<IConsumer, TConsumer>();
@@ -30,9 +28,7 @@ public class QueueConfig
     }
 
     public QueueConfig AddPublisher<
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TQueueDefinition,
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMessage>(TQueueDefinition queueDefinition)
-    where TQueueDefinition : class, IQueuePublisherDefinition<TMessage>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMessage>(IQueuePublisherDefinition<TMessage> queueDefinition)
     where TMessage : IMessage
     {
         _services.AddSingleton<IQueuePublisherDefinition>(queueDefinition);
