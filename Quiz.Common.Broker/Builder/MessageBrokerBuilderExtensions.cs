@@ -12,14 +12,21 @@ public static class MessageBrokerBuilderExtensions
     public static async Task UseMessageBroker(this IApplicationBuilder app, CancellationToken cancellationToken = default)
     {
         var serviceProvider = app.ApplicationServices;
-        var queueDefinitions = serviceProvider.GetServices<IQueueDefinition>();
+        var publisherDefinitions = serviceProvider.GetServices<IQueuePublisherDefinition>();
+        var consumerDefinitions = serviceProvider.GetServices<IQueueConsumerDefinition>();
         var connection = serviceProvider.GetRequiredService<IConnection>();
         using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-        foreach (var queueDefinition in queueDefinitions)
+        foreach (var def in publisherDefinitions)
         {
-            await queueDefinition.RegisterAsync(channel, cancellationToken);
+            await def.RegisterPublisherAsync(channel, cancellationToken);
         }
+
+        foreach (var def in consumerDefinitions)
+        {
+            await def.RegisterConsumerAsync(channel, cancellationToken);
+        }
+
         cancellationToken.ThrowIfCancellationRequested();
     }
     public static void AddMessageBroker(this IServiceCollection services, string connectionString, JsonSerializerContext jsonSerializerContext, Action<QueueConfig> configure)

@@ -12,7 +12,7 @@ public class PingConsumer : ConsumerBase<Ping>
     private readonly IPublisher _publisher;
 
     public PingConsumer(
-        IQueueDefinition<Ping> queueDefinition,
+        IQueueConsumerDefinition<Ping> queueDefinition,
         IConnection connection,
         ILogger<PingConsumer> logger,
         JsonSerializerContext jsonSerializerContext,

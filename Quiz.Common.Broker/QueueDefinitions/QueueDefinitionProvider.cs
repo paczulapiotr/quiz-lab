@@ -4,23 +4,37 @@ namespace Quiz.Common.Broker.QueueDefinitions;
 
 public interface IQueueDefinitionProvider
 {
-    QueueDefinition<T>? GetQueueDefinition<T>() where T : IMessage;
+    IQueuePublisherDefinition<T>? GetPublisherDefinition<T>() where T : IMessage;
+    IQueueConsumerDefinition<T>? GetConsumerDefinition<T>() where T : IMessage;
 }
 
 public class QueueDefinitionProvider : IQueueDefinitionProvider
 {
-    private readonly Dictionary<Type, IQueueDefinition> _queueDefinitions = new();
+    private readonly Dictionary<Type, IQueuePublisherDefinition> _publisherDefinitions = new();
+    private readonly Dictionary<Type, IQueueConsumerDefinition> _consumerDefinitions = new();
 
-    public QueueDefinitionProvider(IEnumerable<IQueueDefinition> queueDefinitions)
+    public QueueDefinitionProvider(
+        IEnumerable<IQueueConsumerDefinition> queueConsumerDefinitions,
+        IEnumerable<IQueuePublisherDefinition> queuePublisherDefinitions)
     {
-        foreach (var queueDefinition in queueDefinitions)
+        foreach (var def in queuePublisherDefinitions)
         {
-            _queueDefinitions.Add(queueDefinition.MessageType, queueDefinition);
+            _publisherDefinitions.Add(def.MessageType, def);
+        }
+
+        foreach (var def in queueConsumerDefinitions)
+        {
+            _consumerDefinitions.Add(def.MessageType, def);
         }
     }
 
-    public QueueDefinition<T>? GetQueueDefinition<T>() where T : IMessage
+    public IQueuePublisherDefinition<T>? GetPublisherDefinition<T>() where T : IMessage
     {
-        return (QueueDefinition<T>?)(_queueDefinitions.TryGetValue(typeof(T), out var queueDefinition) ? queueDefinition : null);
+        return (IQueuePublisherDefinition<T>?)(_publisherDefinitions.TryGetValue(typeof(T), out var def) ? def : null);
+    }
+
+    public IQueueConsumerDefinition<T>? GetConsumerDefinition<T>() where T : IMessage
+    {
+        return (IQueueConsumerDefinition<T>?)(_consumerDefinitions.TryGetValue(typeof(T), out var def) ? def : null);
     }
 }

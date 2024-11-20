@@ -9,7 +9,7 @@ namespace Quiz.Slave.Consumers;
 
 public class PongConsumer : ConsumerBase<Pong>
 {
-    public PongConsumer(IConnection connection, IQueueDefinition<Pong> queueDefinition, ILogger<PongConsumer> logger, JsonSerializerContext jsonSerializerContext)
+    public PongConsumer(IConnection connection, IQueueConsumerDefinition<Pong> queueDefinition, ILogger<PongConsumer> logger, JsonSerializerContext jsonSerializerContext)
     : base(connection, queueDefinition, logger, jsonSerializerContext)
     {
     }

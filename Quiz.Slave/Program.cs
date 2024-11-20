@@ -6,8 +6,10 @@ using Quiz.Slave.Hubs.Models;
 using Quiz.Slave.Commands;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
 using Quiz.Common.WebApplication;
+using Quiz.Common;
+using Quiz.Slave.ApiModels.Ping;
+using Quiz.Slave;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
@@ -44,10 +46,11 @@ builder.Services
         AppJsonSerializerContext.Default,
         opts =>
         {
-            opts.AddDefinition<Ping, PingQueueDefinition>();
-            opts.AddDefinition<Pong, PongQueueDefinition>();
-            opts.AddConsumer<PingConsumer>();
-            opts.AddConsumer<PongConsumer>();
+            var uniqueId = DeviceIdHelper.GetDeviceUniqueId;
+            opts.AddPublisher<PingQueueDefinition, Ping>(PingQueueDefinition.Publisher());
+            opts.AddPublisher<PongQueueDefinition, Pong>(PongQueueDefinition.Publisher());
+            opts.AddConsumer<PingConsumer, PingQueueDefinition, Ping>(PingQueueDefinition.Consumer(uniqueId));
+            opts.AddConsumer<PongConsumer, PongQueueDefinition, Pong>(PongQueueDefinition.Consumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
@@ -66,26 +69,12 @@ await app.UseMessageBroker();
 app.MapHub<SyncHub>("/sync");
 
 // Map endpoints
-app.MapPost("/select-answer/{answer}", async (string answer, ISyncHubClient syncClient, CancellationToken cancellationToken = default) =>
-{
-    await syncClient.SelectAnswer(new SelectAnswer(answer), cancellationToken);
-    return Results.Ok("Answered");
-});
-
-
-app.MapPost("/ping", async (PingRequest req, IPingCommandHandler handler, CancellationToken cancellationToken = default) =>
-{
-    await handler.HandleAsync(new PingCommand(req.Message), cancellationToken);
-    return Results.Ok("Ping message sent");
-});
+app.MapEndpoints();
 
 app.Run();
 
-public record PingRequest(string Message);
-public record Health(string? Status, DateTime? Timestamp = null, bool IsHealthy = true);
 
 // HTTP REST messages
-[JsonSerializable(typeof(Health))]
 [JsonSerializable(typeof(PingRequest))]
 
 // Message Broker messages

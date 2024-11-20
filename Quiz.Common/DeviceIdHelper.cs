@@ -15,26 +15,15 @@ public static class DeviceIdHelper
                 lock (_lock)
                 {
                     if (_deviceId == null)
-                        _deviceId = GetMacAddress();
+                        _deviceId = GetDeviceId();
                 }
             }
             return _deviceId!;
         }
     }
 
-    private static string? GetMacAddress()
+    private static string? GetDeviceId()
     {
-        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-        var macAddress = networkInterfaces
-            .Where(nic => nic.OperationalStatus == OperationalStatus.Up)
-            .Select(nic => nic.GetPhysicalAddress().ToString())
-            .FirstOrDefault();
-
-        if (string.IsNullOrEmpty(macAddress))
-        {
-            throw new InvalidOperationException("No network adapters with an operational status found.");
-        }
-
-        return macAddress;
+        return IdGenerator.New;
     }
 }

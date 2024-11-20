@@ -15,22 +15,28 @@ public class QueueConfig
         _services = services;
     }
 
-    public QueueConfig AddDefinition<
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMessage,
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TQueueDefinition>()
-    where TQueueDefinition : class, IQueueDefinition<TMessage>, new()
+    public QueueConfig AddConsumer<
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConsumer,
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TQueueDefinition,
+    TMessage>(TQueueDefinition queueDefinition)
+    where TConsumer : class, IConsumer<TMessage>
+    where TQueueDefinition : class, IQueueDefinition<TMessage>
     where TMessage : IMessage
     {
-        _services.AddSingleton<IQueueDefinition<TMessage>, TQueueDefinition>();
-        _services.AddSingleton<IQueueDefinition, TQueueDefinition>();
+        _services.AddSingleton<IConsumer, TConsumer>();
+        _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
+        _services.AddSingleton<IQueueConsumerDefinition<TMessage>>(queueDefinition);
         return this;
     }
 
-    public QueueConfig AddConsumer<
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConsumer>()
-    where TConsumer : class, IConsumer
+    public QueueConfig AddPublisher<
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TQueueDefinition,
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMessage>(TQueueDefinition queueDefinition)
+    where TQueueDefinition : class, IQueuePublisherDefinition<TMessage>
+    where TMessage : IMessage
     {
-        _services.AddSingleton<IConsumer, TConsumer>();
+        _services.AddSingleton<IQueuePublisherDefinition>(queueDefinition);
+        _services.AddSingleton<IQueuePublisherDefinition<TMessage>>(queueDefinition);
         return this;
     }
 }

@@ -10,7 +10,7 @@ using RabbitMQ.Client.Events;
 
 namespace Quiz.Common.Broker.Consumer;
 
-public abstract class ConsumerBase<TMessage>(IConnection connection, IQueueDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer
+public abstract class ConsumerBase<TMessage>(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext) : IConsumer<TMessage>
 where TMessage : IMessage
 {
     private IChannel? _channel = null;

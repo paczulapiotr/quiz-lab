@@ -12,7 +12,7 @@ public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jso
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-    public async Task PublishAsync<T>(T message, IQueueDefinition<T> queueDefinition, CancellationToken cancellationToken = default) where T : IMessage
+    public async Task PublishAsync<T>(T message, IQueuePublisherDefinition<T> queueDefinition, CancellationToken cancellationToken = default) where T : IMessage
     {
         if (_channel == null || _channel.IsClosed)
         {
@@ -32,7 +32,7 @@ public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jso
 
     public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default) where T : IMessage
     {
-        var queueDefinition = queueDefinitionProvider.GetQueueDefinition<T>();
+        var queueDefinition = queueDefinitionProvider.GetPublisherDefinition<T>();
 
         ArgumentNullException.ThrowIfNull(queueDefinition, nameof(queueDefinition));
 

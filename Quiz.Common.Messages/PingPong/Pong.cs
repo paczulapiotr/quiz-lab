@@ -9,7 +9,10 @@ public record Pong(string Message, string? CorrelationId = null) : MessageBase(C
 
 public class PongQueueDefinition : QueueDefinition<Pong>
 {
-    public PongQueueDefinition() : base("pong-exchange", "pong-queue", ExchangeType.Fanout)
+    public PongQueueDefinition(string uniqueId = "") : base(ExchangeType.Fanout, queueSufix: uniqueId)
     {
     }
+
+    public static PongQueueDefinition Publisher() => new();
+    public static PongQueueDefinition Consumer(string UniqueId) => new(UniqueId);
 }
