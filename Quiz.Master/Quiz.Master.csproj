@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <PublishAot>true</PublishAot>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <RootNamespace>Quiz.Master</RootNamespace>
@@ -15,6 +14,15 @@
     <ProjectReference Include="..\Quiz.Common.Broker\Quiz.Common.Broker.csproj" />
     <ProjectReference Include="..\Quiz.Common.Messages\Quiz.Common.Messages.csproj" />
     <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

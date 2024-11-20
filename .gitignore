@@ -6,3 +6,5 @@ riderModule.iml
 dist/
 .DS_Store
 .idea/
+
+quizgame.db*
