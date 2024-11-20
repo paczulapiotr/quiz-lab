@@ -1,9 +1,9 @@
 import { ScoreTile } from "@/components/ScoreTile";
 import { Tile } from "@/components/Tile";
 import { Timer } from "@/components/Timer";
-import styles from "./StandardQuestionPage.module.scss";
 import { useLocalSyncService } from "@/hooks/useLocalSyncService";
 import { useEffect, useState } from "react";
+import styles from "./StandardQuestionPage.module.scss";
 
 const StandardQuestionPage = () => {
   const { connected, sendSync, onSync, offSync } = useLocalSyncService();
@@ -27,7 +27,7 @@ const StandardQuestionPage = () => {
   };
 
   return (
-    <div>
+    <div className={styles.page}>
       <ScoreTile />
       <br />
       <Tile text="What is the capital of France?" blue />

@@ -1,5 +1,3 @@
-using System.Net.NetworkInformation;
-
 namespace Quiz.Common;
 
 public static class DeviceIdHelper
@@ -20,6 +18,11 @@ public static class DeviceIdHelper
             }
             return _deviceId!;
         }
+    }
+
+    public static void Setup(string? deviceId)
+    {
+        _deviceId = deviceId;
     }
 
     private static string? GetDeviceId()

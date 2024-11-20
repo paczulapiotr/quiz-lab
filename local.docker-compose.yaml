@@ -1,0 +1,74 @@
+services:
+  quiz-rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: quiz-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # services
+  slave-000:
+    container_name: slave-000
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Quiz.Slave/Dockerfile.debug
+    ports:
+      - "6000:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+    depends_on:
+      - quiz-rabbitmq
+
+  slave-001:
+    container_name: slave-001
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Quiz.Slave/Dockerfile.debug
+    ports:
+      - "6001:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+    depends_on:
+      - quiz-rabbitmq
+
+  slave-002:
+    container_name: slave-002
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Quiz.Slave/Dockerfile.debug
+    ports:
+      - "6002:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+    depends_on:
+      - quiz-rabbitmq
+
+  slave-003:
+    container_name: slave-003
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Quiz.Slave/Dockerfile.debug
+    ports:
+      - "6003:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+    depends_on:
+      - quiz-rabbitmq
+
+volumes:
+  rabbitmq_data:

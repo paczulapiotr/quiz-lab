@@ -14,6 +14,7 @@ using Quiz.Common.Messages;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
+DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {

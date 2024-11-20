@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -14,17 +15,30 @@ public static class MessageBrokerBuilderExtensions
         var serviceProvider = app.ApplicationServices;
         var publisherDefinitions = serviceProvider.GetServices<IQueuePublisherDefinition>();
         var consumerDefinitions = serviceProvider.GetServices<IQueueConsumerDefinition>();
-        var connection = serviceProvider.GetRequiredService<IConnection>();
-        using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
+        var logger = serviceProvider.GetRequiredService<ILogger<IApplicationBuilder>>();
 
-        foreach (var def in publisherDefinitions)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await def.RegisterPublisherAsync(channel, cancellationToken);
-        }
+            try
+            {
+                var connection = serviceProvider.GetRequiredService<IConnection>();
+                using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
+                foreach (var def in publisherDefinitions)
+                {
+                    await def.RegisterPublisherAsync(channel, cancellationToken);
+                }
 
-        foreach (var def in consumerDefinitions)
-        {
-            await def.RegisterConsumerAsync(channel, cancellationToken);
+                foreach (var def in consumerDefinitions)
+                {
+                    await def.RegisterConsumerAsync(channel, cancellationToken);
+                }
+                break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while setting up the message broker.");
+                await Task.Delay(5000, cancellationToken);
+            }
         }
 
         cancellationToken.ThrowIfCancellationRequested();
