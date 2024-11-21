@@ -3,8 +3,7 @@ import StandardQuestionPage from "./pages/StandardQuestionPage";
 import { FlyingSquare } from "./components/FlyingSquare";
 import { LocalSyncServiceProvider } from "./contexts/LocalSyncServiceContext/Provider";
 
-const apiUrl = "http://192.168.0.247:5123";
-// const apiUrl = "http://localhost:5123";
+const apiUrl = import.meta.env.VITE_LOCAL_API_URL;
 
 function App() {
   fetch(`${apiUrl}/ping`, {

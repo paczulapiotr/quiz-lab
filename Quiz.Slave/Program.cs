@@ -32,9 +32,9 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(opts =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        opts.WithOrigins(builder.Configuration["Cors"]!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();

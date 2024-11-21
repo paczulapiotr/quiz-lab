@@ -14,6 +14,20 @@ services:
       retries: 5
 
   # services
+  master-000:
+    container_name: master-000
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Quiz.Master/Dockerfile.debug
+    ports:
+      - "5999:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080;
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+    depends_on:
+      - quiz-rabbitmq
+
   slave-000:
     container_name: slave-000
     restart: always
@@ -21,10 +35,11 @@ services:
       context: .
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
-      - "6000:8080"
+      - "6020:8080"
     environment:
       - ASPNETCORE_URLS=http://+:8080;
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Cors=http://localhost:6010
     depends_on:
       - quiz-rabbitmq
 
@@ -35,10 +50,11 @@ services:
       context: .
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
-      - "6001:8080"
+      - "6021:8080"
     environment:
       - ASPNETCORE_URLS=http://+:8080;
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Cors=http://localhost:6011
     depends_on:
       - quiz-rabbitmq
 
@@ -49,10 +65,11 @@ services:
       context: .
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
-      - "6002:8080"
+      - "6022:8080"
     environment:
       - ASPNETCORE_URLS=http://+:8080;
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Cors=http://localhost:6012
     depends_on:
       - quiz-rabbitmq
 
@@ -63,12 +80,57 @@ services:
       context: .
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
-      - "6003:8080"
+      - "6023:8080"
     environment:
       - ASPNETCORE_URLS=http://+:8080;
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Cors=http://localhost:6013
     depends_on:
       - quiz-rabbitmq
+
+  ui-000:
+    container_name: ui-000
+    restart: always
+    build:
+      context: ./Quiz.UI
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_LOCAL_API_URL=http://localhost:6020
+    ports:
+      - "6010:80"
+
+  ui-001:
+    container_name: ui-001
+    restart: always
+    build:
+      context: ./Quiz.UI
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_LOCAL_API_URL=http://localhost:6021
+    ports:
+      - "6011:80"
+
+  ui-002:
+    container_name: ui-002
+    restart: always
+    build:
+      context: ./Quiz.UI
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_LOCAL_API_URL=http://localhost:6022
+    ports:
+      - "6012:80"
+
+  ui-003:
+    container_name: ui-003
+    restart: always
+    build:
+      context: ./Quiz.UI
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_LOCAL_API_URL=http://localhost:6023
+    ports:
+      - "6013:80"
 
 volumes:
   rabbitmq_data:

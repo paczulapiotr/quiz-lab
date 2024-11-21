@@ -1,0 +1,38 @@
+
+# Use the official ASP.NET Core runtime as a base image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble AS base
+EXPOSE 8080
+RUN apt update
+RUN apt install -y unzip curl
+RUN curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /vsdbg
+
+# Use the official ASP.NET Core build image
+FROM mcr.microsoft.com/dotnet/sdk:9.0-noble AS publish
+ARG BUILD_CONFIGURATION=Debug
+RUN apt update \
+ && apt install -y build-essential \
+ && rm -rf /var/lib/apt/lists/*
+
+# Restore
+WORKDIR /src
+COPY ./Quiz.Master/Quiz.Master.csproj ./Quiz.Master/Quiz.Master.csproj
+COPY ./Quiz.Common/Quiz.Common.csproj ./Quiz.Common/Quiz.Common.csproj
+COPY ./Quiz.Common.Broker/Quiz.Common.Broker.csproj ./Quiz.Common.Broker/Quiz.Common.Broker.csproj
+COPY ./Quiz.Common.Messages/Quiz.Common.Messages.csproj ./Quiz.Common.Messages/Quiz.Common.Messages.csproj
+RUN dotnet restore ./Quiz.Master/Quiz.Master.csproj
+COPY . .
+
+# Publish
+COPY ./Quiz.Master/ ./Quiz.Master/
+COPY ./Quiz.Common/ ./Quiz.Common/
+COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
+COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
+RUN dotnet publish "./Quiz.Master" -c $BUILD_CONFIGURATION \
+-p:PublishSingleFile=false -o /src/publish
+
+# Final stage/image
+FROM base AS final
+USER app
+WORKDIR /src
+COPY --from=publish /src/publish .
+ENTRYPOINT ["dotnet", "./Quiz.Master.dll"]
