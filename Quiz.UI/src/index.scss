@@ -12,4 +12,8 @@ html {
   background-color: vars.$pastell-purple;
   font-family: Fredoka, sans-serif;
   font-weight: 500;
+
+  body {
+    margin: 0;
+  }
 }

@@ -1,8 +1,6 @@
 using Quiz.Common;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Messages;
-using Quiz.Slave.ApiModels.Ping;
-using Quiz.Slave.Commands;
 using Quiz.Slave.Hubs;
 using Quiz.Slave.Hubs.Models;
 
@@ -16,13 +14,6 @@ public static class Endpoints
         {
             await syncClient.SelectAnswer(new SelectAnswer(answer), cancellationToken);
             return Results.Ok("Answered");
-        });
-
-
-        endpoints.MapPost("/ping", async (PingRequest req, IPingCommandHandler handler, CancellationToken cancellationToken = default) =>
-        {
-            await handler.HandleAsync(new PingCommand(req.Message), cancellationToken);
-            return Results.Ok("Ping message sent");
         });
 
         endpoints.MapPost("/register/{player}", async (string player, IPublisher publisher, CancellationToken cancellationToken = default) =>

@@ -57,9 +57,13 @@ export class LocalSyncService {
 
   sendSync = async <T extends SyncSendDefinitionNames>(
     definitionName: T,
-    data: SyncSendData[T],
+    data?: SyncSendData[T],
   ) => {
-    await this.hubConnection?.invoke(definitionName, data);
+    if (data != null) {
+      await this.hubConnection?.invoke(definitionName, data);
+    } else {
+      await this.hubConnection?.invoke(definitionName);
+    }
   };
 
   private async _connect() {

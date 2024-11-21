@@ -6,11 +6,7 @@ import { LocalSyncServiceProvider } from "./contexts/LocalSyncServiceContext/Pro
 const apiUrl = import.meta.env.VITE_LOCAL_API_URL;
 
 function App() {
-  fetch(`${apiUrl}/ping`, {
-    method: "POST",
-    body: JSON.stringify({ Message: "Hello" }),
-    headers: { "Content-Type": "application/json" },
-  })
+  fetch(`${apiUrl}/health`)
     .then((res) => res.json())
     .then(console.log);
 

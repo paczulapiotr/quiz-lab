@@ -1,9 +1,7 @@
 using Quiz.Common.Broker.Builder;
-using Quiz.Common.Messages.PingPong;
 using Quiz.Slave.Consumers;
 using Quiz.Slave.Hubs;
 using Quiz.Slave.Hubs.Models;
-using Quiz.Slave.Commands;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Quiz.Common.WebApplication;
@@ -49,19 +47,13 @@ builder.Services
         opts =>
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
-            opts.AddPublisher(PingQueueDefinition.Publisher());
-            opts.AddPublisher(PongQueueDefinition.Publisher());
-            opts.AddConsumer<PingConsumer, Ping>(PingQueueDefinition.Consumer(uniqueId));
-            opts.AddConsumer<PongConsumer, Pong>(PongQueueDefinition.Consumer(uniqueId));
-
-
             opts.AddPublisher(PlayerRegisterDefinition.Publisher());
             opts.AddConsumer<PlayerRegisteredConsumer, PlayerRegistered>(PlayerRegisteredDefinition.Consumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
 {
-    opts.AddCommandHandler<IPingCommandHandler, PingCommandHandler, PingCommand>();
+    // opts.AddCommandHandler<ICommandHandler, CommandHandler, Command>();
 });
 
 builder.Services.AddScoped<ISyncHubClient, SyncHubClient>();
@@ -84,14 +76,10 @@ app.Run();
 [JsonSerializable(typeof(PingRequest))]
 
 // Message Broker messages
-[JsonSerializable(typeof(Ping))]
-[JsonSerializable(typeof(Pong))]
 [JsonSerializable(typeof(PlayerRegistered))]
 [JsonSerializable(typeof(PlayerRegister))]
 
 // Hub messages
-[JsonSerializable(typeof(PingHubMessage))]
-[JsonSerializable(typeof(PongHubMessage))]
 [JsonSerializable(typeof(SelectAnswer))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext

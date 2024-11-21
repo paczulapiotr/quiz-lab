@@ -5,15 +5,16 @@
   background-color: vars.$white;
   border-radius: 10rem;
   width: fit-content;
-  padding: 1rem 1rem 1rem 2rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  font-size: 1.2rem;
   box-shadow: 0.3rem 0.4rem 0 0.2em vars.$pastell-blue-dark;
   font-weight: 600;
 
   img {
+    width: 2rem;
     animation: pulse 10s linear infinite;
   }
 }

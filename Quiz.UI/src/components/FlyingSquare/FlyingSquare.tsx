@@ -18,7 +18,7 @@ const FlyingSquare: React.FC<FlyingSquareProps> = ({ count = 1 }) => {
   }, [count]);
 
   return (
-    <>
+    <div>
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
@@ -28,7 +28,7 @@ const FlyingSquare: React.FC<FlyingSquareProps> = ({ count = 1 }) => {
           className={styles.square}
         ></div>
       ))}
-    </>
+    </div>
   );
 };
 

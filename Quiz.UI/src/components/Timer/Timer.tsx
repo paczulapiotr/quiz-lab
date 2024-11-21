@@ -4,9 +4,10 @@ import classNames from "classnames";
 
 type Props = {
   startSeconds: number; // Total countdown time in seconds
+  onTimeUp?: () => void; // Callback function when time is up
 };
 
-const Timer: React.FC<Props> = ({ startSeconds }) => {
+const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
   const [timeLeft, setTimeLeft] = useState(startSeconds);
   const [percentage, setPercentage] = useState(0);
 
@@ -14,14 +15,18 @@ const Timer: React.FC<Props> = ({ startSeconds }) => {
     if (timeLeft > 0) {
       const interval = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
+      }, 1_000);
       return () => clearInterval(interval); // Clear the interval on unmount
+    } else {
+      setTimeout(() => {
+        onTimeUp?.();
+      }, 100);
     }
-  }, [timeLeft]);
+  }, [timeLeft, onTimeUp]);
 
   useEffect(() => {
     // Calculate the percentage of time passed
-    const timeElapsed = startSeconds - timeLeft;
+    const timeElapsed = startSeconds - (timeLeft - 1);
     setPercentage((timeElapsed / startSeconds) * 100);
   }, [timeLeft, startSeconds]);
 
@@ -44,7 +49,9 @@ const Timer: React.FC<Props> = ({ startSeconds }) => {
         />
       </div>
       <div className={styles.display}>
-        {new Date(timeLeft * 1000).toISOString().substr(14, 5)}
+        {`${Math.floor(timeLeft / 60)
+          .toString()
+          .padStart(2, "0")}:${(timeLeft % 60).toString().padStart(2, "0")}`}
       </div>
     </div>
   );

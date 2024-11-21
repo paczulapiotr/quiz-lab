@@ -22,7 +22,7 @@ export type LocalSyncServiceContextType = {
 
   sendSync<T extends SyncSendDefinitionNames>(
     definitionName: T,
-    data: SyncSendData[T],
+    data?: SyncSendData[T],
   ): Promise<void>;
 };
 
