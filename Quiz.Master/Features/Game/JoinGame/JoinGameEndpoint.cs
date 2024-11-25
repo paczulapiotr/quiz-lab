@@ -1,16 +1,14 @@
-using Carter;
 using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.Game.JoinGame;
 
 public record JoinGameRequest(string DeviceId, string PlayerName);
 
-
-public class JoinGameEndpoint() : ICarterModule
+public static partial class Endpoints
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public static void MapJoinGame(this IEndpointRouteBuilder endpoints)
     {
-        app.MapPost("/api/game/join", async (JoinGameRequest request, ICommandHandler<JoinGameCommand> commandHandler) =>
+        endpoints.MapPost("/api/game/join", async (JoinGameRequest request, ICommandHandler<JoinGameCommand> commandHandler) =>
         {
             await commandHandler.HandleAsync(new JoinGameCommand(request.DeviceId, request.PlayerName));
             return Results.Ok();

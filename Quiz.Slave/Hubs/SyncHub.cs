@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using Quiz.Slave.Hubs.Models;
 
 namespace Quiz.Slave.Hubs;
 
-public interface ISyncHubWait
-{
-    Task WaitForClient(CancellationToken cancellationToken = default);
-}
-
-public partial class SyncHub : Hub
+internal partial class SyncHub : Hub
 {
     private readonly ILogger<SyncHub> _logger;
     private readonly IHubConnection _hubConnection;
@@ -19,11 +13,6 @@ public partial class SyncHub : Hub
         _hubConnection = hubConnection;
     }
 
-    public Task SelectAnswer(SelectAnswer answer)
-    {
-        _logger.LogInformation("SelectAnswer received from {ConnectionId}, answer: {answer}", Context.ConnectionId, answer);
-        return Task.CompletedTask;
-    }
     public override async Task OnConnectedAsync()
     {
         await _hubConnection.Connected(Context.ConnectionId);

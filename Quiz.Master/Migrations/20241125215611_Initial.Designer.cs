@@ -11,7 +11,7 @@ using Quiz.Master.Persistance;
 namespace Quiz.Master.Migrations
 {
     [DbContext(typeof(QuizDbContext))]
-    [Migration("20241120145208_Initial")]
+    [Migration("20241125215611_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -88,6 +88,9 @@ namespace Quiz.Master.Migrations
 
                     b.Property<Guid>("GameScoreId")
                         .HasColumnType("TEXT");
+
+                    b.Property<uint>("GameSize")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("TEXT");

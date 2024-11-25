@@ -47,8 +47,6 @@ builder.Services
         opts =>
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
-            opts.AddPublisher(PlayerRegisterDefinition.Publisher());
-            opts.AddConsumer<PlayerRegisteredConsumer, PlayerRegistered>(PlayerRegisteredDefinition.Consumer(uniqueId));
             opts.AddConsumer<GameCreatedConsumer, GameCreated>(GameCreatedDefinition.Consumer(uniqueId));
         });
 
@@ -78,8 +76,6 @@ app.Run();
 [JsonSerializable(typeof(PingRequest))]
 
 // Message Broker messages
-[JsonSerializable(typeof(PlayerRegistered))]
-[JsonSerializable(typeof(PlayerRegister))]
 [JsonSerializable(typeof(GameCreated))]
 
 // Hub messages

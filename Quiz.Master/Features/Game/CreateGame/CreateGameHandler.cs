@@ -4,7 +4,7 @@ using Quiz.Common.CQRS;
 using Quiz.Common.Messages;
 using Quiz.Master.Persistance;
 
-namespace Quiz.Master.Features.Game.JoinGame;
+namespace Quiz.Master.Features.Game.CreateGame;
 
 public record CreateGameCommand(uint GameSize) : ICommand;
 

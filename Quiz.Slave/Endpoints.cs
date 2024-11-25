@@ -18,13 +18,6 @@ public static class Endpoints
             await syncClient.SelectAnswer(new SelectAnswer(answer), cancellationToken);
             return Results.Ok("Answered");
         });
-
-        endpoints.MapPost("/register/{player}", async (string player, IPublisher publisher, CancellationToken cancellationToken = default) =>
-        {
-            var id = DeviceIdHelper.DeviceUniqueId;
-            await publisher.PublishAsync(new PlayerRegister(id, player), cancellationToken);
-            return Results.Ok("Player registered with id: " + id);
-        });
     }
 
     private static void MapReverseProxy(IEndpointRouteBuilder endpoints)

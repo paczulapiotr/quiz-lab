@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
 using Quiz.Master.Persistance;
 
-namespace Quiz.Master.Features.Game.JoinGame;
+namespace Quiz.Master.Features.Game.GetCurrentGame;
 
 public record GetCurrentGameResult(string GameId, uint GameSize, IEnumerable<string> PlayerNames);
 public record GetCurrentGameQuery() : IQuery<GetCurrentGameResult>;

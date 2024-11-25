@@ -1,13 +1,13 @@
-using Carter;
 using Quiz.Common.CQRS;
 
-namespace Quiz.Master.Features.Game.JoinGame;
+namespace Quiz.Master.Features.Game.GetCurrentGame;
 
-public class GetCurrentGameEndpoint() : ICarterModule
+
+public static partial class Endpoints
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public static void MapGameCurrent(this IEndpointRouteBuilder endpoints)
     {
-        app.MapGet("/api/game/current", async (IQueryHandler<GetCurrentGameQuery, GetCurrentGameResult> commandHandler) =>
+        endpoints.MapGet("/api/game/current", async (IQueryHandler<GetCurrentGameQuery, GetCurrentGameResult> commandHandler) =>
         {
             var currentGame = await commandHandler.HandleAsync(new GetCurrentGameQuery());
 

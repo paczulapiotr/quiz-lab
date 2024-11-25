@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
-using Carter;
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.Broker.Builder;
 using Quiz.Common.Messages;
 using Quiz.Common.WebApplication;
 using Quiz.Master;
-using Quiz.Master.Consumers;
+using Quiz.Master.Features.Game.CreateGame;
+using Quiz.Master.Features.Game.GetCurrentGame;
 using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Persistance;
 
@@ -37,8 +37,6 @@ builder.Services
         AppJsonSerializerContext.Default,
         opts =>
         {
-            opts.AddConsumer<PlayerRegisterConsumer, PlayerRegister>(PlayerRegisterDefinition.Consumer());
-            opts.AddPublisher(PlayerRegisteredDefinition.Publisher());
             opts.AddPublisher(GameCreatedDefinition.Publisher());
         });
 
@@ -56,19 +54,17 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
-builder.Services.AddCarter();
 builder.Services.AddQuizServices();
 
 var app = builder.Build();
 
 //Apply migrations on startup
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
     try
     {
-        // dbContext.Database.Migrate();
+        dbContext.Database.Migrate();
     }
     catch (Exception ex)
     {
@@ -78,16 +74,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
+app.MapEndpoints();
 app.UseCors();
-app.MapCarter();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.Run();
 
 
 // Message Broker messages
-[JsonSerializable(typeof(PlayerRegistered))]
-[JsonSerializable(typeof(PlayerRegister))]
 [JsonSerializable(typeof(JoinGameRequest))]
 [JsonSerializable(typeof(GameCreated))]
 

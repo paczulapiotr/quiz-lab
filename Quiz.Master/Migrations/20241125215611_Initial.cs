@@ -17,6 +17,7 @@ namespace Quiz.Master.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     GameScoreId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    GameSize = table.Column<uint>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     StartedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     FinishedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
