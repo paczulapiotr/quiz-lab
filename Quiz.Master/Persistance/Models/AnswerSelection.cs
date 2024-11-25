@@ -1,6 +1,6 @@
 namespace Quiz.Master.Persistance.Models;
 
-public record AnswerSelection
+public record AnswerSelection : IEntity
 {
     public Guid Id { get; set; }
     public Guid PlayerId { get; set; }

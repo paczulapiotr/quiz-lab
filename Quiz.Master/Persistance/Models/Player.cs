@@ -1,6 +1,6 @@
 namespace Quiz.Master.Persistance.Models;
 
-public record Player
+public record Player : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameId { get; set; }

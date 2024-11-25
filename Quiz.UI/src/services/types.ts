@@ -6,7 +6,10 @@ export type SyncReceiveCallback<T extends SyncReceiveDefinitionNames> = (
 
 export type SyncSendDefinitionNames = "Ping" | "SelectAnswer";
 
-export type SyncReceiveDefinitionNames = "Pong" | "SelectAnswer";
+export type SyncReceiveDefinitionNames =
+  | "Pong"
+  | "SelectAnswer"
+  | "GameCreated";
 
 export interface SyncSendData {
   Ping: {
@@ -22,5 +25,9 @@ export interface SyncReceiveData {
   Pong: undefined;
   SelectAnswer: {
     Answer: string;
+  };
+  GameCreated: {
+    GameId: string;
+    GameSize: number;
   };
 }

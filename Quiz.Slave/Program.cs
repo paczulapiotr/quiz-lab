@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(opts =>
     {
-        opts.WithOrigins(builder.Configuration["Cors"]!)
+        opts.WithOrigins([builder.Configuration["Cors"]!])
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -49,6 +49,7 @@ builder.Services
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
             opts.AddPublisher(PlayerRegisterDefinition.Publisher());
             opts.AddConsumer<PlayerRegisteredConsumer, PlayerRegistered>(PlayerRegisteredDefinition.Consumer(uniqueId));
+            opts.AddConsumer<GameCreatedConsumer, GameCreated>(GameCreatedDefinition.Consumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
@@ -56,7 +57,8 @@ builder.Services.AddQuizCommonServices(opts =>
     // opts.AddCommandHandler<ICommandHandler, CommandHandler, Command>();
 });
 
-builder.Services.AddScoped<ISyncHubClient, SyncHubClient>();
+builder.Services.AddSingleton<IHubConnection, HubConnection>();
+builder.Services.AddSingleton<ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
 app.UseCors();
@@ -78,9 +80,11 @@ app.Run();
 // Message Broker messages
 [JsonSerializable(typeof(PlayerRegistered))]
 [JsonSerializable(typeof(PlayerRegister))]
+[JsonSerializable(typeof(GameCreated))]
 
 // Hub messages
 [JsonSerializable(typeof(SelectAnswer))]
+[JsonSerializable(typeof(GameCreatedSyncMessage))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {

@@ -1,6 +1,6 @@
 namespace Quiz.Master.Persistance.Models;
 
-public record GameScore
+public record GameScore : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameId { get; set; }

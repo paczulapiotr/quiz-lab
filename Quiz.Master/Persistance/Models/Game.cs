@@ -1,9 +1,10 @@
 namespace Quiz.Master.Persistance.Models;
 
-public record Game
+public record Game : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameScoreId { get; set; }
+    public uint GameSize { get; set; }
     public GameScore GameScore { get; set; } = null!;
     public ICollection<Question> Questions { get; set; } = new List<Question>();
     public ICollection<Player> Players { get; set; } = new List<Player>();

@@ -1,6 +1,6 @@
 namespace Quiz.Master.Persistance.Models;
 
-public record Question
+public record Question : IEntity
 {
     public Guid Id { get; set; }
     public required string Content { get; set; }

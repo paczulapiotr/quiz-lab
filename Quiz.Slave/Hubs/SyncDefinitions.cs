@@ -6,4 +6,5 @@ public static class SyncDefinitions
 
     // Send definitions
     public const string SendSelectAnswer = "SelectAnswer";
+    public const string SendGameCreated = "GameCreated";
 }

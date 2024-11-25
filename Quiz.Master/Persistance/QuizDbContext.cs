@@ -39,6 +39,8 @@ public class QuizDbContext : DbContext
             entity.HasOne(e => e.GameScore)
                   .WithOne(gs => gs.Game)
                   .HasForeignKey<GameScore>(gs => gs.GameId);
+            entity.Ignore(x => x.IsStarted);
+            entity.Ignore(x => x.IsFinished);
         });
 
         modelBuilder.Entity<Question>(entity =>
