@@ -26,7 +26,7 @@ public class GetCurrentGameHandler : IQueryHandler<GetCurrentGameQuery, GetCurre
             .FirstOrDefaultAsync();
 
         return activeGame is null
-            ? null
+            ? new GetCurrentGameResult(string.Empty, 0, Array.Empty<string>())
             : new GetCurrentGameResult(
                 activeGame.Id.ToString(),
                 activeGame.GameSize,

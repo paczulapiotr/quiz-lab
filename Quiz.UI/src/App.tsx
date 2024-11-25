@@ -1,20 +1,32 @@
 import "./App.scss";
 import { LocalSyncServiceProvider } from "./contexts/LocalSyncServiceContext/Provider";
-// import StandardQuestionPage from "./pages/StandardQuestionPage";
+import StandardQuestionPage from "./pages/StandardQuestionPage";
 import { JoinGame } from "./pages/JoinGame";
-
-const apiUrl = import.meta.env.VITE_LOCAL_API_URL;
+import { Welcome } from "./pages/Welcome";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
-  fetch(`${apiUrl}/api/helloworld?who=piotr`)
-    .then((res) => res.json())
-    .then(console.log);
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+      },
+    },
+  });
 
   return (
-    <LocalSyncServiceProvider>
-      {/* <StandardQuestionPage /> */}
-      <JoinGame />
-    </LocalSyncServiceProvider>
+    <QueryClientProvider client={queryClient}>
+      <LocalSyncServiceProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route index element={<Welcome />} />
+            <Route path="join/:gameId" element={<JoinGame />} />
+            <Route path="question" element={<StandardQuestionPage />} />
+          </Routes>
+        </BrowserRouter>
+      </LocalSyncServiceProvider>
+    </QueryClientProvider>
   );
 }
 

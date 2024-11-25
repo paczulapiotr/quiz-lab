@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
 namespace Quiz.Common.Extensions;
-public static class HttpContext
+
+public static class HttpContextExtensions
 {
     public static string? GetCorrelationId(this IHttpContextAccessor httpContextAccessor)
     {
