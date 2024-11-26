@@ -25,6 +25,9 @@ FROM nginx:1.27-alpine
 # Copy the build output to the Nginx HTML directory
 COPY --from=0 /app/dist /usr/share/nginx/html
 
+# Copy the custom Nginx configuration file
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Expose port 80 to serve the app
 EXPOSE 80
 

@@ -1,5 +1,5 @@
 using Quiz.Master.Features.Game.CreateGame;
-using Quiz.Master.Features.Game.GetCurrentGame;
+using Quiz.Master.Features.Game.GetGame;
 using Quiz.Master.Features.Game.JoinGame;
 
 namespace Quiz.Master;
@@ -10,7 +10,7 @@ public static partial class Endpoints
     {
         endpoints.MapCreateGame();
         endpoints.MapJoinGame();
-        endpoints.MapGameCurrent();
+        endpoints.MapGetGame();
     }
 }
 

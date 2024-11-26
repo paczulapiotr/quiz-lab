@@ -26,7 +26,7 @@ public class QuizSqlRepository : IQuizRepository
         _context.Remove(entity);
     }
 
-    public async Task<TEntity?> GetAsync<TEntity>(int id) where TEntity : class, IEntity
+    public async Task<TEntity?> GetAsync<TEntity>(Guid id) where TEntity : class, IEntity
     {
         return await _context.Set<TEntity>().FindAsync(id);
     }

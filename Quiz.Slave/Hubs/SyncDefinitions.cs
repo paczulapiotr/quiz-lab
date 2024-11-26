@@ -7,4 +7,7 @@ public static class SyncDefinitions
     // Send definitions
     public const string SendSelectAnswer = "SelectAnswer";
     public const string SendGameCreated = "GameCreated";
+    public const string SendPlayerJoined = "PlayerJoined";
+    public const string SendGameStarting = "GameStarting";
+    public const string SendGameStarted = "GameStarted";
 }

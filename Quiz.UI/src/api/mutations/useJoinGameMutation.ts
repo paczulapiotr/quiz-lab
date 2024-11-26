@@ -4,6 +4,6 @@ import { AxiosError } from "axios";
 
 export const useJoinGameMutation = () => {
   return useMutation<never, AxiosError, JoinGameRequest>({
-    mutationFn: ({ playerName }) => joinGame(playerName),
+    mutationFn: ({ playerName, gameId }) => joinGame(playerName, gameId),
   });
 };

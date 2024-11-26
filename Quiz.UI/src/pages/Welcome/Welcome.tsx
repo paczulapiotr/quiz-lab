@@ -8,7 +8,7 @@ const Welcome = () => {
     console.log(
       `GameCreated, id: ${payload?.GameId}, slots: ${payload?.GameSize}`,
     );
-    navigate(`/join`);
+    navigate(`/join/${payload?.GameId}`);
   });
 
   return (

@@ -23,7 +23,7 @@ const StandardQuestionPage = () => {
   };
 
   return (
-    <PageTemplate initialTimerSeconds={10}>
+    <PageTemplate initialTimerSeconds={10} score={0}>
       <div className={styles.question}>
         <Tile text="What is the capital of France?" blue />
         <div className={styles.answers}>

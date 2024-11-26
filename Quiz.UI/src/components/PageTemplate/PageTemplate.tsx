@@ -7,16 +7,17 @@ import { FlyingSquare } from "@/components/FlyingSquare";
 
 type Props = {
   initialTimerSeconds?: number;
+  score?: number;
 } & PropsWithChildren;
 
-const PageTemplate = ({ children, initialTimerSeconds }: Props) => {
+const PageTemplate = ({ children, initialTimerSeconds, score }: Props) => {
   const [showTimer, setShowTimer] = useState((initialTimerSeconds ?? 0) > 0);
 
   return (
     <main className={styles.page}>
       <div className={styles.topRight}>
         <Latency />
-        <ScoreTile />
+        {score !== undefined && <ScoreTile score={score} />}
       </div>
       <div className={styles.container}>
         {initialTimerSeconds && showTimer ? (

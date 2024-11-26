@@ -48,6 +48,10 @@ builder.Services
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
             opts.AddConsumer<GameCreatedConsumer, GameCreated>(GameCreatedDefinition.Consumer(uniqueId));
+            opts.AddConsumer<PlayerJoinedConsumer, PlayerJoined>(PlayerJoinedDefinition.Consumer(uniqueId));
+            opts.AddConsumer<GameStartingConsumer, GameStarting>(GameStartingDefinition.Consumer(uniqueId));
+            opts.AddConsumer<GameStartedConsumer, GameStarted>(GameStartedDefinition.Consumer(uniqueId));
+
         });
 
 builder.Services.AddQuizCommonServices(opts =>
@@ -77,10 +81,14 @@ app.Run();
 
 // Message Broker messages
 [JsonSerializable(typeof(GameCreated))]
+[JsonSerializable(typeof(PlayerJoined))]
 
 // Hub messages
 [JsonSerializable(typeof(SelectAnswer))]
 [JsonSerializable(typeof(GameCreatedSyncMessage))]
+[JsonSerializable(typeof(PlayerJoinedSyncMessage))]
+[JsonSerializable(typeof(GameStarting))]
+[JsonSerializable(typeof(GameStarted))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {

@@ -5,7 +5,7 @@ type Props = {
   score?: number;
 };
 
-const ScoreTile = ({ score = 1220 }: Props) => {
+const ScoreTile = ({ score = 0 }: Props) => {
   return (
     <div className={styles.score}>
       <span>{`${score}`}</span>

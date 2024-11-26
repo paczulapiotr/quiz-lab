@@ -1,9 +1,8 @@
 using Quiz.Common.CQRS;
-using Quiz.Master.Extensions;
 
 namespace Quiz.Master.Features.Game.JoinGame;
 
-public record JoinGameRequest(string PlayerName);
+public record JoinGameRequest(string PlayerName, Guid GameId);
 
 public static partial class Endpoints
 {
@@ -11,7 +10,7 @@ public static partial class Endpoints
     {
         endpoints.MapPost("/api/game/join", async (JoinGameRequest request, ICommandHandler<JoinGameCommand> commandHandler, IHttpContextAccessor httpContextAccessor) =>
         {
-            await commandHandler.HandleAsync(new JoinGameCommand(httpContextAccessor.GetDeviceId(), request.PlayerName));
+            await commandHandler.HandleAsync(new JoinGameCommand(request.GameId, request.PlayerName));
             return Results.Ok();
         })
         .WithName("JoinGame")

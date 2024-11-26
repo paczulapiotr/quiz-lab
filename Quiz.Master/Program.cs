@@ -1,15 +1,18 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Quiz.Common;
 using Quiz.Common.Broker.Builder;
 using Quiz.Common.Messages;
 using Quiz.Common.WebApplication;
 using Quiz.Master;
+using Quiz.Master.Consumers;
 using Quiz.Master.Features.Game.CreateGame;
-using Quiz.Master.Features.Game.GetCurrentGame;
+using Quiz.Master.Features.Game.GetGame;
 using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Persistance;
 
 var builder = WebApplication.CreateSlimBuilder(args);
+DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 builder.Services.AddMvcCore();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -28,7 +31,7 @@ builder.Services.AddQuizCommonServices(opts =>
 {
     opts.AddCommandHandler<JoinGameHandler, JoinGameCommand>();
     opts.AddCommandHandler<CreateGameHandler, CreateGameCommand>();
-    opts.AddQueryHandler<GetCurrentGameHandler, GetCurrentGameQuery, GetCurrentGameResult>();
+    opts.AddQueryHandler<GetGameHandler, GetGameQuery, GetGameResult>();
 });
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services
@@ -37,7 +40,12 @@ builder.Services
         AppJsonSerializerContext.Default,
         opts =>
         {
+            var deviceId = DeviceIdHelper.DeviceUniqueId;
             opts.AddPublisher(GameCreatedDefinition.Publisher());
+            opts.AddPublisher(PlayerJoinedDefinition.Publisher());
+            opts.AddPublisher(GameStartingDefinition.Publisher());
+            opts.AddPublisher(GameStartedDefinition.Publisher());
+            opts.AddConsumer<GameStartingConsumer, GameStarting>(GameStartingDefinition.Consumer(deviceId));
         });
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -84,7 +92,9 @@ app.Run();
 // Message Broker messages
 [JsonSerializable(typeof(JoinGameRequest))]
 [JsonSerializable(typeof(GameCreated))]
-
+[JsonSerializable(typeof(PlayerJoined))]
+[JsonSerializable(typeof(GameStarting))]
+[JsonSerializable(typeof(GameStarted))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }
