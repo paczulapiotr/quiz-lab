@@ -4,6 +4,9 @@ public record Game : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameScoreId { get; set; }
+
+    public IEnumerable<GameRound> Rounds { get; set; } = new List<GameRound>();
+    public GameRound CurrentRound { get; set; }
     public uint GameSize { get; set; }
     public GameScore GameScore { get; set; } = null!;
     public ICollection<Question> Questions { get; set; } = new List<Question>();
@@ -14,4 +17,10 @@ public record Game : IEntity
 
     public bool IsFinished => FinishedAt.HasValue;
     public bool IsStarted => StartedAt.HasValue;
+}
+
+public enum GameRound
+{
+    Democratic_ABCD,
+    Democratic_ABCD_Quickest,
 }

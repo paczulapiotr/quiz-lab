@@ -3,6 +3,7 @@ using Quiz.Common.Broker.Publisher;
 using Quiz.Common.CQRS;
 using Quiz.Common.Messages;
 using Quiz.Master.Persistance;
+using Quiz.Master.Persistance.Models;
 
 namespace Quiz.Master.Features.Game.CreateGame;
 
@@ -23,6 +24,7 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
         var game = new Persistance.Models.Game
         {
             GameSize = request.GameSize,
+            Rounds = [GameRound.Democratic_ABCD, GameRound.Democratic_ABCD_Quickest]
         };
         await quizRepository.AddAsync(game);
 

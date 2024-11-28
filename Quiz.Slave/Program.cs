@@ -20,7 +20,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 // Register the GPIO hosted service with configuration
 builder.Services.Configure<GpioSettings>(builder.Configuration.GetSection("GpioSettings"));
-// builder.Services.AddHostedService<GpioHostedService>();
+builder.Services.AddHostedService<GpioHostedService>();
 builder.Services.AddHostedService<ConsumerHostedService>();
 // Add SignalR services with custom JsonSerializerOptions
 builder.Services.AddSignalR().AddJsonProtocol(options =>

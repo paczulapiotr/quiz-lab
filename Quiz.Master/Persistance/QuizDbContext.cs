@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Quiz.Master.Persistance.Converters;
 using Quiz.Master.Persistance.Models;
 
 namespace Quiz.Master.Persistance;
@@ -8,7 +9,7 @@ public class QuizDbContext : DbContext
     public QuizDbContext(DbContextOptions<QuizDbContext> options) : base(options) { }
 
     public DbSet<Player> Players { get; set; } = null!;
-    public DbSet<Game> Games { get; set; } = null!;
+    public DbSet<Models.Game> Games { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
     public DbSet<Answer> Answers { get; set; } = null!;
     public DbSet<AnswerSelection> AnswerSelections { get; set; } = null!;
@@ -26,7 +27,7 @@ public class QuizDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
-        modelBuilder.Entity<Game>(entity =>
+        modelBuilder.Entity<Models.Game>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -41,6 +42,7 @@ public class QuizDbContext : DbContext
                   .HasForeignKey<GameScore>(gs => gs.GameId);
             entity.Ignore(x => x.IsStarted);
             entity.Ignore(x => x.IsFinished);
+            entity.Property(e => e.Rounds).HasConversion(new GameRoundConverter());
         });
 
         modelBuilder.Entity<Question>(entity =>
