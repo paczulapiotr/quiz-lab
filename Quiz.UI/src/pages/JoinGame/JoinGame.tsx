@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import styles from "./JoinGame.module.scss";
 import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
 import { Timer } from "@/components/Timer";
+import { GameStatus } from "@/services/types";
 
 const JoinGame = () => {
   const [slots, setSlots] = useState<string[]>([]);
@@ -33,8 +34,18 @@ const JoinGame = () => {
     );
   });
 
-  useLocalSyncConsumer("GameStarting", () => setStarting(true));
-  useLocalSyncConsumer("GameStarted", () => navigate("/question"));
+  useLocalSyncConsumer("GameStatusUpdate", (message) => {
+    switch (message?.Status) {
+      case GameStatus.GameStarting:
+        setStarting(true);
+        break;
+      case GameStatus.GameStarted:
+        navigate("/question");
+        break;
+      default:
+        break;
+    }
+  });
 
   return (
     <PageTemplate>

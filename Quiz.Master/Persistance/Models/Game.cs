@@ -1,9 +1,12 @@
+using Quiz.Common.Messages.Game;
+
 namespace Quiz.Master.Persistance.Models;
 
 public record Game : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameScoreId { get; set; }
+    public GameStatus Status { get; set; }
 
     public IEnumerable<GameRound> Rounds { get; set; } = new List<GameRound>();
     public GameRound CurrentRound { get; set; }

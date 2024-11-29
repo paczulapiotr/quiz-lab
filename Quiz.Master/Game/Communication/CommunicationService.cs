@@ -1,49 +1,64 @@
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Messages.Game;
-using Quiz.Common.Messages.Round;
 
 namespace Quiz.Master.Game.Communication;
 
 public class CommunicationService(
     IPublisher publisher,
-    IOneTimeConsumer<RulesExplained> rulesExplainedConsumer,
-    IOneTimeConsumer<RoundStarted> roundStartedConsumer,
-    IOneTimeConsumer<RoundEnded> roundEndedConsumer)
+    IOneTimeConsumer<GameStatusUpdate> gameStatusConsumer)
      : ICommunicationService
 {
-    public async Task SendGameEndMessage(string gameId, CancellationToken cancellationToken = default)
+
+    public async Task SendRoundEndingMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new GameEnd(gameId), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundEnding), cancellationToken);
     }
 
-    public async Task SendRoundEndMessage(string gameId, CancellationToken cancellationToken = default)
+    public async Task ReceiveRoundEndedMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new RoundEnd(gameId), cancellationToken);
+        await ReceiveStatusMessage(gameId, GameStatus.RoundEnded, cancellationToken: cancellationToken);
     }
 
-    public async Task ReceiveRoundEndedMessage(CancellationToken cancellationToken = default)
+    public async Task SendRoundStartingMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await roundEndedConsumer.ConsumeFirstAsync(cancellationToken: cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundStarting), cancellationToken);
     }
 
-    public async Task SendRoundStartMessage(string gameId, CancellationToken cancellationToken = default)
+    public async Task ReceiveRoundStartedMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new RoundStart(gameId), cancellationToken);
-    }
-
-    public async Task ReceiveRoundStartedMessage(CancellationToken cancellationToken = default)
-    {
-        await roundStartedConsumer.ConsumeFirstAsync(cancellationToken: cancellationToken);
+        await ReceiveStatusMessage(gameId, GameStatus.RoundStarted, cancellationToken: cancellationToken);
     }
 
     public async Task SendRulesExplainMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new RulesExplain(gameId), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RulesExplaining), cancellationToken);
     }
 
-    public async Task ReceiveRulesExplainedMessage(CancellationToken cancellationToken = default)
+    public async Task ReceiveRulesExplainedMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await rulesExplainedConsumer.ConsumeFirstAsync(cancellationToken: cancellationToken);
+        await ReceiveStatusMessage(gameId, GameStatus.RulesExplained, cancellationToken: cancellationToken);
+    }
+
+    public async Task SendGameEndingMessage(string gameId, CancellationToken cancellationToken = default)
+    {
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameEnding), cancellationToken);
+    }
+
+    public async Task ReceiveGameEndedMessage(string gameId, CancellationToken cancellationToken = default)
+    {
+        await ReceiveStatusMessage(gameId, GameStatus.GameEnded, cancellationToken: cancellationToken);
+    }
+
+    private async Task ReceiveStatusMessage(string gameId, GameStatus status, CancellationToken cancellationToken = default)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var gameStatus = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: cancellationToken);
+            if (gameStatus.GameId == gameId && gameStatus.Status == status)
+            {
+                return;
+            }
+        }
     }
 }

@@ -45,7 +45,7 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
 
         if (game.Players.Count == game.GameSize)
         {
-            await publisher.PublishAsync(new GameStarting(game.Id.ToString()), cancellationToken);
+            await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarting), cancellationToken);
         }
 
         return await ValueTask.FromResult(NoResult.Instance);

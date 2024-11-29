@@ -5,6 +5,7 @@ import { Timer } from "@/components/Timer";
 import { Latency } from "@/components/Latency";
 import { FlyingSquare } from "@/components/FlyingSquare";
 import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
+import { GameStatusNames } from "@/services/types";
 
 type Props = {
   initialTimerSeconds?: number;
@@ -15,17 +16,11 @@ const PageTemplate = ({ children, initialTimerSeconds, score }: Props) => {
   const [showTimer, setShowTimer] = useState((initialTimerSeconds ?? 0) > 0);
 
   // Test communication
-  useLocalSyncConsumer("RulesExplain", (gameId) =>
-    console.log("RulesExplain", gameId),
+  useLocalSyncConsumer("GameStatusUpdate", (message) =>
+    console.log(
+      `[${message?.GameId}] GameStatusUpdate: ${GameStatusNames[message!.Status]}`,
+    ),
   );
-  useLocalSyncConsumer("RulesExplained", (gameId) =>
-    console.log("RulesExplained", gameId),
-  );
-  useLocalSyncConsumer("RoundStart", (gameId) =>
-    console.log("RoundStart", gameId),
-  );
-  useLocalSyncConsumer("RoundEnd", (gameId) => console.log("RoundEnd", gameId));
-  useLocalSyncConsumer("GameEnd", (gameId) => console.log("GameEnd", gameId));
 
   return (
     <main className={styles.page}>

@@ -1,15 +1,12 @@
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Messages.Game;
 using Quiz.Master.Game;
-using Quiz.Master.Persistance;
 
 namespace Quiz.Master;
 
 public class GameEngineHostedService(
     ILogger<GameEngineHostedService> logger,
-    IDbContextFactory<QuizDbContext> dbContextFactory,
-    IOneTimeConsumer<GameStarted> gameStartedConsumer,
+    IOneTimeConsumer<GameStatusUpdate> gameStatusConsumer,
     IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
 
@@ -31,18 +28,16 @@ public class GameEngineHostedService(
             {
                 token.ThrowIfCancellationRequested();
                 // Listen for game start rabbitmq message
-                var gameStart = await gameStartedConsumer.ConsumeFirstAsync(cancellationToken: token);
-                var gameId = Guid.Parse(gameStart.GameId);
+                var status = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: token);
+                if (status.Status != GameStatus.GameStarting)
+                {
+                    return;
+                }
+
+                var gameId = Guid.Parse(status.GameId);
+
                 // Initialize game engine 
-                using var ctx = dbContextFactory.CreateDbContext();
-
-                var game = await ctx.Games
-                    .Include(x => x.Players)
-                    .FirstOrDefaultAsync(x => x.Id == gameId, token);
-
-                await gameEngine.Run(gameId, game!.Players.ToList(), game.Rounds.ToList(), token);
-
-                // Start game engine for stats from DB
+                await gameEngine.Run(gameId, token);
             }
         }, token);
 

@@ -32,45 +32,9 @@ internal class SyncHubClient(IHubContext<SyncHub> ctx, IHubConnection hubConnect
             payload,
             cancellationToken);
 
-    public async Task GameStarting(string gameId, CancellationToken cancellationToken = default)
+    public async Task GameStatusUpdated(GameStatusUpdateSyncMessage payload, CancellationToken cancellationToken = default)
         => await SendAsync(
-            SyncDefinitions.SendGameStarting,
-            gameId,
-            cancellationToken);
-
-    public async Task GameStarted(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendGameStarted,
-            gameId,
-            cancellationToken);
-
-    public async Task GameEnd(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendGameEnd,
-            gameId,
-            cancellationToken);
-
-    public async Task RoundEnd(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendRoundEnd,
-            gameId,
-            cancellationToken);
-
-    public async Task RoundStart(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendRoundStart,
-            gameId,
-            cancellationToken);
-
-    public async Task RulesExplain(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendRulesExplain,
-            gameId,
-            cancellationToken);
-
-    public async Task RulesExplained(string gameId, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendRulesExplained,
-            gameId,
+            SyncDefinitions.SendGameStatusUpdate,
+            payload,
             cancellationToken);
 }

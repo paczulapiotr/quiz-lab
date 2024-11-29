@@ -10,7 +10,7 @@ public interface IGameEngine
 {
     bool IsGameRunning { get; }
     bool IsGameFinished { get; }
-    Task Run(Guid Id, List<Player> players, List<GameRound> gameRounds, CancellationToken cancellationToken = default);
+    Task Run(Guid Id, CancellationToken cancellationToken = default);
 }
 
 public class GameEngine(
@@ -27,24 +27,27 @@ IGameStateRepository gameStateRepository) : IGameEngine
     // - Pass players and chosen rounds/questions seed
     // - Intro welcome moview with rule desription
 
-    public async Task Run(Guid Id, List<Player> players, List<GameRound> gameRounds, CancellationToken cancellationToken = default)
+    public async Task Run(Guid Id, CancellationToken cancellationToken = default)
     {
+        var gameEntity = await gameStateRepository.GetGame(Id, cancellationToken);
         IsGameRunning = true;
         CurrentGameId = Id;
-        Players = players;
-        GameRounds = gameRounds;
+        Players = gameEntity.Players.ToList();
+        GameRounds = gameEntity.Rounds.ToList();
+        var gameIdString = CurrentGameId.ToString()!;
 
         // - send welcome start rabbitmq message
-        await communicationService.SendRulesExplainMessage(Id.ToString(), cancellationToken);
+        await communicationService.SendRulesExplainMessage(gameIdString, cancellationToken);
         // - wait for welcome finished rabbitmq message
-        await communicationService.ReceiveRulesExplainedMessage(cancellationToken);
+        await communicationService.ReceiveRulesExplainedMessage(gameIdString, cancellationToken);
 
         foreach (var round in GameRounds)
         {
             await PlayRound(round, cancellationToken);
         }
 
-        await communicationService.SendGameEndMessage(Id.ToString(), cancellationToken);
+        await communicationService.SendGameEndingMessage(gameIdString, cancellationToken);
+        await communicationService.ReceiveGameEndedMessage(gameIdString, cancellationToken);
 
         IsGameRunning = false;
         IsGameFinished = true;
@@ -65,20 +68,20 @@ IGameStateRepository gameStateRepository) : IGameEngine
         var handler = await gameRoundHandlerSelector.GetHandler(round, cancellationToken);
 
         // - send round start rabbitmq message
-        await communicationService.SendRoundStartMessage(gameId, cancellationToken);
+        await communicationService.SendRoundStartingMessage(gameId, cancellationToken);
 
         // - wait for round start finished rabbitmq message
-        await communicationService.ReceiveRoundStartedMessage(cancellationToken);
+        await communicationService.ReceiveRoundStartedMessage(gameId, cancellationToken);
 
         // - invoke round handler
         // - wait for round handler to finish
         await handler.HandleRound(round, cancellationToken);
 
         // - send mid round ranking show rabbitmq message
-        await communicationService.SendRoundEndMessage(gameId, cancellationToken);
+        await communicationService.SendRoundEndingMessage(gameId, cancellationToken);
 
         // - wait for mid round ranking show finished rabbitmq message
-        await communicationService.ReceiveRoundEndedMessage(cancellationToken);
+        await communicationService.ReceiveRoundEndedMessage(gameId, cancellationToken);
 
         // - Save game state to db
         await gameStateRepository.SaveGameState(this, cancellationToken);
