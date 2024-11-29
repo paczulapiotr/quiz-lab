@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
-using Quiz.Common.Messages;
+using Quiz.Common.Messages.Game;
 using Quiz.Master.Persistance;
 using RabbitMQ.Client;
 
@@ -28,7 +28,7 @@ internal class GameStartingConsumer : ConsumerBase<GameStarting>
 
     protected override async Task ProcessMessageAsync(GameStarting message, CancellationToken cancellationToken = default)
     {
-        var delay = Task.Delay(61_000);
+        var delay = Task.Delay(10_000);
 
         using (var scope = serviceProvider.CreateScope())
         {

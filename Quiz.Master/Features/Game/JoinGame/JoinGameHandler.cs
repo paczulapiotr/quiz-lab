@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.CQRS;
-using Quiz.Common.Messages;
+using Quiz.Common.Messages.Game;
 using Quiz.Master.Extensions;
 using Quiz.Master.Persistance;
 

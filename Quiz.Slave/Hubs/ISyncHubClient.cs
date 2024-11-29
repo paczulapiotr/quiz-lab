@@ -9,4 +9,10 @@ internal interface ISyncHubClient
     Task PlayerJoined(PlayerJoinedSyncMessage payload, CancellationToken cancellationToken = default);
     Task GameStarting(string gameId, CancellationToken cancellationToken = default);
     Task GameStarted(string gameId, CancellationToken cancellationToken = default);
+
+    Task GameEnd(string gameId, CancellationToken cancellationToken = default);
+    Task RoundEnd(string gameId, CancellationToken cancellationToken = default);
+    Task RoundStart(string gameId, CancellationToken cancellationToken = default);
+    Task RulesExplain(string gameId, CancellationToken cancellationToken = default);
+    Task RulesExplained(string gameId, CancellationToken cancellationToken = default);
 }

@@ -1,97 +1,86 @@
 
+using Quiz.Master.Game.Communication;
+using Quiz.Master.Game.Repository;
+using Quiz.Master.Game.Round;
+using Quiz.Master.Persistance.Models;
+
 namespace Quiz.Master.Game;
-
-
 
 public interface IGameEngine
 {
-    Task StartNew();
-
+    bool IsGameRunning { get; }
+    bool IsGameFinished { get; }
+    Task Run(Guid Id, List<Player> players, List<GameRound> gameRounds, CancellationToken cancellationToken = default);
 }
 
-public class Player
+public class GameEngine(
+ICommunicationService communicationService,
+IGameRoundHandlerSelector gameRoundHandlerSelector,
+IGameStateRepository gameStateRepository) : IGameEngine
 {
-    public string Id { get; set; }
-    public int Score { get; set; }
-}
+    public bool IsGameFinished { get; private set; } = false;
+    public bool IsGameRunning { get; private set; } = false;
+    public Guid? CurrentGameId { get; private set; }
+    public List<Player> Players { get; private set; } = [];
+    public List<GameRound> GameRounds { get; private set; } = [];
+    // Start game
+    // - Pass players and chosen rounds/questions seed
+    // - Intro welcome moview with rule desription
 
-public class Question
-{
-    public string Text { get; set; }
-    public string CorrectAnswer { get; set; }
-    public List<string> Categories { get; set; }
-}
-
-public class Answer
-{
-    public string PlayerId { get; set; }
-    public string Response { get; set; }
-    public TimeSpan ResponseTime { get; set; }
-}
-
-public class GameEngine : IGameEngine
-{
-    private List<Player> players;
-    private List<Question> questions;
-    private int currentQuestionIndex;
-
-    public GameEngine(List<Player> players, List<Question> questions)
+    public async Task Run(Guid Id, List<Player> players, List<GameRound> gameRounds, CancellationToken cancellationToken = default)
     {
-        this.players = players;
-        this.questions = questions;
-        this.currentQuestionIndex = 0;
-    }
+        IsGameRunning = true;
+        CurrentGameId = Id;
+        Players = players;
+        GameRounds = gameRounds;
 
-    public async Task StartNew()
-    {
-        while (currentQuestionIndex < questions.Count)
+        // - send welcome start rabbitmq message
+        await communicationService.SendRulesExplainMessage(Id.ToString(), cancellationToken);
+        // - wait for welcome finished rabbitmq message
+        await communicationService.ReceiveRulesExplainedMessage(cancellationToken);
+
+        foreach (var round in GameRounds)
         {
-            var question = questions[currentQuestionIndex];
-            var selectedCategory = await SelectCategory(question.Categories);
-            await Task.Delay(TimeSpan.FromSeconds(10)); // Wait 10 seconds before proceeding to the next question
-
-            var answers = await GetAnswersFromPlayers();
-            ProcessAnswers(answers, question.CorrectAnswer);
-
-            currentQuestionIndex++;
-        }
-    }
-
-    private async Task<string> SelectCategory(List<string> categories)
-    {
-        // Mock implementation for category selection
-        await Task.Delay(TimeSpan.FromSeconds(30)); // Wait for players to vote
-        return categories[new Random().Next(categories.Count)]; // Randomly select a category
-    }
-
-    private async Task<List<Answer>> GetAnswersFromPlayers()
-    {
-        // Mock implementation for getting answers from RabbitMQ
-        await Task.Delay(TimeSpan.FromSeconds(30)); // Wait for players to answer
-        return new List<Answer>(); // Return empty list as mock
-    }
-
-    private void ProcessAnswers(List<Answer> answers, string correctAnswer)
-    {
-        var correctAnswers = answers.Where(a => a.Response == correctAnswer).OrderBy(a => a.ResponseTime).ToList();
-
-        for (int i = 0; i < correctAnswers.Count; i++)
-        {
-            var player = players.First(p => p.Id == correctAnswers[i].PlayerId);
-            player.Score += i switch
-            {
-                0 => 400,
-                1 => 300,
-                2 => 200,
-                _ => 100
-            };
+            await PlayRound(round, cancellationToken);
         }
 
-        var incorrectAnswers = answers.Where(a => a.Response != correctAnswer).ToList();
-        foreach (var answer in incorrectAnswers)
+        await communicationService.SendGameEndMessage(Id.ToString(), cancellationToken);
+
+        IsGameRunning = false;
+        IsGameFinished = true;
+        await gameStateRepository.SaveGameState(this, cancellationToken);
+    }
+
+    private async Task PlayRound(GameRound round, CancellationToken cancellationToken = default)
+    {
+        var gameId = CurrentGameId.ToString();
+
+        if (gameId is null)
         {
-            var player = players.First(p => p.Id == answer.PlayerId);
-            player.Score += 0;
+            throw new InvalidOperationException("Game not started");
         }
+
+        // Start round
+        // - pick round questions and handler
+        var handler = await gameRoundHandlerSelector.GetHandler(round, cancellationToken);
+
+        // - send round start rabbitmq message
+        await communicationService.SendRoundStartMessage(gameId, cancellationToken);
+
+        // - wait for round start finished rabbitmq message
+        await communicationService.ReceiveRoundStartedMessage(cancellationToken);
+
+        // - invoke round handler
+        // - wait for round handler to finish
+        await handler.HandleRound(round, cancellationToken);
+
+        // - send mid round ranking show rabbitmq message
+        await communicationService.SendRoundEndMessage(gameId, cancellationToken);
+
+        // - wait for mid round ranking show finished rabbitmq message
+        await communicationService.ReceiveRoundEndedMessage(cancellationToken);
+
+        // - Save game state to db
+        await gameStateRepository.SaveGameState(this, cancellationToken);
     }
 }

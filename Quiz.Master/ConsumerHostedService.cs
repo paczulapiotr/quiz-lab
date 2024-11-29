@@ -1,5 +1,7 @@
 using Quiz.Common.Broker.Consumer;
 
+namespace Quiz.Master;
+
 public class ConsumerHostedService(
     ILogger<ConsumerHostedService> logger,
     IEnumerable<IConsumer> consumers

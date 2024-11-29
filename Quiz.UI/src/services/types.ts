@@ -12,7 +12,12 @@ export type SyncReceiveDefinitionNames =
   | "GameCreated"
   | "PlayerJoined"
   | "GameStarted"
-  | "GameStarting";
+  | "GameStarting"
+  | "GameEnd"
+  | "RoundEnd"
+  | "RoundStart"
+  | "RulesExplain"
+  | "RulesExplained";
 
 export interface SyncSendData {
   Ping: {
@@ -39,4 +44,9 @@ export interface SyncReceiveData {
   };
   GameStarting: string;
   GameStarted: string;
+  GameEnd: string;
+  RoundEnd: string;
+  RoundStart: string;
+  RulesExplain: string;
+  RulesExplained: string;
 }

@@ -1,7 +1,7 @@
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 
-namespace Quiz.Common.Messages;
+namespace Quiz.Common.Messages.Game;
 
 public record GameCreated(string GameId, uint GameSize, string? CorrelationId = null) : MessageBase(CorrelationId)
 {

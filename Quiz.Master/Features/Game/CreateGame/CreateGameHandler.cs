@@ -1,7 +1,7 @@
 
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.CQRS;
-using Quiz.Common.Messages;
+using Quiz.Common.Messages.Game;
 using Quiz.Master.Persistance;
 using Quiz.Master.Persistance.Models;
 

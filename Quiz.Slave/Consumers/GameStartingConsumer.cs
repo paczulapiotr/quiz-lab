@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.QueueDefinitions;
-using Quiz.Common.Messages;
+using Quiz.Common.Messages.Game;
 using Quiz.Slave.Hubs;
 using RabbitMQ.Client;
 

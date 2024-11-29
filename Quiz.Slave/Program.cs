@@ -8,7 +8,8 @@ using Quiz.Common.WebApplication;
 using Quiz.Common;
 using Quiz.Slave.ApiModels.Ping;
 using Quiz.Slave;
-using Quiz.Common.Messages;
+using Quiz.Common.Messages.Game;
+using Quiz.Common.Messages.Round;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
@@ -51,7 +52,11 @@ builder.Services
             opts.AddConsumer<PlayerJoinedConsumer, PlayerJoined>(PlayerJoinedDefinition.Consumer(uniqueId));
             opts.AddConsumer<GameStartingConsumer, GameStarting>(GameStartingDefinition.Consumer(uniqueId));
             opts.AddConsumer<GameStartedConsumer, GameStarted>(GameStartedDefinition.Consumer(uniqueId));
-
+            opts.AddConsumer<RulesExplainConsumer, RulesExplain>(RulesExplainDefinition.Consumer(uniqueId));
+            opts.AddConsumer<RulesExplainedConsumer, RulesExplained>(RulesExplainedDefinition.Consumer(uniqueId));
+            opts.AddConsumer<GameEndConsumer, GameEnd>(GameEndDefinition.Consumer(uniqueId));
+            opts.AddConsumer<RoundEndConsumer, RoundEnd>(RoundEndDefinition.Consumer(uniqueId));
+            opts.AddConsumer<RoundStartConsumer, RoundStart>(RoundStartDefinition.Consumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
@@ -89,7 +94,13 @@ app.Run();
 [JsonSerializable(typeof(PlayerJoinedSyncMessage))]
 [JsonSerializable(typeof(GameStarting))]
 [JsonSerializable(typeof(GameStarted))]
-
+[JsonSerializable(typeof(RoundEnd))]
+[JsonSerializable(typeof(RoundEnded))]
+[JsonSerializable(typeof(RoundStart))]
+[JsonSerializable(typeof(RoundStarted))]
+[JsonSerializable(typeof(GameEnd))]
+[JsonSerializable(typeof(RulesExplain))]
+[JsonSerializable(typeof(RulesExplained))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

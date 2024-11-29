@@ -3,28 +3,28 @@ using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.QueueDefinitions;
 using Quiz.Common.Messages.Game;
 using Quiz.Slave.Hubs;
-using Quiz.Slave.Hubs.Models;
 using RabbitMQ.Client;
 
 namespace Quiz.Slave.Consumers;
 
-internal class PlayerJoinedConsumer : ConsumerBase<PlayerJoined>
+internal class GameEndConsumer : ConsumerBase<GameEnd>
 {
     private readonly ISyncHubClient syncHubClient;
 
-    public PlayerJoinedConsumer(
+    public GameEndConsumer(
         IConnection connection,
         ISyncHubClient syncHubClient,
-        IQueueConsumerDefinition<PlayerJoined> queueDefinition,
-        ILogger<PlayerJoinedConsumer> logger,
+        IQueueConsumerDefinition<GameEnd> queueDefinition,
+        ILogger<GameEndConsumer> logger,
         JsonSerializerContext jsonSerializerContext)
     : base(connection, queueDefinition, logger, jsonSerializerContext)
     {
         this.syncHubClient = syncHubClient;
     }
 
-    protected override async Task ProcessMessageAsync(PlayerJoined message, CancellationToken cancellationToken = default)
+    protected override async Task ProcessMessageAsync(GameEnd message, CancellationToken cancellationToken = default)
     {
-        await syncHubClient.PlayerJoined(new PlayerJoinedSyncMessage(message.DeviceId, message.PlayerName), cancellationToken);
+        await syncHubClient.GameEnd(message.GameId, cancellationToken);
+
     }
 }
