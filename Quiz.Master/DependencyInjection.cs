@@ -12,7 +12,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IQuizRepository, QuizSqlRepository>();
         services.AddScoped<IGameStateRepository, GameStateSqlRepository>();
-        services.AddScoped<IGameRoundHandlerSelector, GameRoundHandlerSelector>();
+        services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
         services.AddScoped<ICommunicationService, CommunicationService>();
         services.AddScoped<IGameEngine, GameEngine>();
         return services;

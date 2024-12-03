@@ -17,6 +17,8 @@ namespace Quiz.Master.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     GameScoreId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    CurrentMiniGame = table.Column<int>(type: "INTEGER", nullable: true),
                     GameSize = table.Column<uint>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     StartedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -25,6 +27,25 @@ namespace Quiz.Master.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MiniGame",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    GameId = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MiniGame", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MiniGame_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,25 +70,25 @@ namespace Quiz.Master.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GameScores",
+                name: "MiniGameScore",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    GameId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    MiniGameId = table.Column<Guid>(type: "TEXT", nullable: false),
                     PlayerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ScoreValue = table.Column<int>(type: "INTEGER", nullable: false)
+                    Score = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GameScores", x => x.Id);
+                    table.PrimaryKey("PK_MiniGameScore", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GameScores_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
+                        name: "FK_MiniGameScore_MiniGame_MiniGameId",
+                        column: x => x.MiniGameId,
+                        principalTable: "MiniGame",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GameScores_Players_PlayerId",
+                        name: "FK_MiniGameScore_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Players",
                         principalColumn: "Id",
@@ -152,16 +173,19 @@ namespace Quiz.Master.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GameScores_GameId",
-                table: "GameScores",
-                column: "GameId",
-                unique: true);
+                name: "IX_MiniGame_GameId",
+                table: "MiniGame",
+                column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GameScores_PlayerId",
-                table: "GameScores",
-                column: "PlayerId",
-                unique: true);
+                name: "IX_MiniGameScore_MiniGameId",
+                table: "MiniGameScore",
+                column: "MiniGameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MiniGameScore_PlayerId",
+                table: "MiniGameScore",
+                column: "PlayerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_GameId",
@@ -207,7 +231,10 @@ namespace Quiz.Master.Migrations
                 name: "AnswerSelections");
 
             migrationBuilder.DropTable(
-                name: "GameScores");
+                name: "MiniGameScore");
+
+            migrationBuilder.DropTable(
+                name: "MiniGame");
 
             migrationBuilder.DropTable(
                 name: "Players");

@@ -55,9 +55,12 @@ where TMessage : IMessage
         tcs.SetException,
         cancellationToken: cancellationToken);
 
-        await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer);
+        var consumerTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer);
 
-        return await tcs.Task;
+        var result = await tcs.Task;
+        await _channel!.BasicCancelAsync(consumerTag);
+
+        return result;
     }
 
     protected AsyncEventingBasicConsumer CreateAsyncConsumer(Func<TMessage, CancellationToken, Task> callback, Action<Exception>? onException = null, CancellationToken cancellationToken = default)
@@ -82,7 +85,7 @@ where TMessage : IMessage
                 var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo!);
                 messageId = message?.MessageId;
                 correlationId = message?.CorrelationId;
-                logger.LogTrace($"[{correlationId}/{messageId}] received message: {messageJson}");
+                logger.LogTrace($"[{correlationId}/{messageId}] received message {typeof(TMessage)}: {messageJson}");
 
                 await callback(message!, cancellationToken);
 
@@ -97,7 +100,7 @@ where TMessage : IMessage
             finally
             {
                 stopwatch.Stop();
-                logger.LogTrace($"[{correlationId}/{messageId}] processed message in {stopwatch.ElapsedMilliseconds}ms");
+                logger.LogTrace($"[{correlationId}/{messageId}] processed message {typeof(TMessage)} in {stopwatch.ElapsedMilliseconds}ms");
             }
         };
         return consumer;

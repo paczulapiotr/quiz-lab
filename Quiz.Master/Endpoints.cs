@@ -11,6 +11,7 @@ public static partial class Endpoints
         endpoints.MapCreateGame();
         endpoints.MapJoinGame();
         endpoints.MapGetGame();
+        endpoints.MapGetMiniGame();
     }
 }
 

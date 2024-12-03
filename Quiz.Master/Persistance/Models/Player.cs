@@ -8,4 +8,6 @@ public record Player : IEntity
     public required string Name { get; set; }
     public required string DeviceId { get; set; }
     public DateTime CreatedAt { get; set; }
+    public ICollection<MiniGameScore> Scores { get; set; } = new List<MiniGameScore>();
+
 }

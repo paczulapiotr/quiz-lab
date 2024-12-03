@@ -24,7 +24,10 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
         var game = new Persistance.Models.Game
         {
             GameSize = request.GameSize,
-            Rounds = [GameRound.Democratic_ABCD, GameRound.Democratic_ABCD_Quickest]
+            MiniGames = new List<MiniGame> {
+                new MiniGame { Type = MiniGameType.Democratic_ABCD },
+                new MiniGame { Type = MiniGameType.Democratic_ABCD_Quickest },
+            }
         };
         await quizRepository.AddAsync(game);
 

@@ -1,4 +1,5 @@
 
+using Quiz.Common.Messages.Game;
 using Quiz.Master.Game.Communication;
 using Quiz.Master.Game.Repository;
 using Quiz.Master.Game.Round;
@@ -15,14 +16,14 @@ public interface IGameEngine
 
 public class GameEngine(
 ICommunicationService communicationService,
-IGameRoundHandlerSelector gameRoundHandlerSelector,
+IMiniGameHandlerSelector miniGameHandlerSelector,
 IGameStateRepository gameStateRepository) : IGameEngine
 {
     public bool IsGameFinished { get; private set; } = false;
     public bool IsGameRunning { get; private set; } = false;
     public Guid? CurrentGameId { get; private set; }
     public List<Player> Players { get; private set; } = [];
-    public List<GameRound> GameRounds { get; private set; } = [];
+    public List<MiniGame> MiniGames { get; private set; } = [];
     // Start game
     // - Pass players and chosen rounds/questions seed
     // - Intro welcome moview with rule desription
@@ -33,28 +34,42 @@ IGameStateRepository gameStateRepository) : IGameEngine
         IsGameRunning = true;
         CurrentGameId = Id;
         Players = gameEntity.Players.ToList();
-        GameRounds = gameEntity.Rounds.ToList();
+        MiniGames = gameEntity.MiniGames.ToList();
         var gameIdString = CurrentGameId.ToString()!;
 
-        // - send welcome start rabbitmq message
+        gameEntity.StartedAt = DateTime.UtcNow;
+        await SetStatus(gameEntity, GameStatus.RulesExplaining, cancellationToken);
         await communicationService.SendRulesExplainMessage(gameIdString, cancellationToken);
-        // - wait for welcome finished rabbitmq message
+
+        await SetStatus(gameEntity, GameStatus.RulesExplained, cancellationToken);
         await communicationService.ReceiveRulesExplainedMessage(gameIdString, cancellationToken);
 
-        foreach (var round in GameRounds)
+        foreach (var miniGame in MiniGames)
         {
-            await PlayRound(round, cancellationToken);
+            gameEntity.CurrentMiniGame = miniGame.Type;
+            await gameStateRepository.SaveGameState(gameEntity, cancellationToken);
+            await PlayMiniGame(gameEntity, miniGame, cancellationToken);
         }
 
+        gameEntity.CurrentMiniGame = null;
+        await SetStatus(gameEntity, GameStatus.GameEnding, cancellationToken);
         await communicationService.SendGameEndingMessage(gameIdString, cancellationToken);
+
+        gameEntity.FinishedAt = DateTime.UtcNow;
+        await SetStatus(gameEntity, GameStatus.GameEnded, cancellationToken);
         await communicationService.ReceiveGameEndedMessage(gameIdString, cancellationToken);
 
         IsGameRunning = false;
         IsGameFinished = true;
-        await gameStateRepository.SaveGameState(this, cancellationToken);
     }
 
-    private async Task PlayRound(GameRound round, CancellationToken cancellationToken = default)
+    private async Task SetStatus(Persistance.Models.Game game, GameStatus status, CancellationToken cancellationToken = default)
+    {
+        game.Status = status;
+        await gameStateRepository.SaveGameState(game, cancellationToken);
+    }
+
+    private async Task PlayMiniGame(Persistance.Models.Game game, MiniGame miniGame, CancellationToken cancellationToken = default)
     {
         var gameId = CurrentGameId.ToString();
 
@@ -63,9 +78,8 @@ IGameStateRepository gameStateRepository) : IGameEngine
             throw new InvalidOperationException("Game not started");
         }
 
-        // Start round
         // - pick round questions and handler
-        var handler = await gameRoundHandlerSelector.GetHandler(round, cancellationToken);
+        var handler = await miniGameHandlerSelector.GetHandler(miniGame.Type, cancellationToken);
 
         // - send round start rabbitmq message
         await communicationService.SendRoundStartingMessage(gameId, cancellationToken);
@@ -73,9 +87,8 @@ IGameStateRepository gameStateRepository) : IGameEngine
         // - wait for round start finished rabbitmq message
         await communicationService.ReceiveRoundStartedMessage(gameId, cancellationToken);
 
-        // - invoke round handler
-        // - wait for round handler to finish
-        await handler.HandleRound(round, cancellationToken);
+        // - wait for mini game handler to finish
+        await handler.HandleMiniGame(miniGame, cancellationToken);
 
         // - send mid round ranking show rabbitmq message
         await communicationService.SendRoundEndingMessage(gameId, cancellationToken);
@@ -84,6 +97,6 @@ IGameStateRepository gameStateRepository) : IGameEngine
         await communicationService.ReceiveRoundEndedMessage(gameId, cancellationToken);
 
         // - Save game state to db
-        await gameStateRepository.SaveGameState(this, cancellationToken);
+        await gameStateRepository.SaveGameState(game, cancellationToken);
     }
 }

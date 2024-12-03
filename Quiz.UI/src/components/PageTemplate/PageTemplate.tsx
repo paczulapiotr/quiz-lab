@@ -4,8 +4,6 @@ import { ScoreTile } from "@/components/ScoreTile";
 import { Timer } from "@/components/Timer";
 import { Latency } from "@/components/Latency";
 import { FlyingSquare } from "@/components/FlyingSquare";
-import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
-import { GameStatusNames } from "@/services/types";
 
 type Props = {
   initialTimerSeconds?: number;
@@ -14,13 +12,6 @@ type Props = {
 
 const PageTemplate = ({ children, initialTimerSeconds, score }: Props) => {
   const [showTimer, setShowTimer] = useState((initialTimerSeconds ?? 0) > 0);
-
-  // Test communication
-  useLocalSyncConsumer("GameStatusUpdate", (message) =>
-    console.log(
-      `[${message?.GameId}] GameStatusUpdate: ${GameStatusNames[message!.Status]}`,
-    ),
-  );
 
   return (
     <main className={styles.page}>

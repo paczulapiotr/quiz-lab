@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Quiz.Master.Persistance.Converters;
 using Quiz.Master.Persistance.Models;
 
 namespace Quiz.Master.Persistance;
@@ -13,7 +12,6 @@ public class QuizDbContext : DbContext
     public DbSet<Question> Questions { get; set; } = null!;
     public DbSet<Answer> Answers { get; set; } = null!;
     public DbSet<AnswerSelection> AnswerSelections { get; set; } = null!;
-    public DbSet<GameScore> GameScores { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,12 +35,26 @@ public class QuizDbContext : DbContext
             entity.HasMany(e => e.Players)
                   .WithOne(q => q.Game)
                   .HasForeignKey(q => q.GameId);
-            entity.HasOne(e => e.GameScore)
-                  .WithOne(gs => gs.Game)
-                  .HasForeignKey<GameScore>(gs => gs.GameId);
             entity.Ignore(x => x.IsStarted);
             entity.Ignore(x => x.IsFinished);
-            entity.Property(e => e.Rounds).HasConversion(new GameRoundConverter());
+        });
+
+        modelBuilder.Entity<MiniGame>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Game)
+                .WithMany(e => e.MiniGames)
+                .HasForeignKey(e => e.GameId);
+            entity.HasMany(e => e.PlayerScores)
+                .WithOne(e => e.MiniGame)
+                .HasForeignKey(e => e.MiniGameId);
+        });
+
+        modelBuilder.Entity<MiniGameScore>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.MiniGame).WithMany(e => e.PlayerScores).HasForeignKey(e => e.MiniGameId);
+            entity.HasOne(e => e.Player).WithMany(e => e.Scores).HasForeignKey(e => e.PlayerId);
         });
 
         modelBuilder.Entity<Question>(entity =>
@@ -74,15 +86,6 @@ public class QuizDbContext : DbContext
             entity.HasOne(e => e.Player)
                   .WithMany()
                   .HasForeignKey(e => e.PlayerId);
-        });
-
-        modelBuilder.Entity<GameScore>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ScoreValue).IsRequired();
-            entity.HasOne(e => e.Player)
-                  .WithOne()
-                  .HasForeignKey<GameScore>(e => e.PlayerId);
         });
     }
 

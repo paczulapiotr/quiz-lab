@@ -28,7 +28,7 @@ public class GetGameHandler(IQuizRepository quizRepository, IHttpContextAccessor
                 activeGame.Id.ToString(),
                 activeGame.GameSize,
                 activeGame.Players.OrderByDescending(x => x.CreatedAt).Select(x => x.Name),
-                activeGame.Rounds.Select(x => x.ToString()).ToArray(),
+                activeGame.MiniGames.Select(x => x.ToString()).ToArray(),
                 activeGame.IsStarted,
                 activeGame.IsFinished,
                 player?.Name,

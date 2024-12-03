@@ -1,5 +1,6 @@
 const QueryKeys = {
-  CURRENT_GAME: "CURRENT_GAME",
+  GAME: "GAME",
+  CURRENT_MINI_GAME: "CURRENT_MINI_GAME",
 };
 
 export default QueryKeys;

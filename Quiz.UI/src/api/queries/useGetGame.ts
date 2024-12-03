@@ -6,6 +6,6 @@ export const useGetGame = (gameId?: string) => {
   return useQuery({
     enabled: Boolean(gameId),
     queryFn: () => getGame(gameId!),
-    queryKey: [QueryKeys.CURRENT_GAME, gameId],
+    queryKey: [QueryKeys.GAME, gameId],
   });
 };

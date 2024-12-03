@@ -8,10 +8,9 @@ public record Game : IEntity
     public Guid GameScoreId { get; set; }
     public GameStatus Status { get; set; }
 
-    public IEnumerable<GameRound> Rounds { get; set; } = new List<GameRound>();
-    public GameRound CurrentRound { get; set; }
+    public IEnumerable<MiniGame> MiniGames { get; set; } = new List<MiniGame>();
+    public MiniGameType? CurrentMiniGame { get; set; }
     public uint GameSize { get; set; }
-    public GameScore GameScore { get; set; } = null!;
     public ICollection<Question> Questions { get; set; } = new List<Question>();
     public ICollection<Player> Players { get; set; } = new List<Player>();
     public DateTime CreatedAt { get; set; }
@@ -22,8 +21,3 @@ public record Game : IEntity
     public bool IsStarted => StartedAt.HasValue;
 }
 
-public enum GameRound
-{
-    Democratic_ABCD,
-    Democratic_ABCD_Quickest,
-}

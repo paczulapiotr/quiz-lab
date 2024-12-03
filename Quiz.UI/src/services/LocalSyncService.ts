@@ -48,7 +48,10 @@ export class LocalSyncService {
     definitionName: T,
     callback: SyncReceiveCallback<T>,
   ) => {
-    this.hubConnection?.on(definitionName, callback);
+    this.hubConnection?.on(definitionName, (dto) => {
+      console.debug(`Received ${definitionName}:`, dto);
+      callback(dto);
+    });
   };
 
   offSync = (definitionName: SyncReceiveDefinitionNames) => {

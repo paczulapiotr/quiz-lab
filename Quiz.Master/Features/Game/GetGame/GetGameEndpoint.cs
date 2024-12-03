@@ -15,8 +15,8 @@ public static partial class Endpoints
         })
         .WithName("GetGame")
         .ProducesProblem(StatusCodes.Status400BadRequest)
-        .WithSummary("Get  Game")
-        .WithDescription("Get  Game")
+        .WithSummary("Get Game")
+        .WithDescription("Get Game")
         .WithTags("Game");
     }
 }

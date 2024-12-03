@@ -80,7 +80,7 @@ namespace Quiz.Master.Migrations
                         .HasColumnType("TEXT")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("CurrentRound")
+                    b.Property<int?>("CurrentMiniGame")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("FinishedAt")
@@ -92,19 +92,18 @@ namespace Quiz.Master.Migrations
                     b.Property<uint>("GameSize")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Rounds")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("Quiz.Master.Persistance.Models.GameScore", b =>
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.MiniGame", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,21 +112,38 @@ namespace Quiz.Master.Migrations
                     b.Property<Guid>("GameId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("PlayerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ScoreValue")
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId")
-                        .IsUnique();
+                    b.HasIndex("GameId");
 
-                    b.HasIndex("PlayerId")
-                        .IsUnique();
+                    b.ToTable("MiniGame");
+                });
 
-                    b.ToTable("GameScores");
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.MiniGameScore", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("MiniGameId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MiniGameId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("MiniGameScore");
                 });
 
             modelBuilder.Entity("Quiz.Master.Persistance.Models.Player", b =>
@@ -222,21 +238,32 @@ namespace Quiz.Master.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Quiz.Master.Persistance.Models.GameScore", b =>
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.MiniGame", b =>
                 {
                     b.HasOne("Quiz.Master.Persistance.Models.Game", "Game")
-                        .WithOne("GameScore")
-                        .HasForeignKey("Quiz.Master.Persistance.Models.GameScore", "GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Quiz.Master.Persistance.Models.Player", "Player")
-                        .WithOne()
-                        .HasForeignKey("Quiz.Master.Persistance.Models.GameScore", "PlayerId")
+                        .WithMany("MiniGames")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.MiniGameScore", b =>
+                {
+                    b.HasOne("Quiz.Master.Persistance.Models.MiniGame", "MiniGame")
+                        .WithMany("PlayerScores")
+                        .HasForeignKey("MiniGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Quiz.Master.Persistance.Models.Player", "Player")
+                        .WithMany("Scores")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MiniGame");
 
                     b.Navigation("Player");
                 });
@@ -273,12 +300,21 @@ namespace Quiz.Master.Migrations
 
             modelBuilder.Entity("Quiz.Master.Persistance.Models.Game", b =>
                 {
-                    b.Navigation("GameScore")
-                        .IsRequired();
+                    b.Navigation("MiniGames");
 
                     b.Navigation("Players");
 
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.MiniGame", b =>
+                {
+                    b.Navigation("PlayerScores");
+                });
+
+            modelBuilder.Entity("Quiz.Master.Persistance.Models.Player", b =>
+                {
+                    b.Navigation("Scores");
                 });
 
             modelBuilder.Entity("Quiz.Master.Persistance.Models.Question", b =>

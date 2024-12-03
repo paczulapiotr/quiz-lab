@@ -40,7 +40,7 @@ const JoinGame = () => {
         setStarting(true);
         break;
       case GameStatus.GameStarted:
-        navigate("/question");
+        navigate(`/${gameId}/question`);
         break;
       default:
         break;
@@ -77,7 +77,7 @@ const JoinGame = () => {
       {starting ? null : <p onClick={() => navigate("/")}>Exit</p>}
       {starting ? (
         <div style={{ marginTop: "auto" }}>
-          <Timer startSeconds={60} />
+          <Timer startSeconds={10} />
         </div>
       ) : null}
     </PageTemplate>

@@ -3,10 +3,23 @@ import { useLocalSyncService } from "@/hooks/useLocalSyncService";
 import { useEffect, useState } from "react";
 import styles from "./StandardQuestionPage.module.scss";
 import { PageTemplate } from "@/components/PageTemplate";
+import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
+import { useParams } from "react-router";
+import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
+import { GameStatus } from "@/services/types";
 
 const StandardQuestionPage = () => {
   const { sendSync, onSync, offSync } = useLocalSyncService();
   const [selected, setSelected] = useState("");
+  const { gameId } = useParams<{ gameId: string }>();
+  const { data, refetch } = useGetMiniGame(gameId);
+
+  console.log(data);
+  useLocalSyncConsumer("GameStatusUpdate", (message) => {
+    if (message?.Status === GameStatus.RoundStarting) {
+      refetch();
+    }
+  });
 
   useEffect(() => {
     onSync("SelectAnswer", (data) => {

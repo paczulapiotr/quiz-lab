@@ -1,16 +1,29 @@
 
+using Microsoft.EntityFrameworkCore;
+using Quiz.Master.Persistance;
+
 namespace Quiz.Master.Game.Repository;
 
 public class GameStateSqlRepository : IGameStateRepository
 {
-    public Task<Persistance.Models.Game> GetGame(Guid gameId, CancellationToken cancellationToken = default)
+    private readonly QuizDbContext dbContext;
+
+    public GameStateSqlRepository(IDbContextFactory<QuizDbContext> dbContextFactory)
     {
-        return Task.FromResult(new Persistance.Models.Game());
+        dbContext = dbContextFactory.CreateDbContext();
     }
 
-    public async Task SaveGameState(GameEngine game, CancellationToken cancellationToken = default)
+    public async Task<Persistance.Models.Game> GetGame(Guid gameId, CancellationToken cancellationToken = default)
     {
-        // Save game state to SQL database
-        await Task.CompletedTask;
+        return await dbContext.Games
+            .Include(g => g.Players)
+            .Include(x => x.MiniGames)
+            .FirstAsync(g => g.Id == gameId, cancellationToken);
+    }
+
+    public async Task SaveGameState(Persistance.Models.Game game, CancellationToken cancellationToken = default)
+    {
+        dbContext.Update(game);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

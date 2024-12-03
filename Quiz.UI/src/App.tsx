@@ -23,7 +23,7 @@ function App() {
           <Routes>
             <Route index element={<Welcome />} />
             <Route path="join/:gameId" element={<JoinGame />} />
-            <Route path="question" element={<StandardQuestionPage />} />
+            <Route path=":gameId/question" element={<StandardQuestionPage />} />
           </Routes>
         </BrowserRouter>
       </LocalSyncServiceProvider>

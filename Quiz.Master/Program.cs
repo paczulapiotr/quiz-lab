@@ -31,6 +31,7 @@ builder.Services.AddQuizCommonServices(opts =>
     opts.AddCommandHandler<JoinGameHandler, JoinGameCommand>();
     opts.AddCommandHandler<CreateGameHandler, CreateGameCommand>();
     opts.AddQueryHandler<GetGameHandler, GetGameQuery, GetGameResult>();
+    opts.AddQueryHandler<GetMiniGameHandler, GetMiniGameQuery, GetMiniGameResult>();
 });
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddHostedService<GameEngineHostedService>();
