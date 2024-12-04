@@ -1,5 +1,4 @@
-import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
-import { FlyingSquare } from "quiz-common-ui";
+import { FlyingSquare, useLocalSyncConsumer } from "quiz-common-ui";
 import { useNavigate } from "react-router";
 
 const Welcome = () => {

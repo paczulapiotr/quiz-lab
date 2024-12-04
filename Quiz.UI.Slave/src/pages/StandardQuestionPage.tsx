@@ -1,12 +1,14 @@
-import { useLocalSyncService } from "@/hooks/useLocalSyncService";
 import { useEffect, useState } from "react";
 import styles from "./StandardQuestionPage.module.scss";
 import { PageTemplate } from "@/components/PageTemplate";
 import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
 import { useParams } from "react-router";
-import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
-import { GameStatus } from "@/services/types";
-import { Tile } from "quiz-common-ui";
+import {
+  GameStatus,
+  Tile,
+  useLocalSyncConsumer,
+  useLocalSyncService,
+} from "quiz-common-ui";
 
 const StandardQuestionPage = () => {
   const { sendSync, onSync, offSync } = useLocalSyncService();

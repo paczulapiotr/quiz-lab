@@ -14,7 +14,7 @@ const Latency = () => {
 
     const interval = setInterval(() => {
       timestamp.current = Date.now();
-      sendSync("Ping");
+      // sendSync("Ping");
     }, 5_000);
 
     return () => clearInterval(interval);

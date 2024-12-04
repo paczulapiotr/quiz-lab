@@ -1,4 +1,4 @@
-import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
+import { FlyingSquare, useLocalSyncConsumer } from "quiz-common-ui";
 import { useNavigate } from "react-router";
 
 const Welcome = () => {
@@ -15,6 +15,7 @@ const Welcome = () => {
     <div>
       <h1>Quiz Lab</h1>
       <p>Waiting for game...</p>
+      <FlyingSquare count={5} />
     </div>
   );
 };

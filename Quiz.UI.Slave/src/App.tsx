@@ -1,10 +1,10 @@
 import "./App.scss";
-import { LocalSyncServiceProvider } from "./contexts/LocalSyncServiceContext/Provider";
 import StandardQuestionPage from "./pages/StandardQuestionPage";
 import { JoinGame } from "./pages/JoinGame";
 import { Welcome } from "./pages/Welcome";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { LocalSyncServiceProvider } from "quiz-common-ui";
 
 function App() {
   const queryClient = new QueryClient({
@@ -18,7 +18,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalSyncServiceProvider>
+      <LocalSyncServiceProvider
+        wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
+      >
         <BrowserRouter>
           <Routes>
             <Route index element={<Welcome />} />

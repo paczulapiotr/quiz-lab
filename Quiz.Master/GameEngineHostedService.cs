@@ -6,7 +6,7 @@ namespace Quiz.Master;
 
 public class GameEngineHostedService(
     ILogger<GameEngineHostedService> logger,
-    IOneTimeConsumer<GameStatusUpdate> gameStatusConsumer,
+    IOneTimeConsumer<GameStatusUpdateSingle> gameStatusConsumer,
     IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
 

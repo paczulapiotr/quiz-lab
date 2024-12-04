@@ -42,14 +42,20 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
 
         await quizRepository.SaveChangesAsync(cancellationToken);
         await publisher.PublishAsync(new PlayerJoined(request.GameId, request.PlayerName, deviceId), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(request.GameId.ToString(), GameStatus.GameJoined, deviceId), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdateSingle(request.GameId.ToString(), GameStatus.GameJoined, deviceId), cancellationToken);
 
         if (game.Players.Count == game.GameSize)
         {
             await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarting), cancellationToken);
+            await publisher.PublishAsync(new GameStatusUpdateSingle(game.Id.ToString(), GameStatus.GameStarting), cancellationToken);
             Task.Delay(10_000)
-                .ContinueWith(async (CancellationToken)
-                    => await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarted)))
-                        .ConfigureAwait(false);
+                .ContinueWith(async (CancellationToken) =>
+                {
+                    await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarted));
+                    await publisher.PublishAsync(new GameStatusUpdateSingle(game.Id.ToString(), GameStatus.GameStarted));
+                })
+                .ConfigureAwait(false);
         }
 
         return await ValueTask.FromResult(NoResult.Instance);

@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import StateNavigator from "./Navigator";
 import { JoinGame } from "./pages/JoinGame";
 import { LocalSyncServiceProvider } from "quiz-common-ui";
-
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -18,7 +17,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalSyncServiceProvider wsUrl="ws://http:localhost">
+      <LocalSyncServiceProvider
+        wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
+      >
         <BrowserRouter>
           <StateNavigator>
             <Routes>

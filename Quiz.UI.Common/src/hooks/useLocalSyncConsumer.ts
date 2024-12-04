@@ -8,13 +8,16 @@ import { useLocalSyncService } from "./useLocalSyncService";
 export const useLocalSyncConsumer = <T extends SyncReceiveDefinitionNames>(
   name: T,
   callback: SyncReceiveCallback<T>,
+  isMainHandler: boolean = false,
 ) => {
   const { onSync, offSync } = useLocalSyncService();
 
   useEffect(() => {
     onSync(name, callback);
     return () => {
-      offSync(name);
+      if (isMainHandler) {
+        offSync(name);
+      }
     };
-  }, [callback, name, offSync, onSync]);
+  }, [callback, isMainHandler, name, offSync, onSync]);
 };

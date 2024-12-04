@@ -8,11 +8,19 @@ using Quiz.Master;
 using Quiz.Master.Features.Game.CreateGame;
 using Quiz.Master.Features.Game.GetGame;
 using Quiz.Master.Features.Game.JoinGame;
+using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
+using Quiz.Master.Consumers;
+using System.Text.Json;
+using Quiz.Master.Hubs.Models;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 builder.Services.AddMvcCore();
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions = new JsonSerializerOptions(AppJsonSerializerContext.Default.Options);
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -46,7 +54,9 @@ builder.Services
             opts.AddPublisher(GameCreatedDefinition.Publisher());
             opts.AddPublisher(PlayerJoinedDefinition.Publisher());
             opts.AddPublisher(GameStatusUpdateDefinition.Publisher());
-            opts.AddOneTimeConsumer(GameStatusUpdateDefinition.Consumer(deviceId));
+            opts.AddPublisher(GameStatusUpdateSingleDefinition.Publisher());
+            opts.AddOneTimeConsumer(GameStatusUpdateSingleDefinition.Consumer(deviceId));
+            opts.AddConsumer<GameStatusUpdateConsumer, GameStatusUpdate>(GameStatusUpdateDefinition.Consumer(deviceId));
         });
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -62,8 +72,18 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
+    options.AddPolicy("SignalR", opts =>
+    {
+        opts.WithOrigins("http://localhost:5888")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
 });
+
 builder.Services.AddQuizServices();
+builder.Services.AddSingleton<IHubConnection, HubConnection>();
+builder.Services.AddSingleton<ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
 
@@ -84,6 +104,7 @@ using (var scope = app.Services.CreateScope())
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
 app.MapEndpoints();
+app.MapHub<SyncHub>("/sync").RequireCors("SignalR");
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -95,6 +116,10 @@ app.Run();
 [JsonSerializable(typeof(GameCreated))]
 [JsonSerializable(typeof(PlayerJoined))]
 [JsonSerializable(typeof(GameStatusUpdate))]
+[JsonSerializable(typeof(GameStatusUpdateSingle))]
+
+// Websockets
+[JsonSerializable(typeof(GameStatusUpdateSyncMessage))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {

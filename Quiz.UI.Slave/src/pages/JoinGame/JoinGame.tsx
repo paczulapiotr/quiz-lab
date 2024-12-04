@@ -4,9 +4,7 @@ import { PageTemplate } from "@/components/PageTemplate";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import styles from "./JoinGame.module.scss";
-import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
-import { GameStatus } from "@/services/types";
-import { Tile, Timer } from "quiz-common-ui";
+import { GameStatus, Tile, Timer, useLocalSyncConsumer } from "quiz-common-ui";
 
 const JoinGame = () => {
   const [slots, setSlots] = useState<string[]>([]);
