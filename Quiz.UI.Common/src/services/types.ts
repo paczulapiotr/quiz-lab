@@ -58,8 +58,8 @@ export enum GameStatus {
 }
 
 export const GameStatusNames: Record<GameStatus, string> = {
-  [GameStatus.GameCreated]: "GameStarting",
-  [GameStatus.GameJoined]: "GameStarting",
+  [GameStatus.GameCreated]: "GameCreated",
+  [GameStatus.GameJoined]: "GameJoined",
   [GameStatus.GameStarting]: "GameStarting",
   [GameStatus.GameStarted]: "GameStarted",
   [GameStatus.RulesExplaining]: "RulesExplaining",

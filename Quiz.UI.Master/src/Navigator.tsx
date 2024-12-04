@@ -1,13 +1,17 @@
 import { PropsWithChildren } from "react";
-import { useLocalSyncConsumer } from "./hooks/useLocalSyncConsumer";
 import { useNavigate } from "react-router";
 import { GameStatus } from "./services/types";
+import { useLocalSyncConsumer } from "quiz-common-ui";
 
 const Navigator = ({ children }: PropsWithChildren) => {
   const navigate = useNavigate();
 
   useLocalSyncConsumer("GameStatusUpdate", (message) => {
     switch (message?.Status) {
+      case GameStatus.GameCreated:
+      case GameStatus.GameJoined:
+        navigate(`/join/${message.GameId}/`);
+        break;
       case GameStatus.GameStarting:
         navigate(`/starting/${message.GameId}/`);
         break;

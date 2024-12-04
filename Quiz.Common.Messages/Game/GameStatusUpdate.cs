@@ -5,7 +5,9 @@ namespace Quiz.Common.Messages.Game;
 
 public enum GameStatus
 {
-    GameStarting = 0,
+    GameCreated = 0,
+    GameJoined,
+    GameStarting,
     GameStarted,
     RulesExplaining,
     RulesExplained,
