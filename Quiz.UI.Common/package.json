@@ -3,9 +3,25 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
   "sourceMap": true,
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js",
+      "require": "./dist/main.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components.js",
+      "require": "./dist/components.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks.js",
+      "require": "./dist/hooks.js"
+    },
+    "./styles.css": "./dist/quiz-common-ui.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

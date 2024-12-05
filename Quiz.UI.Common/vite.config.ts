@@ -20,9 +20,13 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, "lib/main.ts"),
+      entry: {
+        main: resolve(__dirname, "lib/main.ts"),
+        components: resolve(__dirname, "lib/components/index.ts"),
+        hooks: resolve(__dirname, "lib/hooks/index.ts"),
+      },
       formats: ["es"],
-      fileName: "main",
+      fileName: (_format, name) => `${name}.js`,
     },
     sourcemap: true,
     rollupOptions: {

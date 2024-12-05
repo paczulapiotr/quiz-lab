@@ -3,12 +3,9 @@ import styles from "./StandardQuestionPage.module.scss";
 import { PageTemplate } from "@/components/PageTemplate";
 // import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
 // import { useParams } from "react-router";
-import {
-  GameStatus,
-  Tile,
-  useLocalSyncConsumer,
-  useLocalSyncService,
-} from "quiz-common-ui";
+import { GameStatus } from "quiz-common-ui";
+import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
+import { Tile } from "quiz-common-ui/components";
 
 const StandardQuestionPage = () => {
   const { sendSync } = useLocalSyncService();
@@ -74,3 +71,6 @@ const StandardQuestionPage = () => {
 };
 
 export default StandardQuestionPage;
+function useLocalSyncService(): { sendSync: any } {
+  throw new Error("Function not implemented.");
+}

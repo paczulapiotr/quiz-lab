@@ -1,4 +1,6 @@
-import { FlyingSquare, GameStatus, useLocalSyncConsumer } from "quiz-common-ui";
+import { GameStatus } from "quiz-common-ui";
+import { FlyingSquare } from "quiz-common-ui/components";
+import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 

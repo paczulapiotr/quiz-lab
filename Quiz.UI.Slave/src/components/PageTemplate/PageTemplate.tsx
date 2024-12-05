@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from "react";
 import styles from "./PageTemplate.module.scss";
-import { FlyingSquare, Latency, Timer } from "quiz-common-ui";
+import { FlyingSquare, Latency, Timer } from "quiz-common-ui/components";
 
 type Props = {
   initialTimerSeconds?: number;
