@@ -12,6 +12,15 @@ export class LocalSyncService {
   private onConnectedCallbacks: (() => void)[] = [];
   private onDisconnectedCallbacks: (() => void)[] = [];
 
+  private callbacks: Record<
+    SyncReceiveDefinitionNames,
+    Record<string, SyncReceiveCallback<never>>
+  > = {
+    GameStatusUpdate: {},
+    Pong: {},
+    SelectAnswer: {},
+  };
+
   constructor(
     private wsUrl: string,
     onConnected?: () => void,
@@ -49,15 +58,30 @@ export class LocalSyncService {
   onSync = <T extends SyncReceiveDefinitionNames>(
     definitionName: T,
     callback: SyncReceiveCallback<T>,
+    key: string,
   ) => {
-    this.hubConnection?.on(definitionName, (dto) => {
-      console.debug(`Received ${definitionName}:`, dto);
-      callback(dto);
-    });
+    (
+      this.callbacks[definitionName] as Record<
+        string,
+        SyncReceiveCallback<never>
+      >
+    )[key] = callback;
+    this.reloadSync(definitionName);
   };
 
-  offSync = (definitionName: SyncReceiveDefinitionNames) => {
+  offSync = (definitionName: SyncReceiveDefinitionNames, key?: string) => {
+    if (key) {
+      delete this.callbacks[definitionName][key];
+    }
+    this.reloadSync(definitionName);
+  };
+
+  private reloadSync = (definitionName: SyncReceiveDefinitionNames) => {
+    const toInvoke = Object.entries(this.callbacks[definitionName]);
     this.hubConnection?.off(definitionName);
+    this.hubConnection?.on(definitionName, (dto) => {
+      toInvoke.forEach(([, cb]) => cb(dto));
+    });
   };
 
   sendSync = async <T extends SyncSendDefinitionNames>(
@@ -101,10 +125,7 @@ export class LocalSyncService {
   }
 
   _reconnectInterval = () => {
-    console.log("TIMEOUT INITIALIZED");
-
     this.interval = setTimeout(async () => {
-      console.log("TIMEOUT RUNNING");
       if (
         this.hubConnection?.state === signalR.HubConnectionState.Disconnected
       ) {

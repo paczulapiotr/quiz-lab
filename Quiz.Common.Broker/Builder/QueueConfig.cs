@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quiz.Common.Broker.Consumer;
@@ -20,18 +19,21 @@ public class QueueConfig
     }
 
     public QueueConfig AddConsumer<
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConsumer,
-    TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition)
+    TMessage,
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConsumer
+    >(IQueueConsumerDefinition<TMessage> queueDefinition)
     where TConsumer : class, IConsumer<TMessage>
     where TMessage : IMessage
+
     {
         _services.AddSingleton<IConsumer, TConsumer>();
         _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
-        _services.AddSingleton<IQueueConsumerDefinition<TMessage>>(queueDefinition);
+        _services.AddSingleton(queueDefinition);
         return this;
     }
 
-    public QueueConfig AddOneTimeConsumer<TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition) where TMessage : IMessage
+    public QueueConfig AddOneTimeConsumer<TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition)
+    where TMessage : IMessage
     {
         _services.AddSingleton<IOneTimeConsumer<TMessage>>(service
             => new OneTimeConsumer<TMessage>(
@@ -40,7 +42,8 @@ public class QueueConfig
                 service.GetRequiredService<ILogger<OneTimeConsumer<TMessage>>>(),
                 service.GetRequiredService<IJsonSerializer>()));
         _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
-        _services.AddSingleton<IQueueConsumerDefinition<TMessage>>(queueDefinition);
+        _services.AddSingleton(queueDefinition);
+
         return this;
     }
 

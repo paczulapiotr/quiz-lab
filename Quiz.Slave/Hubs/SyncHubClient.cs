@@ -1,17 +1,13 @@
 using Microsoft.AspNetCore.SignalR;
+using Quiz.Common.Hubs;
 using Quiz.Slave.Hubs.Models;
 
 namespace Quiz.Slave.Hubs;
 
-internal class SyncHubClient(IHubContext<SyncHub> ctx, IHubConnection hubConnection) : ISyncHubClient
+internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
 {
-    private async Task SendAsync<TMessage>(string methodName, TMessage payload, CancellationToken cancellationToken = default)
+    public SyncHubClient(IHubContext<SyncHub> ctx, IHubConnection hubConnection) : base(ctx, hubConnection)
     {
-        await hubConnection.WaitForConnection(cancellationToken);
-        await ctx.Clients.All.SendAsync(
-            methodName,
-            payload,
-            cancellationToken);
     }
 
     public async Task GameCreated(GameCreatedSyncMessage payload, CancellationToken cancellationToken = default)

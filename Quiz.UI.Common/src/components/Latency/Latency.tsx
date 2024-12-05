@@ -1,6 +1,6 @@
 import { useLocalSyncConsumer } from "@/hooks/useLocalSyncConsumer";
 import { useLocalSyncService } from "@/hooks/useLocalSyncService";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Latency.module.scss";
 
 const Latency = () => {
@@ -20,10 +20,14 @@ const Latency = () => {
     return () => clearInterval(interval);
   }, [connected, sendSync]);
 
-  useLocalSyncConsumer("Pong", async () => {
-    const newLatency = Date.now() - timestamp.current;
-    setLatency(newLatency);
-  });
+  useLocalSyncConsumer(
+    "Pong",
+    "Latency",
+    useCallback(async () => {
+      const newLatency = Date.now() - timestamp.current;
+      setLatency(newLatency);
+    }, []),
+  );
 
   return (
     <span className={styles.latency}>{connected ? `${latency}ms` : "---"}</span>

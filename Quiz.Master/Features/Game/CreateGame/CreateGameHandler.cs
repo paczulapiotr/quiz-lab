@@ -33,9 +33,7 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
 
         await quizRepository.SaveChangesAsync();
 
-        await publisher.PublishAsync(new GameCreated(game.Id.ToString(), game.GameSize), cancellationToken);
         await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameCreated), cancellationToken);
-        await publisher.PublishAsync(new GameStatusUpdateSingle(game.Id.ToString(), GameStatus.GameCreated), cancellationToken);
 
         return NoResult.Instance;
     }

@@ -16,9 +16,13 @@ export type LocalSyncServiceContextType = {
   onSync<T extends SyncReceiveDefinitionNames>(
     definitionName: T,
     callback: SyncReceiveCallback<T>,
+    key: string,
   ): void;
 
-  offSync<T extends SyncReceiveDefinitionNames>(definitionName: T): void;
+  offSync<T extends SyncReceiveDefinitionNames>(
+    definitionName: T,
+    key: string,
+  ): void;
 
   sendSync<T extends SyncSendDefinitionNames>(
     definitionName: T,

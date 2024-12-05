@@ -57,7 +57,7 @@ public static class MessageBrokerBuilderExtensions
         var config = new QueueConfig(services);
         configure(config);
 
-        services.AddSingleton<IQueueDefinitionProvider, QueueDefinitionProvider>();
+        services.AddSingleton<IQueuePublisherDefinitionProvider, QueuePublisherDefinitionProvider>();
         services.AddSingleton<IPublisher, RabbitMQPublisher>();
     }
 }

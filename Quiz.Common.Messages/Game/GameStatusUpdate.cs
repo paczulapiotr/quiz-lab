@@ -29,7 +29,12 @@ public class GameStatusUpdateDefinition : QueueDefinition<GameStatusUpdate>
     {
     }
 
-    public static GameStatusUpdateDefinition Publisher() => new();
-    public static GameStatusUpdateDefinition Consumer(string UniqueId) => new(UniqueId);
 
+}
+
+public class GameStatusUpdateSingleDefinition : GameStatusUpdateDefinition
+{
+    public GameStatusUpdateSingleDefinition(string UniqueId = "") : base(UniqueId + "-single")
+    {
+    }
 }

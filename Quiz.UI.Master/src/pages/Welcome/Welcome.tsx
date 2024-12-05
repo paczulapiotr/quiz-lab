@@ -1,16 +1,6 @@
-import { FlyingSquare, useLocalSyncConsumer } from "quiz-common-ui";
-import { useNavigate } from "react-router";
+import { FlyingSquare } from "quiz-common-ui";
 
 const Welcome = () => {
-  const navigate = useNavigate();
-
-  useLocalSyncConsumer("GameCreated", (payload) => {
-    console.log(
-      `GameCreated, id: ${payload?.gameId}, slots: ${payload?.gameSize}`,
-    );
-    navigate(`/join/${payload?.gameId}`);
-  });
-
   return (
     <div>
       <h1>Quiz Lab</h1>

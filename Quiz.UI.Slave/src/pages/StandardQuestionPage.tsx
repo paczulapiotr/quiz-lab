@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import styles from "./StandardQuestionPage.module.scss";
 import { PageTemplate } from "@/components/PageTemplate";
-import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
-import { useParams } from "react-router";
+// import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
+// import { useParams } from "react-router";
 import {
   GameStatus,
   Tile,
@@ -11,26 +11,31 @@ import {
 } from "quiz-common-ui";
 
 const StandardQuestionPage = () => {
-  const { sendSync, onSync, offSync } = useLocalSyncService();
+  const { sendSync } = useLocalSyncService();
   const [selected, setSelected] = useState("");
-  const { gameId } = useParams<{ gameId: string }>();
-  const { data, refetch } = useGetMiniGame(gameId);
+  // const { gameId } = useParams<{ gameId: string }>();
+  // const { data, refetch } = useGetMiniGame(gameId);
 
-  console.log(data);
-  useLocalSyncConsumer("GameStatusUpdate", (message) => {
-    if (message?.status === GameStatus.RoundStarting) {
-      refetch();
-    }
-  });
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    "StandardQuestionPage",
+    useCallback((message) => {
+      if (message?.status === GameStatus.RoundStarting) {
+        // refetch();
+      }
+    }, []),
+  );
 
-  useEffect(() => {
-    onSync("SelectAnswer", (data) => {
-      setSelected(data?.answer === selected ? "" : data!.answer);
-    });
-    return () => {
-      offSync("SelectAnswer");
-    };
-  }, [offSync, onSync, selected]);
+  useLocalSyncConsumer(
+    "SelectAnswer",
+    "StandardQuestionPage",
+    useCallback(
+      (data) => {
+        setSelected(data?.answer === selected ? "" : data!.answer);
+      },
+      [selected],
+    ),
+  );
 
   const selectAnswer = async (answer: string) => {
     setSelected(answer === selected ? "" : answer);

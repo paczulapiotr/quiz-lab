@@ -1,15 +1,22 @@
-import { FlyingSquare, useLocalSyncConsumer } from "quiz-common-ui";
+import { FlyingSquare, GameStatus, useLocalSyncConsumer } from "quiz-common-ui";
+import { useCallback } from "react";
 import { useNavigate } from "react-router";
 
 const Welcome = () => {
   const navigate = useNavigate();
 
-  useLocalSyncConsumer("GameCreated", (payload) => {
-    console.log(
-      `GameCreated, id: ${payload?.gameId}, slots: ${payload?.gameSize}`,
-    );
-    navigate(`/join/${payload?.gameId}`);
-  });
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    "Welcome",
+    useCallback(
+      (payload) => {
+        if (payload?.status === GameStatus.GameCreated) {
+          navigate(`/join/${payload?.gameId}`);
+        }
+      },
+      [navigate],
+    ),
+  );
 
   return (
     <div>

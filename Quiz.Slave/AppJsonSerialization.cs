@@ -12,8 +12,6 @@ namespace Quiz.Slave;
 [JsonSerializable(typeof(PingRequest))]
 
 // Message Broker messages
-[JsonSerializable(typeof(GameCreated))]
-[JsonSerializable(typeof(PlayerJoined))]
 [JsonSerializable(typeof(GameStatusUpdate))]
 
 // Hub messages

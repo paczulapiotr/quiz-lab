@@ -50,18 +50,14 @@ builder.Services
         opts =>
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
-            opts.AddConsumer<GameCreatedConsumer, GameCreated>(GameCreatedDefinition.Consumer(uniqueId));
-            opts.AddConsumer<PlayerJoinedConsumer, PlayerJoined>(PlayerJoinedDefinition.Consumer(uniqueId));
-            opts.AddConsumer<GameStatusUpdateConsumer, GameStatusUpdate>(GameStatusUpdateDefinition.Consumer(uniqueId));
+            opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>
 {
     // opts.AddCommandHandler<ICommandHandler, CommandHandler, Command>();
 });
-
-builder.Services.AddSingleton<IHubConnection, HubConnection>();
-builder.Services.AddSingleton<ISyncHubClient, SyncHubClient>();
+builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
 app.UseCors();

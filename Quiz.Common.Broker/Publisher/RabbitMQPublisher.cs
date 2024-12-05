@@ -6,7 +6,7 @@ using RabbitMQ.Client;
 
 namespace Quiz.Common.Broker.Publisher;
 
-public class RabbitMQPublisher(IConnection connection, IJsonSerializer jsonSerializer, IQueueDefinitionProvider queueDefinitionProvider) : IPublisher
+public class RabbitMQPublisher(IConnection connection, IJsonSerializer jsonSerializer, IQueuePublisherDefinitionProvider queueDefinitionProvider) : IPublisher
 {
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);

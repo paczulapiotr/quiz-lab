@@ -3,17 +3,25 @@ import { PageTemplate } from "@/components/PageTemplate";
 import { useParams } from "react-router";
 import { Tile, useLocalSyncConsumer } from "quiz-common-ui";
 import { GameStatus } from "quiz-common-ui";
+import { useCallback } from "react";
 
 const JoinGame = () => {
   const { gameId } = useParams<{ gameId: string }>();
 
   const { data, isLoading, refetch } = useGetGame(gameId);
 
-  useLocalSyncConsumer("GameStatusUpdate", (payload) => {
-    if (payload?.status === GameStatus.GameJoined) {
-      refetch();
-    }
-  });
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    "JoinGame",
+    useCallback(
+      (payload) => {
+        if (payload?.status === GameStatus.GameJoined) {
+          refetch();
+        }
+      },
+      [refetch],
+    ),
+  );
 
   const players = data?.playerNames ?? [];
 

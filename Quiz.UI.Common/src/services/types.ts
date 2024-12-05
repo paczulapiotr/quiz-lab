@@ -9,8 +9,6 @@ export type SyncSendDefinitionNames = "Ping" | "SelectAnswer";
 export type SyncReceiveDefinitionNames =
   | "Pong"
   | "SelectAnswer"
-  | "GameCreated"
-  | "PlayerJoined"
   | "GameStatusUpdate";
 
 export interface SyncSendData {
@@ -27,14 +25,6 @@ export interface SyncReceiveData {
   Pong: undefined;
   SelectAnswer: {
     answer: string;
-  };
-  GameCreated: {
-    gameId: string;
-    gameSize: number;
-  };
-  PlayerJoined: {
-    deviceId: string;
-    playerName: string;
   };
   GameStatusUpdate: {
     gameId: string;

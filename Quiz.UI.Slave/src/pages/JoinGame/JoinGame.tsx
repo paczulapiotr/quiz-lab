@@ -1,13 +1,12 @@
 import { useJoinGameMutation } from "@/api/mutations/useJoinGameMutation";
 import { useGetGame } from "@/api/queries/useGetGame";
 import { PageTemplate } from "@/components/PageTemplate";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import styles from "./JoinGame.module.scss";
 import { GameStatus, Tile, Timer, useLocalSyncConsumer } from "quiz-common-ui";
 
 const JoinGame = () => {
-  const [slots, setSlots] = useState<string[]>([]);
   const [joined, setJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [playerName, setPlayerName] = useState("");
@@ -20,29 +19,25 @@ const JoinGame = () => {
   const joinGame = async () =>
     mutateAsync({ playerName, gameId: gameId! }).then(() => setJoined(true));
 
-  useEffect(() => {
-    setJoined(Boolean(data?.yourDeviceId));
-    setSlots(data?.playerNames ?? []);
-  }, [data?.playerNames, data?.yourDeviceId]);
-
-  useLocalSyncConsumer("PlayerJoined", (payload) => {
-    setSlots((prev) =>
-      payload?.playerName ? [...prev, payload.playerName] : prev,
-    );
-  });
-
-  useLocalSyncConsumer("GameStatusUpdate", (message) => {
-    switch (message?.status) {
-      case GameStatus.GameStarting:
-        setStarting(true);
-        break;
-      case GameStatus.GameStarted:
-        navigate(`/${gameId}/question`);
-        break;
-      default:
-        break;
-    }
-  });
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    "JoinGame",
+    useCallback(
+      (message) => {
+        switch (message?.status) {
+          case GameStatus.GameStarting:
+            setStarting(true);
+            break;
+          case GameStatus.GameStarted:
+            navigate(`/${gameId}/question`);
+            break;
+          default:
+            break;
+        }
+      },
+      [gameId, navigate],
+    ),
+  );
 
   return (
     <PageTemplate>
@@ -65,8 +60,10 @@ const JoinGame = () => {
       )}
       {isLoading ? null : (
         <>
-          <Tile text={`Slots ${slots.length}/${data?.gameSize ?? 0}`} />
-          {slots.map((player, index) => (
+          <Tile
+            text={`Slots ${data?.playerNames.length}/${data?.gameSize ?? 0}`}
+          />
+          {data?.playerNames.map((player, index) => (
             <Tile key={`${player}_${index}`} text={`${index + 1}. ${player}`} />
           ))}
         </>

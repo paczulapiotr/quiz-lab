@@ -8,7 +8,7 @@ public class CorrelationIdMiddleware : IMiddleware
     {
         var newCorrelationId = IdGenerator.New;
         context.Items["CorrelationId"] = newCorrelationId;
-        context.Response.Headers.Add("X-Correlation-ID", newCorrelationId);
+        context.Response.Headers.Append("X-Correlation-ID", newCorrelationId);
 
         await next(context);
     }

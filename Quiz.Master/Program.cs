@@ -42,12 +42,9 @@ builder.Services
         opts =>
         {
             var deviceId = DeviceIdHelper.DeviceUniqueId;
-            opts.AddPublisher(GameCreatedDefinition.Publisher());
-            opts.AddPublisher(PlayerJoinedDefinition.Publisher());
-            opts.AddPublisher(GameStatusUpdateDefinition.Publisher());
-            opts.AddPublisher(GameStatusUpdateSingleDefinition.Publisher());
-            opts.AddOneTimeConsumer(GameStatusUpdateSingleDefinition.Consumer(deviceId));
-            opts.AddConsumer<GameStatusUpdateConsumer, GameStatusUpdate>(GameStatusUpdateDefinition.Consumer(deviceId));
+            opts.AddPublisher(new GameStatusUpdateDefinition());
+            opts.AddOneTimeConsumer(new GameStatusUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
+            opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(deviceId));
         });
 
 builder.Services.AddCors(options =>

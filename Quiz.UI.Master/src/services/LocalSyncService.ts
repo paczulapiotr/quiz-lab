@@ -99,10 +99,7 @@ export class LocalSyncService {
   }
 
   _reconnectInterval = () => {
-    console.log("TIMEOUT INITIALIZED");
-
     this.interval = setTimeout(async () => {
-      console.log("TIMEOUT RUNNING");
       if (
         this.hubConnection?.state === signalR.HubConnectionState.Disconnected
       ) {

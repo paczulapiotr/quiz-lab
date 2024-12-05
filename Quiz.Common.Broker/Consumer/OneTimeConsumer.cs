@@ -1,7 +1,4 @@
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
 using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   SyncReceiveCallback,
   SyncReceiveDefinitionNames,
@@ -7,17 +7,18 @@ import { useLocalSyncService } from "./useLocalSyncService";
 
 export const useLocalSyncConsumer = <T extends SyncReceiveDefinitionNames>(
   name: T,
+  key: string,
   callback: SyncReceiveCallback<T>,
-  isMainHandler: boolean = false,
 ) => {
   const { onSync, offSync } = useLocalSyncService();
-
+  const callbackRef = useRef<SyncReceiveCallback<T>>();
   useEffect(() => {
-    onSync(name, callback);
+    callbackRef.current = callback;
+    onSync(name, callback, key);
     return () => {
-      if (isMainHandler) {
-        offSync(name);
+      if (callbackRef.current) {
+        offSync(name, key);
       }
     };
-  }, [callback, isMainHandler, name, offSync, onSync]);
+  }, [callback, key, name, offSync, onSync]);
 };
