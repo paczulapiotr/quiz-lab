@@ -6,9 +6,9 @@ const Welcome = () => {
 
   useLocalSyncConsumer("GameCreated", (payload) => {
     console.log(
-      `GameCreated, id: ${payload?.GameId}, slots: ${payload?.GameSize}`,
+      `GameCreated, id: ${payload?.gameId}, slots: ${payload?.gameSize}`,
     );
-    navigate(`/join/${payload?.GameId}`);
+    navigate(`/join/${payload?.gameId}`);
   });
 
   return (

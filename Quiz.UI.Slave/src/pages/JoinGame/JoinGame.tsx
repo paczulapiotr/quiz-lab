@@ -27,12 +27,12 @@ const JoinGame = () => {
 
   useLocalSyncConsumer("PlayerJoined", (payload) => {
     setSlots((prev) =>
-      payload?.PlayerName ? [...prev, payload.PlayerName] : prev,
+      payload?.playerName ? [...prev, payload.playerName] : prev,
     );
   });
 
   useLocalSyncConsumer("GameStatusUpdate", (message) => {
-    switch (message?.Status) {
+    switch (message?.status) {
       case GameStatus.GameStarting:
         setStarting(true);
         break;

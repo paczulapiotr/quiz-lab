@@ -18,14 +18,14 @@ const StandardQuestionPage = () => {
 
   console.log(data);
   useLocalSyncConsumer("GameStatusUpdate", (message) => {
-    if (message?.Status === GameStatus.RoundStarting) {
+    if (message?.status === GameStatus.RoundStarting) {
       refetch();
     }
   });
 
   useEffect(() => {
     onSync("SelectAnswer", (data) => {
-      setSelected(data?.Answer === selected ? "" : data!.Answer);
+      setSelected(data?.answer === selected ? "" : data!.answer);
     });
     return () => {
       offSync("SelectAnswer");
@@ -34,7 +34,7 @@ const StandardQuestionPage = () => {
 
   const selectAnswer = async (answer: string) => {
     setSelected(answer === selected ? "" : answer);
-    await sendSync("SelectAnswer", { Answer: answer });
+    await sendSync("SelectAnswer", { answer });
   };
 
   return (

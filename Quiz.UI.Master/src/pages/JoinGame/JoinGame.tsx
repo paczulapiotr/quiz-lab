@@ -10,7 +10,7 @@ const JoinGame = () => {
   const { data, isLoading, refetch } = useGetGame(gameId);
 
   useLocalSyncConsumer("GameStatusUpdate", (payload) => {
-    if (payload?.Status === GameStatus.GameJoined) {
+    if (payload?.status === GameStatus.GameJoined) {
       refetch();
     }
   });

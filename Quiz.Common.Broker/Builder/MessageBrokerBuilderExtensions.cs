@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -43,9 +43,9 @@ public static class MessageBrokerBuilderExtensions
 
         cancellationToken.ThrowIfCancellationRequested();
     }
-    public static void AddMessageBroker(this IServiceCollection services, string connectionString, JsonSerializerContext jsonSerializerContext, Action<QueueConfig> configure)
+    public static void AddMessageBroker(this IServiceCollection services, string connectionString, IJsonSerializer jsonSerializer, Action<QueueConfig> configure)
     {
-        services.AddSingleton<JsonSerializerContext>(jsonSerializerContext);
+        services.AddSingleton(jsonSerializer);
         services.AddSingleton(new ConnectionFactory() { Uri = new Uri(connectionString) });
         services.AddSingleton(sp =>
         {

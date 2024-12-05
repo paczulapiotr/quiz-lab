@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -13,8 +13,8 @@ where TMessage : IMessage
         IConnection connection,
         IQueueConsumerDefinition<TMessage> queueDefinition,
         ILogger logger,
-        JsonSerializerContext jsonSerializerContext)
-         : base(connection, queueDefinition, logger, jsonSerializerContext)
+        IJsonSerializer jsonSerializer)
+         : base(connection, queueDefinition, logger, jsonSerializer)
     {
     }
 

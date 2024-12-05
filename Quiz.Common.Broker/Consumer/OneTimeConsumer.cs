@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -17,15 +18,15 @@ where TMessage : IMessage
     private readonly IConnection _connection;
     protected readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
     protected IChannel? _channel = null;
-    protected readonly JsonSerializerContext jsonSerializerContext;
+    protected readonly IJsonSerializer jsonSerializer;
     protected readonly ILogger logger;
 
-    public OneTimeConsumer(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, JsonSerializerContext jsonSerializerContext)
+    public OneTimeConsumer(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, IJsonSerializer jsonSerializer)
     {
         _connection = connection;
         _queueDefinition = queueDefinition;
         this.logger = logger;
-        this.jsonSerializerContext = jsonSerializerContext;
+        this.jsonSerializer = jsonSerializer;
     }
 
     protected async Task InitChannel(CancellationToken cancellationToken = default)
@@ -70,7 +71,6 @@ where TMessage : IMessage
             throw new InvalidOperationException("Channel is not initialized");
         }
 
-        var jsonTypeInfo = jsonSerializerContext.GetTypeInfo(typeof(TMessage)) as JsonTypeInfo<TMessage>;
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
@@ -82,7 +82,7 @@ where TMessage : IMessage
             {
                 var body = ea.Body.ToArray();
                 var messageJson = Encoding.UTF8.GetString(body);
-                var message = JsonSerializer.Deserialize(messageJson, jsonTypeInfo!);
+                var message = jsonSerializer.Deserialize<TMessage>(messageJson);
                 messageId = message?.MessageId;
                 correlationId = message?.CorrelationId;
                 logger.LogTrace($"[{correlationId}/{messageId}] received message {typeof(TMessage)}: {messageJson}");

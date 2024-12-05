@@ -10,27 +10,27 @@ const Navigator = ({ children }: PropsWithChildren) => {
     "GameStatusUpdate",
     (message) => {
       console.log("GameStatusUpdate", message);
-      switch (message?.Status) {
+      switch (message?.status) {
         case GameStatus.GameCreated:
         case GameStatus.GameJoined:
-          navigate(`/join/${message.GameId}/`);
+          navigate(`/join/${message.gameId}/`);
           break;
         case GameStatus.GameStarting:
-          navigate(`/starting/${message.GameId}/`);
+          navigate(`/starting/${message.gameId}/`);
           break;
         case GameStatus.RulesExplaining:
-          navigate(`/rules/${message.GameId}/`);
+          navigate(`/rules/${message.gameId}/`);
           break;
         case GameStatus.RoundStarting:
-          navigate(`/round/${message.GameId}/`);
+          navigate(`/round/${message.gameId}/`);
           break;
 
         case GameStatus.RoundEnding:
-          navigate(`/round/end/${message.GameId}/`);
+          navigate(`/round/end/${message.gameId}/`);
           break;
 
         case GameStatus.GameEnding:
-          navigate(`/end/${message.GameId}/`);
+          navigate(`/end/${message.gameId}/`);
           break;
         default:
           break;

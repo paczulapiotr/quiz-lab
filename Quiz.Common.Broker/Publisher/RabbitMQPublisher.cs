@@ -1,13 +1,12 @@
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
 
 namespace Quiz.Common.Broker.Publisher;
 
-public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jsonSerializerContext, IQueueDefinitionProvider queueDefinitionProvider) : IPublisher
+public class RabbitMQPublisher(IConnection connection, IJsonSerializer jsonSerializer, IQueueDefinitionProvider queueDefinitionProvider) : IPublisher
 {
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -23,8 +22,7 @@ public class RabbitMQPublisher(IConnection connection, JsonSerializerContext jso
             }
         }
 
-        var jsonTypeInfo = jsonSerializerContext.GetTypeInfo(typeof(T))!;
-        var stringBody = JsonSerializer.Serialize(message, jsonTypeInfo);
+        var stringBody = jsonSerializer.Serialize(message);
         var body = Encoding.UTF8.GetBytes(stringBody);
 
         await _channel.BasicPublishAsync(queueDefinition.ExchangeName, queueDefinition.RoutingKey, body, cancellationToken);

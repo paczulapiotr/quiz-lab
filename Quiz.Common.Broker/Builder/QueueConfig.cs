@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quiz.Common.Broker.Consumer;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -37,7 +38,7 @@ public class QueueConfig
                 service.GetRequiredService<IConnection>(),
                 queueDefinition,
                 service.GetRequiredService<ILogger<OneTimeConsumer<TMessage>>>(),
-                service.GetRequiredService<JsonSerializerContext>()));
+                service.GetRequiredService<IJsonSerializer>()));
         _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
         _services.AddSingleton<IQueueConsumerDefinition<TMessage>>(queueDefinition);
         return this;

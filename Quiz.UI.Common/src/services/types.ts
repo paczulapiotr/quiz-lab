@@ -15,30 +15,30 @@ export type SyncReceiveDefinitionNames =
 
 export interface SyncSendData {
   Ping: {
-    Message: string;
-    Amount: number;
+    message: string;
+    amount: number;
   };
   SelectAnswer: {
-    Answer: string;
+    answer: string;
   };
 }
 
 export interface SyncReceiveData {
   Pong: undefined;
   SelectAnswer: {
-    Answer: string;
+    answer: string;
   };
   GameCreated: {
-    GameId: string;
-    GameSize: number;
+    gameId: string;
+    gameSize: number;
   };
   PlayerJoined: {
-    DeviceId: string;
-    PlayerName: string;
+    deviceId: string;
+    playerName: string;
   };
   GameStatusUpdate: {
-    GameId: string;
-    Status: GameStatus;
+    gameId: string;
+    status: GameStatus;
   };
 }
 

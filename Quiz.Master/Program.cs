@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common;
 using Quiz.Common.Broker.Builder;
@@ -11,21 +10,13 @@ using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
-using System.Text.Json;
-using Quiz.Master.Hubs.Models;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 builder.Services.AddMvcCore();
-builder.Services.AddSignalR().AddJsonProtocol(options =>
-{
-    options.PayloadSerializerOptions = new JsonSerializerOptions(AppJsonSerializerContext.Default.Options);
-});
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Quiz.Master", Version = "v1" });
@@ -47,7 +38,7 @@ builder.Services.AddHostedService<GameEngineHostedService>();
 builder.Services
     .AddMessageBroker(
         builder.Configuration.GetConnectionString("RabbitMq")!,
-        AppJsonSerializerContext.Default,
+        new SystemJsonSerializer(),
         opts =>
         {
             var deviceId = DeviceIdHelper.DeviceUniqueId;
@@ -59,11 +50,6 @@ builder.Services
             opts.AddConsumer<GameStatusUpdateConsumer, GameStatusUpdate>(GameStatusUpdateDefinition.Consumer(deviceId));
         });
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-});
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(opts =>
@@ -74,7 +60,7 @@ builder.Services.AddCors(options =>
     });
     options.AddPolicy("SignalR", opts =>
     {
-        opts.WithOrigins("http://localhost:5888")
+        opts.WithOrigins([builder.Configuration["Cors"]!])
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -111,16 +97,3 @@ app.UseSwaggerUI();
 app.Run();
 
 
-// Message Broker messages
-[JsonSerializable(typeof(JoinGameRequest))]
-[JsonSerializable(typeof(GameCreated))]
-[JsonSerializable(typeof(PlayerJoined))]
-[JsonSerializable(typeof(GameStatusUpdate))]
-[JsonSerializable(typeof(GameStatusUpdateSingle))]
-
-// Websockets
-[JsonSerializable(typeof(GameStatusUpdateSyncMessage))]
-
-internal partial class AppJsonSerializerContext : JsonSerializerContext
-{
-}

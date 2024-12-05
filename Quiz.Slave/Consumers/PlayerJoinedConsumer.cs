@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Consumer;
+using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.QueueDefinitions;
 using Quiz.Common.Messages.Game;
 using Quiz.Slave.Hubs;
@@ -17,8 +17,8 @@ internal class PlayerJoinedConsumer : ConsumerBase<PlayerJoined>
         ISyncHubClient syncHubClient,
         IQueueConsumerDefinition<PlayerJoined> queueDefinition,
         ILogger<PlayerJoinedConsumer> logger,
-        JsonSerializerContext jsonSerializerContext)
-    : base(connection, queueDefinition, logger, jsonSerializerContext)
+        IJsonSerializer jsonSerializer)
+    : base(connection, queueDefinition, logger, jsonSerializer)
     {
         this.syncHubClient = syncHubClient;
     }
