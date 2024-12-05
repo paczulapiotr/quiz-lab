@@ -4,9 +4,9 @@ import { PageTemplate } from "@/components/PageTemplate";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GameStatus } from "quiz-common-ui";
+import styles from "./JoinGame.module.scss";
 import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
 import { Tile, Timer } from "quiz-common-ui/components";
-import styles from "./JoinGame.module.scss";
 
 const JoinGame = () => {
   const [joined, setJoined] = useState(false);

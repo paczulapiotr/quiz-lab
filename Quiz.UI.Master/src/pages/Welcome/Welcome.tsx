@@ -1,4 +1,4 @@
-import { FlyingSquare } from "quiz-common-ui";
+import { FlyingSquare } from "quiz-common-ui/components";
 
 const Welcome = () => {
   return (

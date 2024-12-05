@@ -41,7 +41,7 @@ where TMessage : IMessage
         await InitChannel(cancellationToken);
         var tcs = new TaskCompletionSource<TMessage>();
 
-        var consumer = CreateAsyncConsumer(async (message, token) =>
+        var consumer = await CreateAsyncConsumer(async (message, token) =>
         {
             if (callback is not null)
             {
@@ -61,7 +61,7 @@ where TMessage : IMessage
         return result;
     }
 
-    protected AsyncEventingBasicConsumer CreateAsyncConsumer(Func<TMessage, CancellationToken, Task> callback, Action<Exception>? onException = null, CancellationToken cancellationToken = default)
+    protected async Task<AsyncEventingBasicConsumer> CreateAsyncConsumer(Func<TMessage, CancellationToken, Task> callback, Action<Exception>? onException = null, CancellationToken cancellationToken = default)
     {
         if (_channel is null)
         {
@@ -69,6 +69,8 @@ where TMessage : IMessage
         }
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
+
+        await consumer.Channel.BasicQosAsync(0, 1, false, cancellationToken);
         consumer.ReceivedAsync += async (model, ea) =>
         {
             string? messageId = null;

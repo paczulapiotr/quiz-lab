@@ -22,7 +22,7 @@ where TMessage : IMessage
     {
         await InitChannel(cancellationToken);
 
-        var consumer = CreateAsyncConsumer(ProcessMessageAsync, cancellationToken: cancellationToken);
+        var consumer = await CreateAsyncConsumer(ProcessMessageAsync, cancellationToken: cancellationToken);
 
         await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
     }

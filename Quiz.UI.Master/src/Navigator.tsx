@@ -1,7 +1,7 @@
+import { GameStatus } from "quiz-common-ui";
+import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
 import { PropsWithChildren, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { GameStatus } from "./services/types";
-import { useLocalSyncConsumer } from "quiz-common-ui";
 
 const Navigator = ({ children }: PropsWithChildren) => {
   const navigate = useNavigate();
