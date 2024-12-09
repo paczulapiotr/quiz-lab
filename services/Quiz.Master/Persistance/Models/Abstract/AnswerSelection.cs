@@ -1,8 +1,7 @@
 namespace Quiz.Master.Persistance.Models;
 
-public abstract record AnswerSelection<TAnswer> : IEntity where TAnswer : Answer
+public abstract record AnswerSelectionBase<TAnswer> where TAnswer : AnswerBase
 {
-    public Guid Id { get; set; }
     public Guid PlayerId { get; set; }
     public Player Player { get; set; } = null!;
     public Guid AnswerId { get; set; }
