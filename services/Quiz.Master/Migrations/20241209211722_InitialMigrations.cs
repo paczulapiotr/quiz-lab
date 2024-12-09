@@ -6,18 +6,36 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Quiz.Master.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "MiniGameDefinitions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ArchivedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Archived = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DefinitionJsonData = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MiniGameDefinitions", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    CurrentMiniGame = table.Column<int>(type: "INTEGER", nullable: true),
+                    CurrentMiniGameId = table.Column<Guid>(type: "TEXT", nullable: true),
                     GameSize = table.Column<uint>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     StartedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -29,20 +47,27 @@ namespace Quiz.Master.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MiniGame",
+                name: "MiniGameInstances",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    GameId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    GameId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    MiniGameDefinitionId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    RoundsJsonData = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MiniGame", x => x.Id);
+                    table.PrimaryKey("PK_MiniGameInstances", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MiniGame_Games_GameId",
+                        name: "FK_MiniGameInstances_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MiniGameInstances_MiniGameDefinitions_MiniGameDefinitionId",
+                        column: x => x.MiniGameDefinitionId,
+                        principalTable: "MiniGameDefinitions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -69,25 +94,25 @@ namespace Quiz.Master.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MiniGameScore",
+                name: "MiniGameInstanceScores",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MiniGameId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    MiniGameInstanceId = table.Column<Guid>(type: "TEXT", nullable: false),
                     PlayerId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Score = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MiniGameScore", x => x.Id);
+                    table.PrimaryKey("PK_MiniGameInstanceScores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MiniGameScore_MiniGame_MiniGameId",
-                        column: x => x.MiniGameId,
-                        principalTable: "MiniGame",
+                        name: "FK_MiniGameInstanceScores_MiniGameInstances_MiniGameInstanceId",
+                        column: x => x.MiniGameInstanceId,
+                        principalTable: "MiniGameInstances",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MiniGameScore_Players_PlayerId",
+                        name: "FK_MiniGameInstanceScores_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Players",
                         principalColumn: "Id",
@@ -95,40 +120,65 @@ namespace Quiz.Master.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MiniGame_GameId",
-                table: "MiniGame",
+                name: "IX_Games_CurrentMiniGameId",
+                table: "Games",
+                column: "CurrentMiniGameId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MiniGameInstanceScores_MiniGameInstanceId",
+                table: "MiniGameInstanceScores",
+                column: "MiniGameInstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MiniGameInstanceScores_PlayerId",
+                table: "MiniGameInstanceScores",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MiniGameInstances_GameId",
+                table: "MiniGameInstances",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MiniGameScore_MiniGameId",
-                table: "MiniGameScore",
-                column: "MiniGameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MiniGameScore_PlayerId",
-                table: "MiniGameScore",
-                column: "PlayerId");
+                name: "IX_MiniGameInstances_MiniGameDefinitionId",
+                table: "MiniGameInstances",
+                column: "MiniGameDefinitionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_GameId",
                 table: "Players",
                 column: "GameId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Games_MiniGameInstances_CurrentMiniGameId",
+                table: "Games",
+                column: "CurrentMiniGameId",
+                principalTable: "MiniGameInstances",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "MiniGameScore");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Games_MiniGameInstances_CurrentMiniGameId",
+                table: "Games");
 
             migrationBuilder.DropTable(
-                name: "MiniGame");
+                name: "MiniGameInstanceScores");
 
             migrationBuilder.DropTable(
                 name: "Players");
 
             migrationBuilder.DropTable(
+                name: "MiniGameInstances");
+
+            migrationBuilder.DropTable(
                 name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "MiniGameDefinitions");
         }
     }
 }

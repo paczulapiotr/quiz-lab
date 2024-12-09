@@ -4,5 +4,5 @@ namespace Quiz.Master.Game.Round;
 
 public interface IMiniGameHandler
 {
-    Task HandleMiniGame(MiniGame game, CancellationToken cancellationToken = default);
+    Task HandleMiniGame(MiniGameInstance game, CancellationToken cancellationToken = default);
 }

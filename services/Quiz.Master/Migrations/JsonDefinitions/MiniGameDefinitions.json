@@ -1,0 +1,205 @@
+[
+  {
+    "Id": "d2f1e8a1-4b6e-4c3a-9f8e-1a2b3c4d5e6f",
+    "Description": "Sample mini game description",
+    "Type": 1,
+    "CreatedAt": "2023-10-01T12:00:00Z",
+    "UpdatedAt": null,
+    "ArchivedAt": null,
+    "Archived": false,
+    "DefinitionJsonData": {
+      "Rounds": [
+        {
+          "Id": "round_01",
+          "Categories": [
+            {
+              "Id": "category_01",
+              "Name": "Kategoria 1.1",
+              "Questions": [
+                {
+                  "Id": "question_01",
+                  "Text": "Pytanie 1.1.1",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                },
+                {
+                  "Id": "question_02",
+                  "Text": "Pytanie 1.1.2",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Id": "category_02",
+              "Name": "Kategoria 1.2",
+              "Questions": [
+                {
+                  "Id": "question_01",
+                  "Text": "Pytanie 1.2.1",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Id": "round_02",
+          "Categories": [
+            {
+              "Id": "category_11",
+              "Name": "Kategoria 2.1",
+              "Questions": [
+                {
+                  "Id": "question_01",
+                  "Text": "Pytanie 2.1.1",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                },
+                {
+                  "Id": "question_02",
+                  "Text": "Pytanie 2.1.2",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Id": "category_02",
+              "Name": "Kategoria 2.2",
+              "Questions": [
+                {
+                  "Id": "question_01",
+                  "Text": "Pytanie 2.2.1",
+                  "Answers": [
+                    {
+                      "Id": "answer_01",
+                      "Text": "Odpowiedz 1",
+                      "IsCorrect": true
+                    },
+                    {
+                      "Id": "answer_02",
+                      "Text": "Odpowiedz 2",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_03",
+                      "Text": "Odpowiedz 3",
+                      "IsCorrect": false
+                    },
+                    {
+                      "Id": "answer_04",
+                      "Text": "Odpowiedz 4",
+                      "IsCorrect": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

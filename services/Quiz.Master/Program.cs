@@ -10,6 +10,8 @@ using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
+using Quiz.Master.Persistance.Models;
+using Quiz.Master.Migrations;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -71,19 +73,7 @@ builder.Services.AddSingleton<ISyncHubClient, SyncHubClient>();
 var app = builder.Build();
 
 //Apply migrations on startup
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<QuizDbContext>();
-    try
-    {
-        dbContext.Database.Migrate();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-}
-
+await app.MigrateDatabaseAsync();
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
 app.MapEndpoints();
@@ -92,5 +82,4 @@ app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.Run();
-
 

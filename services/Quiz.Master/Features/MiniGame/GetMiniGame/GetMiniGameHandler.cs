@@ -17,12 +17,15 @@ public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<
         var activeGame = await quizRepository.Query<Persistance.Models.Game>()
             .Include(x => x.Players)
             .Include(x => x.MiniGames)
+            .ThenInclude(x => x.MiniGameDefinition)
             .Where(x => x.Id == request.GameId)
             .OrderByDescending(x => x.CreatedAt)
             .FirstOrDefaultAsync();
 
-        var currentMiniGame = activeGame?.MiniGames.FirstOrDefault(x => x.Type == activeGame.CurrentMiniGame);
+        var currentMiniGame = activeGame?.CurrentMiniGame;
 
-        return currentMiniGame is null ? new GetMiniGameResult() : new GetMiniGameResult(currentMiniGame.Id.ToString(), currentMiniGame.Type);
+        return currentMiniGame is null
+            ? new GetMiniGameResult()
+            : new GetMiniGameResult(currentMiniGame.Id.ToString(), currentMiniGame.MiniGameDefinition.Type);
     }
 }

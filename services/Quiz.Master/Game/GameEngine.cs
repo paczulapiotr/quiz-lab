@@ -23,7 +23,7 @@ IGameStateRepository gameStateRepository) : IGameEngine
     public bool IsGameRunning { get; private set; } = false;
     public Guid? CurrentGameId { get; private set; }
     public List<Player> Players { get; private set; } = [];
-    public List<MiniGame> MiniGames { get; private set; } = [];
+    public List<MiniGameInstance> MiniGames { get; private set; } = [];
     // Start game
     // - Pass players and chosen rounds/questions seed
     // - Intro welcome moview with rule desription
@@ -46,7 +46,7 @@ IGameStateRepository gameStateRepository) : IGameEngine
 
         foreach (var miniGame in MiniGames)
         {
-            gameEntity.CurrentMiniGame = miniGame.Type;
+            gameEntity.CurrentMiniGame = miniGame;
             await gameStateRepository.SaveGameState(gameEntity, cancellationToken);
             await PlayMiniGame(gameEntity, miniGame, cancellationToken);
         }
@@ -69,7 +69,7 @@ IGameStateRepository gameStateRepository) : IGameEngine
         await gameStateRepository.SaveGameState(game, cancellationToken);
     }
 
-    private async Task PlayMiniGame(Persistance.Models.Game game, MiniGame miniGame, CancellationToken cancellationToken = default)
+    private async Task PlayMiniGame(Persistance.Models.Game game, MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
         var gameId = CurrentGameId.ToString();
 
@@ -79,7 +79,7 @@ IGameStateRepository gameStateRepository) : IGameEngine
         }
 
         // - pick round questions and handler
-        var handler = await miniGameHandlerSelector.GetHandler(miniGame.Type, cancellationToken);
+        var handler = await miniGameHandlerSelector.GetHandler(miniGame.MiniGameDefinition.Type, cancellationToken);
 
         // - send round start rabbitmq message
         await communicationService.SendRoundStartingMessage(gameId, cancellationToken);
