@@ -1,5 +1,5 @@
 {
-  "name": "quiz-ui-master",
+  "name": "quiz-ui",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -17,7 +17,7 @@
     "@microsoft/signalr": "^8.0.7",
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
-    "quiz-common-ui": "file:../Quiz.UI.Common",
+    "quiz-common-ui": "file:../quiz-common-ui",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",
