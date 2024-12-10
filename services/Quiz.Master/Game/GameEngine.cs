@@ -30,9 +30,21 @@ IGameStateRepository gameStateRepository) : IGameEngine
 
     public async Task Run(Guid Id, CancellationToken cancellationToken = default)
     {
-        var gameEntity = await gameStateRepository.GetGame(Id, cancellationToken);
+        var gameEntity = await StartGame(Id, cancellationToken);
+
+        foreach (var miniGame in MiniGames)
+        {
+            await PlayMiniGame(gameEntity, miniGame, cancellationToken);
+        }
+
+        await FinishGame(gameEntity, cancellationToken);
+    }
+
+    private async Task<Persistance.Models.Game> StartGame(Guid id, CancellationToken cancellationToken)
+    {
+        var gameEntity = await gameStateRepository.GetGame(id, cancellationToken);
         IsGameRunning = true;
-        CurrentGameId = Id;
+        CurrentGameId = id;
         Players = gameEntity.Players.ToList();
         MiniGames = gameEntity.MiniGames.ToList();
         var gameIdString = CurrentGameId.ToString()!;
@@ -43,21 +55,22 @@ IGameStateRepository gameStateRepository) : IGameEngine
 
         await SetStatus(gameEntity, GameStatus.RulesExplained, cancellationToken);
         await communicationService.ReceiveRulesExplainedMessage(gameIdString, cancellationToken);
+        await gameStateRepository.SaveGameState(gameEntity, cancellationToken);
 
-        foreach (var miniGame in MiniGames)
-        {
-            gameEntity.CurrentMiniGame = miniGame;
-            await gameStateRepository.SaveGameState(gameEntity, cancellationToken);
-            await PlayMiniGame(gameEntity, miniGame, cancellationToken);
-        }
+        return gameEntity;
+    }
+
+    private async Task FinishGame(Persistance.Models.Game gameEntity, CancellationToken cancellationToken)
+    {
+        var gameId = CurrentGameId.ToString()!;
 
         gameEntity.CurrentMiniGame = null;
         await SetStatus(gameEntity, GameStatus.GameEnding, cancellationToken);
-        await communicationService.SendGameEndingMessage(gameIdString, cancellationToken);
+        await communicationService.SendGameEndingMessage(gameId, cancellationToken);
 
         gameEntity.FinishedAt = DateTime.UtcNow;
         await SetStatus(gameEntity, GameStatus.GameEnded, cancellationToken);
-        await communicationService.ReceiveGameEndedMessage(gameIdString, cancellationToken);
+        await communicationService.ReceiveGameEndedMessage(gameId, cancellationToken);
 
         IsGameRunning = false;
         IsGameFinished = true;
@@ -71,6 +84,9 @@ IGameStateRepository gameStateRepository) : IGameEngine
 
     private async Task PlayMiniGame(Persistance.Models.Game game, MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
+        game.CurrentMiniGame = miniGame;
+        await gameStateRepository.SaveGameState(game, cancellationToken);
+
         var gameId = CurrentGameId.ToString();
 
         if (gameId is null)
@@ -81,20 +97,20 @@ IGameStateRepository gameStateRepository) : IGameEngine
         // - pick round questions and handler
         var handler = await miniGameHandlerSelector.GetHandler(miniGame.MiniGameDefinition.Type, cancellationToken);
 
-        // - send round start rabbitmq message
-        await communicationService.SendRoundStartingMessage(gameId, cancellationToken);
+        // - send mini game start rabbitmq message
+        await communicationService.SendMiniGameStartingMessage(gameId, cancellationToken);
 
-        // - wait for round start finished rabbitmq message
-        await communicationService.ReceiveRoundStartedMessage(gameId, cancellationToken);
+        // - wait for mini game start finished rabbitmq message
+        await communicationService.ReceiveMiniGameStartedMessage(gameId, cancellationToken);
 
         // - wait for mini game handler to finish
         await handler.HandleMiniGame(miniGame, cancellationToken);
 
-        // - send mid round ranking show rabbitmq message
-        await communicationService.SendRoundEndingMessage(gameId, cancellationToken);
+        // - send mini game ening msg for score table rabbitmq message
+        await communicationService.SendMiniGameEndingMessage(gameId, cancellationToken);
 
-        // - wait for mid round ranking show finished rabbitmq message
-        await communicationService.ReceiveRoundEndedMessage(gameId, cancellationToken);
+        // - wait for response after showing score table
+        await communicationService.ReceiveMiniGameEndedMessage(gameId, cancellationToken);
 
         // - Save game state to db
         await gameStateRepository.SaveGameState(game, cancellationToken);

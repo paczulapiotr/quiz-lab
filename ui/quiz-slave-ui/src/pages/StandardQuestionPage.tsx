@@ -17,7 +17,7 @@ const StandardQuestionPage = () => {
     "GameStatusUpdate",
     "StandardQuestionPage",
     useCallback((message) => {
-      if (message?.status === GameStatus.RoundStarting) {
+      if (message?.status === GameStatus.MiniGameStarting) {
         // refetch();
       }
     }, []),

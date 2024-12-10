@@ -5,16 +5,20 @@ namespace Quiz.Common.Messages.Game;
 
 public enum GameStatus
 {
-    GameCreated = 0,
+    GameCreated = 1,
     GameJoined,
     GameStarting,
     GameStarted,
     RulesExplaining,
     RulesExplained,
-    RoundStarting,
-    RoundStarted,
-    RoundEnding,
-    RoundEnded,
+    MiniGameStarting,
+    MiniGameStarted,
+    // RoundStarting,
+    // RoundStarted,
+    // RoundEnded,
+    // RoundEnding,
+    MiniGameEnding,
+    MiniGameEnded,
     GameEnding,
     GameEnded,
 }

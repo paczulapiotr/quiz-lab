@@ -22,14 +22,12 @@ const Navigator = ({ children }: PropsWithChildren) => {
           case GameStatus.RulesExplaining:
             navigate(`/rules/${message.gameId}/`);
             break;
-          case GameStatus.RoundStarting:
-            navigate(`/round/${message.gameId}/`);
+          case GameStatus.MiniGameStarting:
+            navigate(`/minigame/${message.gameId}/`);
             break;
-
-          case GameStatus.RoundEnding:
-            navigate(`/round/end/${message.gameId}/`);
+          case GameStatus.MiniGameEnding:
+            navigate(`/minigame/end/${message.gameId}/`);
             break;
-
           case GameStatus.GameEnding:
             navigate(`/end/${message.gameId}/`);
             break;

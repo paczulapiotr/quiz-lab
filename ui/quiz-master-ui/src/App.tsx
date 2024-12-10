@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import StateNavigator from "./Navigator";
 import { JoinGame } from "./pages/JoinGame";
 import { LocalSyncServiceProvider } from "quiz-common-ui";
+import { GameStarting } from "./pages/GameStarting";
+import { RulesExplaining } from "./pages/RulesExplaining";
+import { MiniGameStarting } from "./pages/MiniGameStarting";
+import MiniGameEnding from "./pages/MiniGameEnding/MiniGameEnding";
+import { GameEnding } from "./pages/GameEnding";
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -25,11 +30,14 @@ function App() {
             <Routes>
               <Route index element={<Welcome />} />
               <Route path="/join/:gameId" element={<JoinGame />} />
-              <Route path="/starting/:gameId" element={<h1>GameStarting</h1>} />
-              <Route path="/rules/:gameId" element={<h1>RulesExplaining</h1>} />
-              <Route path="/round/:gameId" element={<h1>RoundStarting</h1>} />
-              <Route path="/round/end/:gameId" element={<h1>RoundEnding</h1>} />
-              <Route path="/end/:gameId" element={<h1>GameEnding</h1>} />
+              <Route path="/starting/:gameId" element={<GameStarting />} />
+              <Route path="/rules/:gameId" element={<RulesExplaining />} />
+              <Route path="/minigame/:gameId" element={<MiniGameStarting />} />
+              <Route
+                path="/minigame/end/:gameId"
+                element={<MiniGameEnding />}
+              />
+              <Route path="/end/:gameId" element={<GameEnding />} />
             </Routes>
           </StateNavigator>
         </BrowserRouter>

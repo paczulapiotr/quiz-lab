@@ -4,7 +4,10 @@ export type SyncReceiveCallback<T extends SyncReceiveDefinitionNames> = (
 
 // Extendable
 
-export type SyncSendDefinitionNames = "Ping" | "SelectAnswer";
+export type SyncSendDefinitionNames =
+  | "Ping"
+  | "SelectAnswer"
+  | "GameStatusUpdate";
 
 export type SyncReceiveDefinitionNames =
   | "Pong"
@@ -18,6 +21,10 @@ export interface SyncSendData {
   };
   SelectAnswer: {
     answer: string;
+  };
+  GameStatusUpdate: {
+    gameId: string;
+    status: GameStatus;
   };
 }
 
@@ -33,16 +40,16 @@ export interface SyncReceiveData {
 }
 
 export enum GameStatus {
-  GameCreated = 0,
+  GameCreated = 1,
   GameJoined,
   GameStarting,
   GameStarted,
   RulesExplaining,
   RulesExplained,
-  RoundStarting,
-  RoundStarted,
-  RoundEnding,
-  RoundEnded,
+  MiniGameStarting,
+  MiniGameStarted,
+  MiniGameEnding,
+  MiniGameEnded,
   GameEnding,
   GameEnded,
 }
@@ -54,10 +61,10 @@ export const GameStatusNames: Record<GameStatus, string> = {
   [GameStatus.GameStarted]: "GameStarted",
   [GameStatus.RulesExplaining]: "RulesExplaining",
   [GameStatus.RulesExplained]: "RulesExplained",
-  [GameStatus.RoundStarting]: "RoundStarting",
-  [GameStatus.RoundStarted]: "RoundStarted",
-  [GameStatus.RoundEnding]: "RoundEnding",
-  [GameStatus.RoundEnded]: "RoundEnded",
+  [GameStatus.MiniGameStarting]: "MiniGameStarting",
+  [GameStatus.MiniGameStarted]: "MiniGameStarted",
+  [GameStatus.MiniGameEnding]: "MiniGameEnding",
+  [GameStatus.MiniGameEnded]: "MiniGameEnded",
   [GameStatus.GameEnding]: "GameEnding",
   [GameStatus.GameEnded]: "GameEnded",
 };

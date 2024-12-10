@@ -18,6 +18,7 @@ public class GameStateSqlRepository : IGameStateRepository
         return await dbContext.Games
             .Include(g => g.Players)
             .Include(x => x.MiniGames)
+            .ThenInclude(x => x.MiniGameDefinition)
             .FirstAsync(g => g.Id == gameId, cancellationToken);
     }
 

@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.QueueDefinitions;
