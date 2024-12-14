@@ -33,7 +33,7 @@ public class QueueConfig
     }
 
     public QueueConfig AddOneTimeConsumer<TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition)
-    where TMessage : IMessage
+    where TMessage : class, IMessage
     {
         _services.AddSingleton<IOneTimeConsumer<TMessage>>(service
             => new OneTimeConsumer<TMessage>(

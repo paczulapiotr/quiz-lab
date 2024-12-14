@@ -29,7 +29,7 @@ public class GameEngineHostedService(
                 token.ThrowIfCancellationRequested();
                 // Listen for game start rabbitmq message
                 var status = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: token);
-                if (status.Status != GameStatus.GameStarted)
+                if (status?.Status != GameStatus.GameStarted)
                 {
                     continue;
                 }

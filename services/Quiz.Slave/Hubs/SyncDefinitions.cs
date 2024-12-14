@@ -9,4 +9,5 @@ public static class SyncDefinitions
     public const string SendGameCreated = "GameCreated";
     public const string SendPlayerJoined = "PlayerJoined";
     public const string SendGameStatusUpdate = "GameStatusUpdate";
+    public const string SendMiniGameUpdate = "MiniGameUpdate";
 }

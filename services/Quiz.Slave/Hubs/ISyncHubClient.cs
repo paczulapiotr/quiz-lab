@@ -8,4 +8,5 @@ internal interface ISyncHubClient
     Task GameCreated(GameCreatedSyncMessage payload, CancellationToken cancellationToken = default);
     Task PlayerJoined(PlayerJoinedSyncMessage payload, CancellationToken cancellationToken = default);
     Task GameStatusUpdated(GameStatusUpdateSyncMessage payload, CancellationToken cancellationToken = default);
+    Task MiniGameUpdated(MiniGameUpdateSyncMessage payload, CancellationToken cancellationToken = default);
 }

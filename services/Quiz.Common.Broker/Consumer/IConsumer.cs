@@ -9,7 +9,7 @@ public interface IConsumer : IDisposable
 
 public interface IOneTimeConsumer<TMessage> where TMessage : IMessage
 {
-    Task<TMessage> ConsumeFirstAsync(Func<TMessage, CancellationToken, Task>? callback = null, CancellationToken cancellationToken = default);
+    Task<TMessage?> ConsumeFirstAsync(Func<TMessage, CancellationToken, Task>? callback = null, Func<TMessage, bool>? condition = null, CancellationToken cancellationToken = default);
 }
 
 

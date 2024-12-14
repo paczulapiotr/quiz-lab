@@ -8,23 +8,23 @@ using RabbitMQ.Client;
 
 namespace Quiz.Master.Consumers;
 
-internal class GameStatusUpdateConsumer : ConsumerBase<GameStatusUpdate>
+internal class MiniGameNotificationConsumer : ConsumerBase<MiniGameNotification>
 {
     private readonly ISyncHubClient syncHubClient;
 
-    public GameStatusUpdateConsumer(
+    public MiniGameNotificationConsumer(
         IConnection connection,
         ISyncHubClient syncHubClient,
-        IQueueConsumerDefinition<GameStatusUpdate> queueDefinition,
-        ILogger<GameStatusUpdateConsumer> logger,
+        IQueueConsumerDefinition<MiniGameNotification> queueDefinition,
+        ILogger<MiniGameNotificationConsumer> logger,
         IJsonSerializer jsonSerializer)
     : base(connection, queueDefinition, logger, jsonSerializer)
     {
         this.syncHubClient = syncHubClient;
     }
 
-    protected override async Task ProcessMessageAsync(GameStatusUpdate message, CancellationToken cancellationToken = default)
+    protected override async Task ProcessMessageAsync(MiniGameNotification message, CancellationToken cancellationToken = default)
     {
-        await syncHubClient.GameStatusUpdated(new GameStatusUpdateSyncMessage(message.GameId, message.Status), cancellationToken);
+        await syncHubClient.MiniGameNotification(new MiniGameNotificationSyncMessage(message.GameId, message.MiniGameType, message.Action, message.Metadata), cancellationToken);
     }
 }

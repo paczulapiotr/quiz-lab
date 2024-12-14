@@ -17,5 +17,6 @@ public record Game : IEntity
 
     public bool IsFinished => FinishedAt.HasValue;
     public bool IsStarted => StartedAt.HasValue;
+    public int PlayersCount => Players.Count;
 }
 

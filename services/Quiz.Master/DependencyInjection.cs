@@ -1,7 +1,7 @@
 using Quiz.Master.Game;
 using Quiz.Master.Game.Communication;
 using Quiz.Master.Game.Repository;
-using Quiz.Master.Game.Round;
+using Quiz.Master.Game.MiniGames;
 using Quiz.Master.Persistance;
 
 namespace Quiz.Master;

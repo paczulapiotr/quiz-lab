@@ -10,7 +10,6 @@ using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
-using Quiz.Master.Persistance.Models;
 using Quiz.Master.Migrations;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -45,8 +44,11 @@ builder.Services
         {
             var deviceId = DeviceIdHelper.DeviceUniqueId;
             opts.AddPublisher(new GameStatusUpdateDefinition());
+            opts.AddPublisher(new MiniGameUpdateDefinition());
+            opts.AddPublisher(new MiniGameNotificationDefinition());
             opts.AddOneTimeConsumer(new GameStatusUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
-            opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(deviceId));
+            opts.AddOneTimeConsumer(new MiniGameUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
+            opts.AddConsumer<MiniGameNotification, MiniGameNotificationConsumer>(new MiniGameNotificationDefinition().ToConsumer(deviceId));
         });
 
 builder.Services.AddCors(options =>
@@ -67,8 +69,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddQuizServices();
-builder.Services.AddSingleton<IHubConnection, HubConnection>();
-builder.Services.AddSingleton<ISyncHubClient, SyncHubClient>();
+builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
 

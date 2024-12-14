@@ -7,7 +7,7 @@ using RabbitMQ.Client;
 namespace Quiz.Common.Broker.Consumer;
 
 public abstract class ConsumerBase<TMessage> : OneTimeConsumer<TMessage>, IConsumer<TMessage>
-where TMessage : IMessage
+where TMessage : class, IMessage
 {
     public ConsumerBase(
         IConnection connection,

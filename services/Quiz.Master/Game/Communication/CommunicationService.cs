@@ -88,7 +88,7 @@ public class CommunicationService(
         while (!cancellationToken.IsCancellationRequested)
         {
             var gameStatus = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: cancellationToken);
-            if (gameStatus.GameId == gameId && gameStatus.Status == status)
+            if (gameStatus?.GameId == gameId && gameStatus.Status == status)
             {
                 return;
             }

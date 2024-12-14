@@ -9,7 +9,7 @@ using RabbitMQ.Client.Events;
 namespace Quiz.Common.Broker.Consumer;
 
 public class OneTimeConsumer<TMessage> : IOneTimeConsumer<TMessage>
-where TMessage : IMessage
+where TMessage : class, IMessage
 {
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
     private readonly IConnection _connection;
@@ -36,10 +36,36 @@ where TMessage : IMessage
         _semaphore.Release();
     }
 
-    public async Task<TMessage> ConsumeFirstAsync(Func<TMessage, CancellationToken, Task>? callback = null, CancellationToken cancellationToken = default)
+    public async Task<TMessage?> ConsumeFirstAsync(Func<TMessage, CancellationToken, Task>? callback = null, Func<TMessage, bool>? condition = null, CancellationToken cancellationToken = default)
     {
         await InitChannel(cancellationToken);
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var message = await ConsumeAsync(CallbackWhere(callback, condition), cancellationToken: cancellationToken);
+            if (condition is null || condition(message))
+            {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    private Func<TMessage, CancellationToken, Task>? CallbackWhere(Func<TMessage, CancellationToken, Task>? callback, Func<TMessage, bool>? condition)
+    {
+        return async (message, token) =>
+        {
+            if (callback is not null && (condition is null || condition(message)))
+            {
+                await callback(message, token);
+            }
+        };
+    }
+
+    private async Task<TMessage> ConsumeAsync(Func<TMessage, CancellationToken, Task>? callback = null, CancellationToken cancellationToken = default)
+    {
         var tcs = new TaskCompletionSource<TMessage>();
+        cancellationToken.Register(() => tcs.TrySetCanceled(cancellationToken));
 
         var consumer = await CreateAsyncConsumer(async (message, token) =>
         {
@@ -53,10 +79,10 @@ where TMessage : IMessage
         tcs.SetException,
         cancellationToken: cancellationToken);
 
-        var consumerTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer);
+        var consumerTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
 
         var result = await tcs.Task;
-        await _channel!.BasicCancelAsync(consumerTag);
+        await _channel!.BasicCancelAsync(consumerTag, cancellationToken: cancellationToken);
 
         return result;
     }

@@ -1,6 +1,6 @@
 using Quiz.Master.Persistance.Models;
 
-namespace Quiz.Master.Game.Round;
+namespace Quiz.Master.Game.MiniGames;
 
 public interface IMiniGameHandlerSelector
 {
