@@ -7,12 +7,14 @@ export type SyncReceiveCallback<T extends SyncReceiveDefinitionNames> = (
 export type SyncSendDefinitionNames =
   | "Ping"
   | "SelectAnswer"
-  | "GameStatusUpdate";
+  | "GameStatusUpdate"
+  | "MiniGameUpdate";
 
 export type SyncReceiveDefinitionNames =
   | "Pong"
   | "SelectAnswer"
-  | "GameStatusUpdate";
+  | "GameStatusUpdate"
+  | "MiniGameNotification";
 
 export interface SyncSendData {
   Ping: {
@@ -26,6 +28,13 @@ export interface SyncSendData {
     gameId: string;
     status: GameStatus;
   };
+  MiniGameUpdate: {
+    gameId: string;
+    miniGameType: string;
+    action: string;
+    valujes?: string;
+    data?: Record<string, string>;
+  };
 }
 
 export interface SyncReceiveData {
@@ -36,6 +45,12 @@ export interface SyncReceiveData {
   GameStatusUpdate: {
     gameId: string;
     status: GameStatus;
+  };
+  MiniGameNotification: {
+    gameId: string;
+    miniGameType: string;
+    action: string;
+    metadata?: Record<string, string>;
   };
 }
 

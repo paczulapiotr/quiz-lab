@@ -51,8 +51,7 @@ builder.Services
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
             opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(uniqueId));
-            opts.AddConsumer<MiniGameUpdate, MiniGameUpdateConsumer>(new MiniGameUpdateDefinition().ToConsumer(uniqueId));
-
+            opts.AddConsumer<MiniGameNotification, MiniGameNotificationConsumer>(new MiniGameNotificationDefinition().ToConsumer(uniqueId));
         });
 
 builder.Services.AddQuizCommonServices(opts =>

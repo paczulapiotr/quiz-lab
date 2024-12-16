@@ -60,7 +60,7 @@ public class QuizDbContext : DbContext
             entity.HasMany(e => e.PlayerScores)
                 .WithOne(e => e.MiniGameInstance)
                 .HasForeignKey(e => e.MiniGameInstanceId);
-            entity.Property(e => e.RoundsJsonData).HasColumnType("TEXT");
+            entity.Property(e => e.StateJsonData).HasColumnType("TEXT");
 
         });
 

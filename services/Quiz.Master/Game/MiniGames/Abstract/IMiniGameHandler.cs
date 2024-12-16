@@ -4,5 +4,7 @@ namespace Quiz.Master.Game.MiniGames;
 
 public interface IMiniGameHandler
 {
-    Task HandleMiniGame(MiniGameInstance game, CancellationToken cancellationToken = default);
+    // <deviceId, score>
+    Task<Dictionary<string, int>> HandleMiniGame(MiniGameInstance game, CancellationToken cancellationToken = default);
 }
+

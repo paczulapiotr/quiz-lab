@@ -7,9 +7,11 @@ import { JoinGame } from "./pages/JoinGame";
 import { LocalSyncServiceProvider } from "quiz-common-ui";
 import { GameStarting } from "./pages/GameStarting";
 import { RulesExplaining } from "./pages/RulesExplaining";
-import { MiniGameStarting } from "./pages/MiniGameStarting";
+// import { MiniGameStarting } from "./pages/MiniGameStarting";
 import MiniGameEnding from "./pages/MiniGameEnding/MiniGameEnding";
 import { GameEnding } from "./pages/GameEnding";
+import AbcdWithCategories from "./pages/miniGames/AbcdWithCategories";
+import AdminPanel from "./AdminPanel";
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -32,7 +34,10 @@ function App() {
               <Route path="/join/:gameId" element={<JoinGame />} />
               <Route path="/starting/:gameId" element={<GameStarting />} />
               <Route path="/rules/:gameId" element={<RulesExplaining />} />
-              <Route path="/minigame/:gameId" element={<MiniGameStarting />} />
+              <Route
+                path="/minigame/:gameId"
+                element={<AbcdWithCategories />}
+              />
               <Route
                 path="/minigame/end/:gameId"
                 element={<MiniGameEnding />}
@@ -40,6 +45,7 @@ function App() {
               <Route path="/end/:gameId" element={<GameEnding />} />
             </Routes>
           </StateNavigator>
+          <AdminPanel />
         </BrowserRouter>
       </LocalSyncServiceProvider>
     </QueryClientProvider>

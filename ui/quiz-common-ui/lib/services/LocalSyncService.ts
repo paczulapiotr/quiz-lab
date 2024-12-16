@@ -19,6 +19,7 @@ export class LocalSyncService {
     GameStatusUpdate: {},
     Pong: {},
     SelectAnswer: {},
+    MiniGameNotification: {},
   };
 
   constructor(

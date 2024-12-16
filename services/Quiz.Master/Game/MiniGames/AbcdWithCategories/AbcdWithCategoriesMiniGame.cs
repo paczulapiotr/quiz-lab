@@ -5,33 +5,46 @@ using Quiz.Common.Messages.Game;
 using Quiz.Master.Persistance.Models;
 using Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
 using Quiz.Master.Persistance.Repositories.Abstract;
+using Definition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition;
+using State = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesState;
+using RoundDefinition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Round;
+using QuestionDefintiion = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Question;
 
 namespace Quiz.Master.Game.MiniGames;
 
 public class AbcdWithCategoriesMiniGame(
-    IOneTimeConsumer<PlayerInteraction> playerInteracton,
+    ILogger<AbcdWithCategoriesMiniGame> logger,
+    IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
     IPublisher publisher,
     IMiniGameSaveRepository miniGameSaveRepository) : IMiniGameHandler
 {
+    private State _state = new State();
+    private MiniGameInstance _miniGameInstance { get; set; } = null!;
+    private string _gameId => _miniGameInstance?.GameId.ToString() ?? string.Empty;
     private static string MiniGameType => Persistance.Models.MiniGameType.AbcdWithCategories.ToString();
-    public async Task HandleMiniGame(MiniGameInstance game, CancellationToken cancellationToken = default)
-    {
-        var miniGameData = GetJsonData<AbcdWithCategories>(game);
 
-        if (miniGameData is null)
+    public async Task<Dictionary<string, int>> HandleMiniGame(MiniGameInstance game, CancellationToken cancellationToken = default)
+    {
+        _miniGameInstance = game;
+        var miniGameDefinition = GetMiniGameDefinition();
+
+        if (miniGameDefinition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration");
         }
-        var config = miniGameData.Config;
-        var firstRound = miniGameData.Rounds.FirstOrDefault();
-        if (firstRound is null)
+        var config = miniGameDefinition.Config;
+        var firstRoundDefinition = miniGameDefinition.Rounds.FirstOrDefault();
+        if (firstRoundDefinition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
         }
+        var gameId = _miniGameInstance.GameId.ToString();
+        var firstRoundState = new State.RoundState { RoundId = firstRoundDefinition.Id };
+        _state.Rounds.Add(firstRoundState);
+        _state.CurrentRoundId = firstRoundDefinition.Id;
 
-        var gameId = game.GameId.ToString();
-        await RunRoundBase(game, miniGameData, firstRound, cancellationToken);
+        await RunRoundBase(miniGameDefinition, firstRoundDefinition, firstRoundState, cancellationToken);
 
         // RABBIT_SEND start explaining PowerPlay
         await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "PowerPlayExplainStart"), cancellationToken);
@@ -40,34 +53,59 @@ public class AbcdWithCategoriesMiniGame(
         await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "PowerPlayExplainStop"), cancellationToken);
 
         // For each question after first one
-        foreach (var round in miniGameData.Rounds.Skip(1))
+        foreach (var roundDefinition in miniGameDefinition.Rounds.Skip(1))
         {
             // Save PowerPlay selection for every player
-            await SelectPowerPlays(game, miniGameData, round, cancellationToken);
+            var roundState = new State.RoundState { RoundId = roundDefinition.Id };
+            _state.Rounds.Add(roundState);
+            await SelectPowerPlays(miniGameDefinition, roundDefinition, roundState, cancellationToken);
 
             // USE Round_Base
-            await RunRoundBase(game, miniGameData, round, cancellationToken);
+            await RunRoundBase(miniGameDefinition, roundDefinition, roundState, cancellationToken);
         }
+
+        return CalculatePoints();
     }
 
-    private async Task SelectPowerPlays(MiniGameInstance game, AbcdWithCategories miniGameData, AbcdWithCategories.Round round, CancellationToken cancellationToken)
+    private Dictionary<string, int> CalculatePoints()
     {
-        var gameId = game.GameId.ToString();
+        var result = new Dictionary<string, int>();
+
+        foreach (var round in _state.Rounds)
+        {
+            foreach (var answer in round.Answers)
+            {
+                if (result.ContainsKey(answer.DeviceId))
+                {
+                    result[answer.DeviceId] += answer.Points;
+                }
+                else
+                {
+                    result.Add(answer.DeviceId, answer.Points);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private async Task SelectPowerPlays(Definition miniGameData, RoundDefinition round, State.RoundState roundState, CancellationToken cancellationToken)
+    {
         // RABBIT_SEND start selecting PowerPlay
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "PowerPlayStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayStart"), cancellationToken);
         // HTTP_RECEIVE Receive ZAGRYWKA selection or wait for time to pass
 
         var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForPowerPlaySelectionMs).Token;
-        // <playerId, (PowerPlay, sourcePlayerId)[]>
+        // <deviceId, (PowerPlay, sourceDeviceId)[]>
         var powerPlays = new PowerPlaysDictionary();
         var categoryIds = round.Categories.Select(x => x.Id).ToList();
-        var playersCount = game.Game.PlayersCount;
+        var playersCount = _miniGameInstance.Game.PlayersCount;
         for (int i = 0; i < playersCount; i++)
         {
-            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.sourcePlayerId)).Distinct().ToArray();
-            var selection = await playerInteracton.ConsumeFirstAsync(
-                condition: x => x.GameId == gameId
-                    && !playersThatSelected.Contains(x.PlayerId)
+            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.sourceDeviceId)).Distinct().ToArray();
+            var selection = await playerInteraction.ConsumeFirstAsync(
+                condition: x => x.GameId == _gameId
+                    && !playersThatSelected.Contains(x.DeviceId)
                     && x.InteractionType == "PowerPlaySelection"
                     && x.Value != null,
                 cancellationToken: timeToken);
@@ -76,91 +114,98 @@ public class AbcdWithCategoriesMiniGame(
             {
                 break;
             }
-            var actionData = selection!.Data!;
-            var playerId = actionData["playerId"]!;
-            var powerPlay = Enum.Parse<AbcdWithCategories.PowerPlay>(actionData["powerPlay"]);
+            try
+            {
+                var actionData = selection!.Data!;
+                var deviceId = actionData["deviceId"]!;
+                var powerPlay = Enum.Parse<PowerPlay>(actionData["powerPlay"]);
 
-            if (powerPlays.ContainsKey(playerId))
-            {
-                powerPlays[playerId].Append((powerPlay, selection.PlayerId));
+                if (powerPlays.ContainsKey(deviceId))
+                {
+                    powerPlays[deviceId].Append((powerPlay, selection.DeviceId));
+                }
+                else
+                {
+                    powerPlays.Add(deviceId, [(powerPlay, selection.DeviceId)]);
+                }
             }
-            else
+            catch (Exception e)
             {
-                powerPlays.Add(playerId, [(powerPlay, selection.PlayerId)]);
+                logger.LogError(e, "Error while parsing PowerPlay selection");
             }
         }
-        var roundState = miniGameData.State.Rounds.First(x => x.RoundId == round.Id);
+
         roundState.PowerPlays = powerPlays;
 
         // RABBIT_SEND start showing PowerPlays
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "PowerPlayApplyStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayApplyStart"), cancellationToken);
         // RABBIT_RECEIVE stop showing PowerPlays
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "PowerPlayApplyStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "PowerPlayApplyStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayApplyStop"), cancellationToken);
     }
 
-    private async Task RunRoundBase(MiniGameInstance game, AbcdWithCategories miniGameData, AbcdWithCategories.Round round, CancellationToken cancellationToken)
+    private async Task RunRoundBase(Definition definition, RoundDefinition roundDefinition, State.RoundState roundState, CancellationToken cancellationToken)
     {
-        var gameId = game.GameId.ToString();
-        var playersCount = game.Game.PlayersCount;
-        var config = miniGameData!.Config;
-        miniGameData.State.Rounds.Add(new()
-        {
-            RoundId = round!.Id,
-        });
-
-        await SaveState(game, miniGameData, cancellationToken);
+        var playersCount = _miniGameInstance.Game.PlayersCount;
+        var config = definition!.Config;
+        _state.CurrentRoundId = roundState.RoundId;
+        await SaveState(cancellationToken);
 
         // Choose most voted category or random if tied
-        var selectedCategoryId = await SelectCategoryId(gameId, round, playersCount, config.TimeForCategorySelectionMs);
-        var selectedCategory = round.Categories.FirstOrDefault(x => x.Id == selectedCategoryId);
-        miniGameData.State.Rounds[0].CategoryId = selectedCategoryId;
-        await SaveState(game, miniGameData, cancellationToken);
+        var selectedCategoryId = await SelectCategoryId(_gameId, roundDefinition, playersCount, config.TimeForCategorySelectionMs);
+        var selectedCategory = roundDefinition.Categories.FirstOrDefault(x => x.Id == selectedCategoryId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(selectedCategoryId, nameof(selectedCategoryId));
+        var questionDefinition = selectedCategory!.Questions.First();
+        roundState.CategoryId = selectedCategoryId;
+        _state.CurrentCategoryId = selectedCategoryId;
+        _state.CurrentQuestionId = questionDefinition.Id;
+        await SaveState(cancellationToken);
 
         // RABBIT_SEND start showing selected category
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "CategoryShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "CategoryShowStart"), cancellationToken);
 
         // RABBIT_RECEIVE stop showing selected category
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "CategoryShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, "CategoryShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, "CategoryShowStop"), cancellationToken);
 
         // RABBIT_SEND start showing question
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "QuestionShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "QuestionShowStart"), cancellationToken);
 
         // RABBIT_RECEIVE stop showing question
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "QuestionShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, "QuestionShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, "QuestionShowStop"), cancellationToken);
 
         // RABBIT_SEND start countdown for answers
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "QuestionAnswerStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "QuestionAnswerStart"), cancellationToken);
 
+        // RABBIT_RECEIVE stop countdown for answers
         // HTTP_RECEIVE Wait for answers or wait for time to pass
-        await AnswerQuestion(game, miniGameData, selectedCategory!);
-        await SaveState(game, miniGameData, cancellationToken);
+        await AnswerQuestion(definition.Config, questionDefinition, roundState);
+        await SaveState(cancellationToken);
 
         // RABBIT_SEND start showing answers
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, Action: "QuestionAnswerShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "QuestionAnswerShowStart"), cancellationToken);
 
         // RABBIT_RECEIVE stop showing answers
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "QuestionAnswerShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, MiniGameType, "QuestionAnswerShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, "QuestionAnswerShowStop"), cancellationToken);
     }
 
-    private async Task AnswerQuestion(MiniGameInstance game, AbcdWithCategories miniGameData, AbcdWithCategories.Category selectedCategory)
+    private async Task AnswerQuestion(Definition.Configuration config, QuestionDefintiion question, State.RoundState roundState)
     {
-        var gameId = game.GameId.ToString();
-        var playersCount = game.Game.PlayersCount;
-        var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForAnswerSelectionMs).Token;
-        var playerIds = game.Game.Players.Select(x => x.Id.ToString()).ToList();
-        // <playerId, (answerId, timestamp)>
+        var playersCount = _miniGameInstance.Game.PlayersCount;
+        // var timeToken = new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token;
+        var timeToken = new CancellationTokenSource(60_000).Token;
+        var playerIds = _miniGameInstance.Game.Players.Select(x => x.DeviceId.ToString()).ToList();
+        // <deviceId, (answerId, timestamp)>
         var answers = new Dictionary<string, (string answerId, DateTime timestamp)>();
 
         for (int i = 0; i < playersCount; i++)
         {
-            var answer = await playerInteracton.ConsumeFirstAsync(
-                condition: x => x.GameId == gameId
-                    && playerIds.Contains(x.PlayerId)
-                    && !answers.Keys.Contains(x.PlayerId)
+            var answer = await playerInteraction.ConsumeFirstAsync(
+                condition: x => x.GameId == _gameId
+                    && playerIds.Contains(x.DeviceId)
+                    && !answers.Keys.Contains(x.DeviceId)
                     && x.InteractionType == "QuestionAnswer"
                     && x.Value != null,
             cancellationToken: timeToken);
@@ -170,46 +215,62 @@ public class AbcdWithCategoriesMiniGame(
                 break;
             }
 
-            answers.TryAdd(answer!.PlayerId, (answer.Value!, answer.Timestamp));
+            answers.TryAdd(answer!.DeviceId, (answer.Value!, answer.Timestamp));
         }
-        var correctAnswerIds = selectedCategory!.Questions.First().Answers.Where(x => x.IsCorrect).Select(x => x.Id).ToList();
-        var correctAnswers = answers
-            .Where(x => correctAnswerIds.Contains(x.Value.answerId))
-            .OrderByDescending(x => x.Value.timestamp)
-            .ToArray();
 
-        for (int i = 0; i < correctAnswers.Count(); i++)
+        var correctAnswerIds = question.Answers.Where(x => x.IsCorrect).Select(x => x.Id).ToList();
+        var playerAnswers = _miniGameInstance.Game.Players.Select(p =>
         {
-            var ans = correctAnswers[i]!;
-            var score = game.PlayerScores.FirstOrDefault(x => x.PlayerId.ToString() == ans.Key);
-            if (score is null)
+            DateTime? timestamp = null;
+            string answerId = string.Empty;
+            if (answers.TryGetValue(p.DeviceId, out var answer))
             {
-                score = new MiniGameInstanceScore
-                {
-                    Score = 0,
-                    PlayerId = Guid.Parse(ans.Key),
-                    MiniGameInstanceId = game.Id,
-                };
-                game.PlayerScores.Append(score);
+                timestamp = answer.timestamp;
+                answerId = answer.answerId;
             }
 
-            score.Score += Math.Max(miniGameData.Config.MaxPointsForAnswer - i * miniGameData.Config.PointsDecrement, miniGameData.Config.MinPointsForAnswer);
+            return new State.RoundAnswer
+            {
+                DeviceId = p.DeviceId,
+                Points = 0,
+                AnswerId = answerId,
+                IsCorrect = string.IsNullOrWhiteSpace(answerId) ? false : correctAnswerIds.Contains(answerId),
+                Timestamp = timestamp,
+            };
+        })
+        .OrderByDescending(x => x.Timestamp)
+        .ToList();
+
+        var correctAnswers = 0;
+        foreach (var ans in playerAnswers)
+        {
+            if (ans.IsCorrect)
+            {
+                ans.Points = Math.Max(
+                    config.MaxPointsForAnswer - correctAnswers * config.PointsDecrement,
+                    config.MinPointsForAnswer);
+                correctAnswers++;
+            }
         }
+
+        roundState.Answers = playerAnswers;
+
+        await SaveState();
     }
 
-    private async Task<string> SelectCategoryId(string gameId, AbcdWithCategories.Round firstRound, int playersCount, int timeForCategorySelectionMs)
+    private async Task<string> SelectCategoryId(string gameId, RoundDefinition firstRound, int playersCount, int timeForCategorySelectionMs)
     {
         var timeToken = new CancellationTokenSource(timeForCategorySelectionMs).Token;
 
-        // <categoryId, playerId[]>
+        // <categoryId, deviceId[]>
         var selections = new Dictionary<string, string[]>();
         var categoryIds = firstRound.Categories.Select(x => x.Id).ToList();
         for (int i = 0; i < playersCount; i++)
         {
             var playersThatSelected = selections.Values.SelectMany(x => x).Distinct().ToArray();
-            var selection = await playerInteracton.ConsumeFirstAsync(
+            var selection = await playerInteraction.ConsumeFirstAsync(
                 condition: x => x.GameId == gameId
-                    && !playersThatSelected.Contains(x.PlayerId)
+                    && !playersThatSelected.Contains(x.DeviceId)
                     && x.InteractionType == "CategorySelection"
                     && x.Value != null
                     && categoryIds.Contains(x.Value),
@@ -222,11 +283,11 @@ public class AbcdWithCategoriesMiniGame(
 
             if (selections.ContainsKey(selection!.Value!))
             {
-                selections[selection!.Value!].Append(selection!.PlayerId);
+                selections[selection!.Value!].Append(selection!.DeviceId);
             }
             else
             {
-                selections.Add(selection!.Value!, [selection!.PlayerId]);
+                selections.Add(selection!.Value!, [selection!.DeviceId]);
             }
 
         }
@@ -238,14 +299,10 @@ public class AbcdWithCategoriesMiniGame(
     }
 
 
-    private async Task SaveState(MiniGameInstance game, AbcdWithCategories state, CancellationToken cancellationToken)
+    private async Task SaveState(CancellationToken cancellationToken = default)
     {
-        await miniGameSaveRepository.SaveMiniGame<
-            AbcdWithCategories,
-            AbcdWithCategories.Configuration,
-            AbcdWithCategories.MiniGameState>
-            (game, state, cancellationToken);
+        await miniGameSaveRepository.SaveMiniGame(_miniGameInstance, _state, cancellationToken);
     }
 
-    private TData? GetJsonData<TData>(MiniGameInstance game) => JsonSerializer.Deserialize<TData>(game.RoundsJsonData);
+    private Definition? GetMiniGameDefinition() => JsonSerializer.Deserialize<Definition>(_miniGameInstance.MiniGameDefinition.DefinitionJsonData);
 }

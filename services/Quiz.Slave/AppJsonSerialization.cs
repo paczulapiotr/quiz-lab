@@ -13,12 +13,14 @@ namespace Quiz.Slave;
 
 // Message Broker messages
 [JsonSerializable(typeof(GameStatusUpdate))]
+[JsonSerializable(typeof(MiniGameNotification))]
 
 // Hub messages
 [JsonSerializable(typeof(SelectAnswer))]
 [JsonSerializable(typeof(GameCreatedSyncMessage))]
 [JsonSerializable(typeof(PlayerJoinedSyncMessage))]
 [JsonSerializable(typeof(GameStatusUpdateSyncMessage))]
+[JsonSerializable(typeof(MiniGameNotificationSyncMessage))]
 
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {

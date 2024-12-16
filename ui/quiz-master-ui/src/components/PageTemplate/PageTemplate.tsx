@@ -29,7 +29,7 @@ const PageTemplate = ({ children, initialTimerSeconds, score }: Props) => {
           <div className={styles.content}>{children}</div>
         )}
       </div>
-      <FlyingSquare count={5} />
+      {/* <FlyingSquare count={5} /> */}
     </main>
   );
 };

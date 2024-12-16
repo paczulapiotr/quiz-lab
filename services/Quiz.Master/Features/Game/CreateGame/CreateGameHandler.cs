@@ -25,7 +25,7 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
     public async ValueTask<NoResult?> HandleAsync(CreateGameCommand request, CancellationToken cancellationToken = default)
     {
         var definition = await quizRepository.Query<MiniGameDefinition>().FirstOrDefaultAsync(x => x.Type == MiniGameType.AbcdWithCategories);
-        var metadata = JsonSerializer.Deserialize<AbcdWithCategories>(definition?.DefinitionJsonData!);
+        var metadata = JsonSerializer.Deserialize<AbcdWithCategoriesDefinition>(definition?.DefinitionJsonData!);
 
         var game = new Persistance.Models.Game
         {

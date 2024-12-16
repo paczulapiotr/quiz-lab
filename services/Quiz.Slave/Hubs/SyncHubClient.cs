@@ -34,9 +34,9 @@ internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
             payload,
             cancellationToken);
 
-    public async Task MiniGameUpdated(MiniGameUpdateSyncMessage payload, CancellationToken cancellationToken = default)
+    public async Task MiniGameNotification(MiniGameNotificationSyncMessage payload, CancellationToken cancellationToken = default)
         => await SendAsync(
-            SyncDefinitions.SendMiniGameUpdate,
+            SyncDefinitions.SendMiniGameNotification,
             payload,
             cancellationToken);
 }

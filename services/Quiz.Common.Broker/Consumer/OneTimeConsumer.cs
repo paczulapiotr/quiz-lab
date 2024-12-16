@@ -14,7 +14,7 @@ where TMessage : class, IMessage
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
     private readonly IConnection _connection;
     protected readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
-    protected IChannel? _channel = null;
+    protected IChannel _channel = null!;
     protected readonly IJsonSerializer jsonSerializer;
     protected readonly ILogger logger;
 
@@ -42,8 +42,8 @@ where TMessage : class, IMessage
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var message = await ConsumeAsync(CallbackWhere(callback, condition), cancellationToken: cancellationToken);
-            if (condition is null || condition(message))
+            var message = await ConsumeAsync(callback, condition, cancellationToken: cancellationToken);
+            if (message is null || condition is null || condition(message))
             {
                 return message;
             }
@@ -51,40 +51,51 @@ where TMessage : class, IMessage
         return null;
     }
 
-    private Func<TMessage, CancellationToken, Task>? CallbackWhere(Func<TMessage, CancellationToken, Task>? callback, Func<TMessage, bool>? condition)
+    private async Task<TMessage?> ConsumeAsync(Func<TMessage, CancellationToken, Task>? callback = null, Func<TMessage, bool>? condition = null, CancellationToken cancellationToken = default)
     {
-        return async (message, token) =>
-        {
-            if (callback is not null && (condition is null || condition(message)))
-            {
-                await callback(message, token);
-            }
-        };
-    }
+        var tcs = new TaskCompletionSource<TMessage?>();
 
-    private async Task<TMessage> ConsumeAsync(Func<TMessage, CancellationToken, Task>? callback = null, CancellationToken cancellationToken = default)
-    {
-        var tcs = new TaskCompletionSource<TMessage>();
-        cancellationToken.Register(() => tcs.TrySetCanceled(cancellationToken));
+        cancellationToken.Register(() =>
+        {
+            logger.LogWarning($"Task cancelled while processing message of type {typeof(TMessage)}");
+            tcs.TrySetCanceled();
+        });
 
         var consumer = await CreateAsyncConsumer(async (message, token) =>
         {
+            if (condition is not null && !condition(message))
+            {
+                return;
+            }
+
             if (callback is not null)
             {
                 await callback(message, token);
             }
-
             tcs.SetResult(message);
         },
         tcs.SetException,
         cancellationToken: cancellationToken);
 
-        var consumerTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+        string? consumerTag = null;
 
-        var result = await tcs.Task;
-        await _channel!.BasicCancelAsync(consumerTag, cancellationToken: cancellationToken);
-
-        return result;
+        try
+        {
+            consumerTag = await _channel.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+            var result = await tcs.Task;
+            logger.LogInformation("Message consumed");
+            await _channel.BasicCancelAsync(consumerTag);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Error while processing message of type {typeof(TMessage)}", ex);
+            if (consumerTag is not null)
+            {
+                await _channel.BasicCancelAsync(consumerTag);
+            }
+            return null;
+        }
     }
 
     protected async Task<AsyncEventingBasicConsumer> CreateAsyncConsumer(Func<TMessage, CancellationToken, Task> callback, Action<Exception>? onException = null, CancellationToken cancellationToken = default)

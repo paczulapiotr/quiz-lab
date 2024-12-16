@@ -1,13 +1,15 @@
 
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
 using Quiz.Master.Persistance;
 using Quiz.Master.Persistance.Models;
+using Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
 
-namespace Quiz.Master.Features.Game.GetGame;
+namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
-public record GetMiniGameResult(string? MiniGameId = null, MiniGameType? MiniGameType = null);
-public record GetMiniGameQuery(Guid GameId) : IQuery<GetMiniGameResult>;
+public record GetMiniGameResult(string MiniGameId, MiniGameType MiniGameType, string? PlayerName, string? PlayerDeviceId, int Score, object? State = null);
+public record GetMiniGameQuery(Guid GameId, string PlayerDeviceId) : IQuery<GetMiniGameResult>;
 
 public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<GetMiniGameQuery, GetMiniGameResult>
 {
@@ -23,9 +25,27 @@ public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<
             .FirstOrDefaultAsync();
 
         var currentMiniGame = activeGame?.CurrentMiniGame;
+        var player = activeGame?.Players.FirstOrDefault(x => x.DeviceId == request.PlayerDeviceId);
+        var score = player?.Scores.Sum(x => x.Score) ?? 0;
 
         return currentMiniGame is null
-            ? new GetMiniGameResult()
-            : new GetMiniGameResult(currentMiniGame.Id.ToString(), currentMiniGame.MiniGameDefinition.Type);
+            ? null
+            : new GetMiniGameResult(
+                currentMiniGame.Id.ToString(),
+                currentMiniGame.MiniGameDefinition.Type,
+                player?.Name,
+                player?.DeviceId,
+                score,
+                StateSerializer(currentMiniGame.StateJsonData, currentMiniGame.MiniGameDefinition.Type));
+    }
+
+
+    private static object? StateSerializer(string stateJsonData, MiniGameType type)
+    {
+        return type switch
+        {
+            MiniGameType.AbcdWithCategories => JsonSerializer.Deserialize<AbcdWithCategoriesState>(stateJsonData),
+            _ => null
+        };
     }
 }

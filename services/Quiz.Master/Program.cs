@@ -11,6 +11,8 @@ using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
 using Quiz.Master.Migrations;
+using Quiz.Master.Features.MiniGame.GetMiniGame;
+using Quiz.Master.Features.MiniGame.SendPlayerInteraction;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -30,8 +32,10 @@ builder.Services.AddQuizCommonServices(opts =>
 {
     opts.AddCommandHandler<JoinGameHandler, JoinGameCommand>();
     opts.AddCommandHandler<CreateGameHandler, CreateGameCommand>();
+    opts.AddCommandHandler<SendPlayerInteractionHandler, SendPlayerInteractionCommand>();
     opts.AddQueryHandler<GetGameHandler, GetGameQuery, GetGameResult>();
     opts.AddQueryHandler<GetMiniGameHandler, GetMiniGameQuery, GetMiniGameResult>();
+
 });
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddHostedService<GameEngineHostedService>();
@@ -46,9 +50,12 @@ builder.Services
             opts.AddPublisher(new GameStatusUpdateDefinition());
             opts.AddPublisher(new MiniGameUpdateDefinition());
             opts.AddPublisher(new MiniGameNotificationDefinition());
+            opts.AddPublisher(new PlayerInteractionDefinition());
             opts.AddOneTimeConsumer(new GameStatusUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
             opts.AddOneTimeConsumer(new MiniGameUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
+            opts.AddOneTimeConsumer(new PlayerInteractionDefinition().ToConsumer(deviceId + "-single"));
             opts.AddConsumer<MiniGameNotification, MiniGameNotificationConsumer>(new MiniGameNotificationDefinition().ToConsumer(deviceId));
+            opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(deviceId));
         });
 
 builder.Services.AddCors(options =>

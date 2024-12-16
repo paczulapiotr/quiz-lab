@@ -1,6 +1,14 @@
 
-using Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
+namespace Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
 
-public class PowerPlaysDictionary : Dictionary<string, (AbcdWithCategories.PowerPlay powerPlay, string sourcePlayerId)[]>
+public enum PowerPlay
+{
+    Slime = 1,
+    Freeze,
+    Bombs,
+    Letters,
+}
+
+public class PowerPlaysDictionary : Dictionary<string, (PowerPlay powerPlay, string sourceDeviceId)[]>
 {
 }

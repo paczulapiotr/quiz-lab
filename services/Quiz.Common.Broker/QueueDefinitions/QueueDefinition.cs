@@ -16,8 +16,8 @@ public abstract class QueueDefinition<TMessage>
 
     private static readonly IDictionary<string, object?> _queueDefaultArguments = new Dictionary<string, object?>
     {
-        { "x-message-ttl", 60000 },
-        { "x-expires", 60000 }
+        { "x-message-ttl", 60_000 },
+        { "x-expires", 24 * 60 * 60_000 }
     };
 
     public ExchangeType ExchangeType { get; init; }

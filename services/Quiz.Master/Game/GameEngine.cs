@@ -102,9 +102,20 @@ IGameStateRepository gameStateRepository) : IGameEngine
         await SetStatus(game, GameStatus.MiniGameStarted, cancellationToken);
 
         // - wait for mini game handler to finish
-        await handler.HandleMiniGame(
+        var result = await handler.HandleMiniGame(
             miniGame,
             cancellationToken);
+
+        foreach (var playerScore in result)
+        {
+            var score = miniGame.PlayerScores.FirstOrDefault(x => x.Player?.DeviceId == playerScore.Key);
+            if (score is not null)
+            {
+                score.Score += playerScore.Value;
+            }
+        }
+
+        await gameStateRepository.SaveGameState(game, cancellationToken);
 
         // - send mini game ening msg for score table rabbitmq message
         await SetStatus(game, GameStatus.MiniGameEnding, cancellationToken);

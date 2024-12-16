@@ -1,19 +1,18 @@
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Quiz.Master.Persistance.Models;
-using Quiz.Master.Persistance.Models.MiniGames;
 using Quiz.Master.Persistance.Repositories.Abstract;
 
 namespace Quiz.Master.Persistance.Repositories;
 
-public class SqlMiniGameSaveRepository(QuizDbContext quizDbContext) : IMiniGameSaveRepository
+public class SqlMiniGameSaveRepository(IDbContextFactory<QuizDbContext> quizDbContextFactory) : IMiniGameSaveRepository
 {
-    public async Task SaveMiniGame<TData, TConfig, TState>(MiniGameInstance miniGame, TData stateData, CancellationToken cancellationToken = default)
-    where TData : MiniGameDataBase<TConfig, TState>
-    where TConfig : class, new()
+    public async Task SaveMiniGame<TState>(MiniGameInstance miniGame, TState stateData, CancellationToken cancellationToken = default)
     where TState : class, new()
     {
+        await using var quizDbContext = quizDbContextFactory.CreateDbContext();
         var jsonData = JsonSerializer.Serialize(stateData);
-        miniGame.RoundsJsonData = jsonData;
+        miniGame.StateJsonData = jsonData;
         quizDbContext.Update(miniGame);
         await quizDbContext.SaveChangesAsync(cancellationToken);
     }
