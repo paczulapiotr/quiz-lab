@@ -44,7 +44,7 @@ public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<
     {
         return type switch
         {
-            MiniGameType.AbcdWithCategories => JsonSerializer.Deserialize<AbcdWithCategoriesState>(stateJsonData),
+            MiniGameType.AbcdWithCategories => string.IsNullOrWhiteSpace(stateJsonData) ? new AbcdWithCategoriesState() : JsonSerializer.Deserialize<AbcdWithCategoriesState>(stateJsonData),
             _ => null
         };
     }

@@ -13,7 +13,7 @@ const Welcome = () => {
     useCallback(
       (payload) => {
         if (payload?.status === GameStatus.GameCreated) {
-          navigate(`/join/${payload?.gameId}`);
+          navigate(`/game/${payload?.gameId}/join`);
         }
       },
       [navigate],

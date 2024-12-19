@@ -20,7 +20,13 @@
       "import": "./dist/hooks.js",
       "require": "./dist/hooks.js"
     },
-    "./styles.css": "./dist/quiz-common-ui.css"
+    "./utility": {
+      "types": "./dist/utility/index.d.ts",
+      "import": "./dist/utility.js",
+      "require": "./dist/utility.js"
+    },
+    "./styles.css": "./dist/quiz-common-ui.css",
+    "./prettier.config.js": "./dist/ide/prettier.config.js"
   },
   "scripts": {
     "dev": "vite",
@@ -34,7 +40,8 @@
   },
   "peerDependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

@@ -17,12 +17,14 @@
     "@microsoft/signalr": "^8.0.7",
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
+    "motion": "^11.15.0",
     "quiz-common-ui": "file:../quiz-common-ui",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",
     "react-query": "^3.39.3",
-    "react-router": "^7.0.1"
+    "react-router": "^7.0.1",
+    "react-smooth": "^4.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",

@@ -151,6 +151,8 @@ public class AbcdWithCategoriesMiniGame(
         _state.CurrentRoundId = roundState.RoundId;
         await SaveState(cancellationToken);
 
+        // RABBIT_SEND start selecting category
+        await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "CategorySelectStart"), cancellationToken);
         // Choose most voted category or random if tied
         var selectedCategoryId = await SelectCategoryId(_gameId, roundDefinition, playersCount, config.TimeForCategorySelectionMs);
         var selectedCategory = roundDefinition.Categories.FirstOrDefault(x => x.Id == selectedCategoryId);

@@ -16,7 +16,7 @@ const JoinGame = () => {
   const navigate = useNavigate();
 
   const { mutateAsync } = useJoinGameMutation();
-  const { data, isLoading } = useGetGame(gameId);
+  const { data, isLoading, refetch } = useGetGame(gameId);
 
   const joinGame = async () =>
     mutateAsync({ playerName, gameId: gameId! }).then(() => setJoined(true));
@@ -24,21 +24,19 @@ const JoinGame = () => {
   useLocalSyncConsumer(
     "GameStatusUpdate",
     "JoinGame",
-    useCallback(
-      (message) => {
-        switch (message?.status) {
-          case GameStatus.GameStarting:
-            setStarting(true);
-            break;
-          case GameStatus.GameStarted:
-            navigate(`/${gameId}/question`);
-            break;
-          default:
-            break;
-        }
-      },
-      [gameId, navigate],
-    ),
+    useCallback((message) => {
+      switch (message?.status) {
+        case GameStatus.GameJoined:
+          refetch();
+          break;
+        case GameStatus.GameStarting:
+          setStarting(true);
+          break;
+
+        default:
+          break;
+      }
+    }, []),
   );
 
   return (

@@ -30,10 +30,11 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      external: ["react", "react-dom", "react-router", "react/jsx-runtime"],
       output: {
         globals: {
           react: "react",
+          "react-router": "react-router",
           "react-dom": "react-dom",
           "react/jsx-runtime": "react/jsx-runtime",
         },

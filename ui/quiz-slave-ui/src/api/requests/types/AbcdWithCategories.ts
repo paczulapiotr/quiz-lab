@@ -1,6 +1,6 @@
 export type AbcdWithCategoriesState = {
   miniGameType: 1;
-  state: {
+  state?: {
     currentRoundId: string;
     currentCategoryId: string;
     currentQuestionId: string;
@@ -23,7 +23,6 @@ export type RoundAnswer = {
   points: number;
 };
 
-// Assuming PowerPlaysDictionary is a dictionary type, you can define it as follows:
 export type PowerPlaysDictionary = {
   [deviceId: string]: {
     powerPlay: string;

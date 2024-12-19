@@ -1,16 +1,16 @@
-import { JoinGame } from "./pages/JoinGame";
 import { Welcome } from "./pages/Welcome";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { LocalSyncServiceProvider } from "quiz-common-ui";
-import AbcdWithCategories from "./pages/miniGames/AbcdWithCategories";
 import "./App.scss";
 import AdminPanel from "./AdminPanel";
+import GameRoutes from "./Routes";
 
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
+        retry: false,
         staleTime: Infinity,
         cacheTime: 0,
       },
@@ -25,11 +25,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route index element={<Welcome />} />
-            <Route path="join/:gameId" element={<JoinGame />} />
-            <Route path=":gameId/question" element={<AbcdWithCategories />} />
+            <Route path="*" element={<GameRoutes />} />
           </Routes>
         </BrowserRouter>
-        <AdminPanel/>
+        <AdminPanel />
       </LocalSyncServiceProvider>
     </QueryClientProvider>
   );

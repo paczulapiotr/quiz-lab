@@ -1,4 +1,4 @@
-import prettierConfig from "quiz-common-ui/dist/ide/prettier.config.js";
+import prettierConfig from "quiz-common-ui/prettier.config.js";
 
 /**
  * @see https://prettier.io/docs/en/configuration.html
