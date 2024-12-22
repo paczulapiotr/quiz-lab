@@ -7,11 +7,8 @@ import GameEnding from "./pages/GameEnding";
 import MiniGameStarting from "./pages/MiniGameStarting";
 import MiniGameEnding from "./pages/MiniGameEnding";
 import MiniGameStarted from "./pages/MiniGameStarted";
-import { useLocation } from "react-router";
 
 const Routes = () => {
-  const { pathname } = useLocation();
-  console.log(pathname);
   return (
     <GameNavigator
       basePath=""

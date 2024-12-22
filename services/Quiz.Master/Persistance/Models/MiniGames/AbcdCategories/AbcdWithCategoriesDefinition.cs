@@ -23,6 +23,7 @@ public record AbcdWithCategoriesDefinition : MiniGameDefinitionBase<AbcdWithCate
     public record Category
     {
         public required string Id { get; set; }
+        public required string Name { get; set; }
         public IEnumerable<Question> Questions { get; set; } = new List<Question>();
     }
 

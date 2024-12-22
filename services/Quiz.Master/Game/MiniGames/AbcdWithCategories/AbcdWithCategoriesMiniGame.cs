@@ -9,6 +9,7 @@ using Definition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdW
 using State = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesState;
 using RoundDefinition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Round;
 using QuestionDefintiion = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Question;
+using System.Security.Cryptography.Pkcs;
 
 namespace Quiz.Master.Game.MiniGames;
 
@@ -95,7 +96,7 @@ public class AbcdWithCategoriesMiniGame(
         await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayStart"), cancellationToken);
         // HTTP_RECEIVE Receive ZAGRYWKA selection or wait for time to pass
 
-        var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForPowerPlaySelectionMs).Token;
+        var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForPowerPlaySelectionMs * 1000).Token;
         // <deviceId, (PowerPlay, sourceDeviceId)[]>
         var powerPlays = new PowerPlaysDictionary();
         var categoryIds = round.Categories.Select(x => x.Id).ToList();
@@ -106,8 +107,7 @@ public class AbcdWithCategoriesMiniGame(
             var selection = await playerInteraction.ConsumeFirstAsync(
                 condition: x => x.GameId == _gameId
                     && !playersThatSelected.Contains(x.DeviceId)
-                    && x.InteractionType == "PowerPlaySelection"
-                    && x.Value != null,
+                    && x.InteractionType == "PowerPlaySelection",
                 cancellationToken: timeToken);
 
             if (timeToken.IsCancellationRequested)
@@ -154,7 +154,7 @@ public class AbcdWithCategoriesMiniGame(
         // RABBIT_SEND start selecting category
         await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "CategorySelectStart"), cancellationToken);
         // Choose most voted category or random if tied
-        var selectedCategoryId = await SelectCategoryId(_gameId, roundDefinition, playersCount, config.TimeForCategorySelectionMs);
+        var selectedCategoryId = await SelectCategoryId(_gameId, roundDefinition, playersCount, config.TimeForCategorySelectionMs, roundState);
         var selectedCategory = roundDefinition.Categories.FirstOrDefault(x => x.Id == selectedCategoryId);
         ArgumentException.ThrowIfNullOrWhiteSpace(selectedCategoryId, nameof(selectedCategoryId));
         var questionDefinition = selectedCategory!.Questions.First();
@@ -260,9 +260,9 @@ public class AbcdWithCategoriesMiniGame(
         await SaveState();
     }
 
-    private async Task<string> SelectCategoryId(string gameId, RoundDefinition firstRound, int playersCount, int timeForCategorySelectionMs)
+    private async Task<string> SelectCategoryId(string gameId, RoundDefinition firstRound, int playersCount, int timeForCategorySelectionMs, State.RoundState roundState)
     {
-        var timeToken = new CancellationTokenSource(timeForCategorySelectionMs).Token;
+        var timeToken = new CancellationTokenSource(timeForCategorySelectionMs * 1000).Token;
 
         // <categoryId, deviceId[]>
         var selections = new Dictionary<string, string[]>();
@@ -293,6 +293,15 @@ public class AbcdWithCategoriesMiniGame(
             }
 
         }
+
+        // add to state
+        roundState.SelectedCategories = selections.Select(x => new State.SelectedCategory
+        {
+            CategoryId = x.Key,
+            DeviceIds = x.Value
+        }).ToList();
+
+        await SaveState();
 
         var selectedCategoryId = selections.OrderByDescending(x => x.Value.Length).FirstOrDefault().Key
             ?? categoryIds[new Random().Next(categoryIds.Count)];

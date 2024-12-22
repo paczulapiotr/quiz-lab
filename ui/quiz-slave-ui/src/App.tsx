@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { LocalSyncServiceProvider } from "quiz-common-ui";
 import "./App.scss";
-import AdminPanel from "./AdminPanel";
 import GameRoutes from "./Routes";
 
 function App() {
@@ -28,7 +27,6 @@ function App() {
             <Route path="*" element={<GameRoutes />} />
           </Routes>
         </BrowserRouter>
-        <AdminPanel />
       </LocalSyncServiceProvider>
     </QueryClientProvider>
   );

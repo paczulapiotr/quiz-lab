@@ -1,5 +1,5 @@
 import { Tile } from "quiz-common-ui/components";
-import styles from "./SelectPowerPlayView.module.scss";
+import styles from "./Component.module.scss";
 import { PowerPlaysEnum } from "../types";
 import { useState } from "react";
 
@@ -11,13 +11,13 @@ type Props = {
   }[];
 };
 
-const SelectPowerPlayView = ({ onSelect, players }: Props) => {
+const Component = ({ onSelect, players }: Props) => {
   const [powerPlay, setPowerPlay] = useState<PowerPlaysEnum>();
   const [playerId, setPlayerId] = useState<string>();
 
-  const choosePowerPlay = (powerPlay: PowerPlaysEnum) => {
+  const choosePowerPlay = (_powerPlay: PowerPlaysEnum) => {
     if (powerPlay !== undefined) return;
-    setPowerPlay(powerPlay);
+    setPowerPlay(_powerPlay);
   };
 
   const choosePlayer = (_playerId: string) => {
@@ -64,4 +64,4 @@ const SelectPowerPlayView = ({ onSelect, players }: Props) => {
   );
 };
 
-export default SelectPowerPlayView;
+export default Component;

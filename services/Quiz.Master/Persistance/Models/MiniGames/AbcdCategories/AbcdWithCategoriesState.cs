@@ -15,6 +15,13 @@ public record AbcdWithCategoriesState
         public PowerPlaysDictionary PowerPlays { get; set; } = new();
         // DeviceId, (AnswerId, Timestamp)
         public List<RoundAnswer> Answers { get; set; } = new();
+        public List<SelectedCategory> SelectedCategories { get; set; } = new();
+    }
+
+    public record SelectedCategory
+    {
+        public required string CategoryId { get; set; }
+        public required string[] DeviceIds { get; set; }
     }
 
     public record RoundAnswer

@@ -30,6 +30,6 @@ export const sendPlayerInteraction = async ({
   await instance.post<never, AxiosResponse>(
     `/game/${gameId}/mini-game/interaction`,
     {
-      data,
+      ...data,
     },
   );

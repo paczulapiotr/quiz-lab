@@ -11,7 +11,7 @@ import { RulesExplaining } from "./pages/RulesExplaining";
 import MiniGameEnding from "./pages/MiniGameEnding/MiniGameEnding";
 import { GameEnding } from "./pages/GameEnding";
 import AbcdWithCategories from "./pages/miniGames/AbcdWithCategories";
-import AdminPanel from "./AdminPanel";
+
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -45,7 +45,6 @@ function App() {
               <Route path="/end/:gameId" element={<GameEnding />} />
             </Routes>
           </StateNavigator>
-          <AdminPanel />
         </BrowserRouter>
       </LocalSyncServiceProvider>
     </QueryClientProvider>

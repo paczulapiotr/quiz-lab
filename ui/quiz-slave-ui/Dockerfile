@@ -8,13 +8,14 @@ ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
 WORKDIR /app
 
 # Copy package.json and package-lock.json to install dependencies
-COPY package*.json ./
+COPY ./quiz-slave-ui/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application code to the working directory
-COPY . .
+COPY ./quiz-slave-ui/. .
+COPY ./quiz-common-ui/ ../quiz-common-ui/
 
 # Build the Vite React app
 RUN npm run build
@@ -26,7 +27,7 @@ FROM nginx:1.27-alpine
 COPY --from=0 /app/dist /usr/share/nginx/html
 
 # Copy the custom Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./quiz-slave-ui/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to serve the app
 EXPOSE 80

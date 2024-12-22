@@ -66,7 +66,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
         element={
           <GenericNavigator<SyncReceiveData["GameStatusUpdate"]>
             basePath={cleanupSlash(basePath + "/game")}
-            key={"GameNavigator"}
+            identifier={"GameNavigator"}
             routes={routes}
             queueName={"GameStatusUpdate"}
             createNavigationPath={createNavigationPath}

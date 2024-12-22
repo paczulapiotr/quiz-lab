@@ -1,36 +1,34 @@
-import { useState } from "react";
-import SelectPowerPlayView from "./SelectPowerPlayView";
-import SelectPlayerView from "./SelectPlayerView";
 import { PowerPlaysEnum, PowerPlaysNames } from "../types";
+import Component from "./Component";
 import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
+import { useGetPowerPlays } from "@/api/queries/minigames/abcd/useGetPowerPlays";
 
 type Props = {
   gameId: string;
 };
 
 const SelectPowerPlay = ({ gameId }: Props) => {
-  const [selectedPowerPlay, setSelectedPowerPlay] = useState<string>();
+  const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
+  const powerPlays = useGetPowerPlays(gameId, true);
 
-  const { mutateAsync: sendAsync } = useSendPlayerInteraction();
-
-  const onPowerPlaySelect = (powerPlay: PowerPlaysEnum) => {
-    setSelectedPowerPlay(PowerPlaysNames[powerPlay]);
-  };
-
-  const onPlayerSelect = async (playerId: string) => {
-    await sendAsync({
-      gameId,
-      interactionType: "powerPlay",
-      data: { powerPlay: selectedPowerPlay!, playerId: playerId },
+  const sendSelectPowerPlay = async (
+    powerPlay: PowerPlaysEnum,
+    playerId: string,
+  ) => {
+    await sendInteraction({
+      gameId: gameId!,
+      interactionType: "PowerPlaySelection",
+      data: {
+        powerPlay: PowerPlaysNames[powerPlay],
+        playerId,
+      },
     });
   };
 
-  return selectedPowerPlay ? (
-    <SelectPlayerView onSelect={onPlayerSelect} players={[]} />
-  ) : (
-    <SelectPowerPlayView
-      onSelect={onPowerPlaySelect}
-      players={[{ id: "test_id", name: "Test Name" }]}
+  return (
+    <Component
+      onSelect={sendSelectPowerPlay}
+      players={powerPlays.data?.players ?? []}
     />
   );
 };

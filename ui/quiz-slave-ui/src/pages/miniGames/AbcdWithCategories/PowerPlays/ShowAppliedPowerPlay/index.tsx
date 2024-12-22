@@ -1,22 +1,15 @@
-import { PowerPlaysEnum, PowerPlaysNames } from "../types";
-import { Tile } from "quiz-common-ui/components";
-import styles from "./index.module.scss";
+import Component from "./Component";
+import { useGetAppliedPowerPlay } from "@/api/queries/minigames/abcd/useGetAppliedPowerPlay";
 
 type Props = {
-  appliedPowerPlays: {
-    playerId: string;
-    playerName: string;
-    powerPlay: PowerPlaysEnum;
-  }[];
+  gameId: string;
 };
 
-const ShowAppliedPowerPlay = ({ appliedPowerPlays }: Props) => {
+const ShowAppliedPowerPlay = ({ gameId }: Props) => {
+  const appliedPowerPlays = useGetAppliedPowerPlay(gameId, true);
+
   return (
-    <div className={styles.list}>
-      {appliedPowerPlays.map((appliedPowerPlay) => (
-        <Tile text={PowerPlaysNames[appliedPowerPlay.powerPlay]} />
-      ))}
-    </div>
+    <Component appliedPowerPlays={appliedPowerPlays.data?.powerPlays ?? []} />
   );
 };
 

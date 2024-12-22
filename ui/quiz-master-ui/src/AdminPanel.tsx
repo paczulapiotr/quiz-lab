@@ -1,39 +1,75 @@
+import { GameStatus, GameStatusNames } from "quiz-common-ui";
 import { useLocalSync } from "quiz-common-ui/hooks";
-import { useState } from "react";
+import { useParams } from "react-router";
 
 const AdminPanel = () => {
-  const [gameId, setGameId] = useState<string>("");
-  const [action, setAction] = useState<string>("");
-
-  const { sendSync } = useLocalSync();
+  const data = useParams<{ gameId: string }>();
   return (
-    <div style={{ width: "100%", display: "flex" }}>
-      <label htmlFor="gameId">Game ID</label>
-      <input
-        id="gameId"
-        value={gameId}
-        onChange={(e) => setGameId(e.target.value)}
-      />
-      <label htmlFor="action">Action</label>
-      <input
-        id="action"
-        value={action}
-        onChange={(e) => setAction(e.target.value)}
-      />
-
-      <button
-        onClick={() =>
-          sendSync("MiniGameUpdate", {
-            gameId: gameId,
-            action: action,
-            miniGameType: "AbcdWithCategories",
-          })
-        }
+    <>
+      <p>{JSON.stringify(data)}</p>
+      <p>GAME UPDATES</p>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          gap: "1rem",
+          paddingBottom: "1rem",
+        }}
       >
-        {"Send MiniGameUpdate"}
-      </button>
-    </div>
+        <SendGameUpdateButton status={GameStatus.RulesExplained} />
+        <SendGameUpdateButton status={GameStatus.MiniGameStarted} />
+        <SendGameUpdateButton status={GameStatus.MiniGameEnded} />
+        <SendGameUpdateButton status={GameStatus.GameEnded} />
+      </div>
+      <p>MINI GAME UPDATES</p>
+      <div style={{ width: "100%", display: "flex", gap: "1rem" }}>
+        <SendMiniGameUpdateButton action="PowerPlayExplainStop" />
+        <SendMiniGameUpdateButton action="PowerPlayApplyStop" />
+        <SendMiniGameUpdateButton action="CategoryShowStop" />
+        <SendMiniGameUpdateButton action="QuestionShowStop" />
+        <SendMiniGameUpdateButton action="QuestionAnswerShowStop" />
+      </div>
+    </>
   );
 };
 
 export default AdminPanel;
+
+const SendMiniGameUpdateButton = ({ action }: { action: string }) => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const { sendSync } = useLocalSync();
+
+  return (
+    <button
+      style={{ fontSize: "1rem", flexWrap: "wrap" }}
+      onClick={() =>
+        sendSync("MiniGameUpdate", {
+          gameId: gameId!,
+          action,
+          miniGameType: "AbcdWithCategories",
+        })
+      }
+    >
+      {action}
+    </button>
+  );
+};
+
+const SendGameUpdateButton = ({ status }: { status: GameStatus }) => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const { sendSync } = useLocalSync();
+
+  return (
+    <button
+      style={{ fontSize: "1rem", flexWrap: "wrap" }}
+      onClick={() =>
+        sendSync("GameStatusUpdate", {
+          gameId: gameId!,
+          status,
+        })
+      }
+    >
+      {GameStatusNames[status]}
+    </button>
+  );
+};

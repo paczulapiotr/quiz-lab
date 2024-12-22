@@ -5,7 +5,7 @@ import { Route, Routes, useLocation, useNavigate } from "react-router";
 
 interface Props<TMessage> {
   basePath?: string;
-  key: string;
+  identifier: string;
   routes: Record<string, JSX.Element>;
   queueName: SyncReceiveDefinitionNames;
   createNavigationPath: (message: TMessage) => string;
@@ -14,7 +14,7 @@ interface Props<TMessage> {
 const GenericNavigator = <TMessage,>({
   queueName,
   basePath,
-  key,
+  identifier: key,
   createNavigationPath,
   routes,
 }: Props<TMessage>) => {

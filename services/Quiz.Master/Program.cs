@@ -13,6 +13,12 @@ using Quiz.Master.Consumers;
 using Quiz.Master.Migrations;
 using Quiz.Master.Features.MiniGame.GetMiniGame;
 using Quiz.Master.Features.MiniGame.SendPlayerInteraction;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetAppliedPowerPlay;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetCategories;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetPowerPlays;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestion;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestionAnswer;
+using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetSelectedCategory;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -35,6 +41,15 @@ builder.Services.AddQuizCommonServices(opts =>
     opts.AddCommandHandler<SendPlayerInteractionHandler, SendPlayerInteractionCommand>();
     opts.AddQueryHandler<GetGameHandler, GetGameQuery, GetGameResult>();
     opts.AddQueryHandler<GetMiniGameHandler, GetMiniGameQuery, GetMiniGameResult>();
+
+    // AbcdWithCategories mini game
+    opts.AddQueryHandler<GetAppliedPowerPlayHandler, GetAppliedPowerPlayQuery, GetAppliedPowerPlayResult>();
+    opts.AddQueryHandler<GetCategoriesHandler, GetCategoriesQuery, GetCategoriesResult>();
+    opts.AddQueryHandler<GetPowerPlaysHandler, GetPowerPlaysQuery, GetPowerPlaysResult>();
+    opts.AddQueryHandler<GetQuestionHandler, GetQuestionQuery, GetQuestionResult>();
+    opts.AddQueryHandler<GetQuestionAnswerHandler, GetQuestionAnswerQuery, GetQuestionAnswerResult>();
+    opts.AddQueryHandler<GetSelectedCategoryHandler, GetSelectedCategoryQuery, GetSelectedCategoryResult>();
+
 
 });
 builder.Services.AddHostedService<ConsumerHostedService>();

@@ -18,7 +18,7 @@ services:
     container_name: master
     restart: always
     build:
-      context: .
+      context: ./services
       dockerfile: ./Quiz.Master/Dockerfile.debug
     ports:
       - "5999:8080"
@@ -32,7 +32,7 @@ services:
     container_name: slave-000
     restart: always
     build:
-      context: .
+      context: ./services
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6020:8080"
@@ -49,7 +49,7 @@ services:
     container_name: slave-001
     restart: always
     build:
-      context: .
+      context: ./services
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6021:8080"
@@ -66,7 +66,7 @@ services:
     container_name: slave-002
     restart: always
     build:
-      context: .
+      context: ./services
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6022:8080"
@@ -83,7 +83,7 @@ services:
     container_name: slave-003
     restart: always
     build:
-      context: .
+      context: ./services
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6023:8080"
@@ -100,8 +100,8 @@ services:
     container_name: ui-000
     restart: always
     build:
-      context: ./Quiz.UI
-      dockerfile: ./Dockerfile
+      context: ./ui
+      dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6020
     ports:
@@ -111,8 +111,8 @@ services:
     container_name: ui-001
     restart: always
     build:
-      context: ./Quiz.UI
-      dockerfile: ./Dockerfile
+      context: ./ui
+      dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6021
     ports:
@@ -122,8 +122,8 @@ services:
     container_name: ui-002
     restart: always
     build:
-      context: ./Quiz.UI
-      dockerfile: ./Dockerfile
+      context: ./ui
+      dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6022
     ports:
@@ -133,8 +133,8 @@ services:
     container_name: ui-003
     restart: always
     build:
-      context: ./Quiz.UI
-      dockerfile: ./Dockerfile
+      context: ./ui
+      dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6023
     ports:
@@ -142,3 +142,5 @@ services:
 
 volumes:
   rabbitmq_data:
+# TODO: Add quiz-common-ui to dockerfiles
+# TODO: Add master-ui to dockerfiles

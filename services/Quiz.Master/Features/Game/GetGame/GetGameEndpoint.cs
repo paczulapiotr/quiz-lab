@@ -2,7 +2,6 @@ using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.Game.GetGame;
 
-
 public static partial class Endpoints
 {
     public static void MapGetGame(this IEndpointRouteBuilder endpoints)

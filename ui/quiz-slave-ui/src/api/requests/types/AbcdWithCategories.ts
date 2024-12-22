@@ -5,8 +5,8 @@ export type AbcdWithCategoriesState = {
     currentCategoryId: string;
     currentQuestionId: string;
     rounds: RoundState[];
-  }
-}
+  };
+};
 
 export type RoundState = {
   roundId: string;
@@ -28,5 +28,4 @@ export type PowerPlaysDictionary = {
     powerPlay: string;
     sourceDeviceId: string;
   };
-}
-
+};
