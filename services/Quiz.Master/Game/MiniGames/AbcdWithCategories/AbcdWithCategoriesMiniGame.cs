@@ -103,7 +103,7 @@ public class AbcdWithCategoriesMiniGame(
         var playersCount = _miniGameInstance.Game.PlayersCount;
         for (int i = 0; i < playersCount; i++)
         {
-            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.sourceDeviceId)).Distinct().ToArray();
+            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.SourceDeviceId)).Distinct().ToArray();
             var selection = await playerInteraction.ConsumeFirstAsync(
                 condition: x => x.GameId == _gameId
                     && !playersThatSelected.Contains(x.DeviceId)
@@ -122,11 +122,11 @@ public class AbcdWithCategoriesMiniGame(
 
                 if (powerPlays.ContainsKey(deviceId))
                 {
-                    powerPlays[deviceId].Append((powerPlay, selection.DeviceId));
+                    powerPlays[deviceId].Add(new(selection.DeviceId, powerPlay));
                 }
                 else
                 {
-                    powerPlays.Add(deviceId, [(powerPlay, selection.DeviceId)]);
+                    powerPlays.Add(deviceId, [new(selection.DeviceId, powerPlay)]);
                 }
             }
             catch (Exception e)
@@ -136,6 +136,7 @@ public class AbcdWithCategoriesMiniGame(
         }
 
         roundState.PowerPlays = powerPlays;
+        await SaveState(cancellationToken);
 
         // RABBIT_SEND start showing PowerPlays
         await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayApplyStart"), cancellationToken);
@@ -265,7 +266,7 @@ public class AbcdWithCategoriesMiniGame(
         var timeToken = new CancellationTokenSource(timeForCategorySelectionMs * 1000).Token;
 
         // <categoryId, deviceId[]>
-        var selections = new Dictionary<string, string[]>();
+        var selections = new Dictionary<string, List<string>>();
         var categoryIds = firstRound.Categories.Select(x => x.Id).ToList();
         for (int i = 0; i < playersCount; i++)
         {
@@ -285,7 +286,7 @@ public class AbcdWithCategoriesMiniGame(
 
             if (selections.ContainsKey(selection!.Value!))
             {
-                selections[selection!.Value!].Append(selection!.DeviceId);
+                selections[selection!.Value!].Add(selection!.DeviceId);
             }
             else
             {
@@ -303,7 +304,7 @@ public class AbcdWithCategoriesMiniGame(
 
         await SaveState();
 
-        var selectedCategoryId = selections.OrderByDescending(x => x.Value.Length).FirstOrDefault().Key
+        var selectedCategoryId = selections.OrderByDescending(x => x.Value.Count).FirstOrDefault().Key
             ?? categoryIds[new Random().Next(categoryIds.Count)];
 
         return selectedCategoryId;

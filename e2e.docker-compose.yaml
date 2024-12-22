@@ -24,9 +24,21 @@ services:
       - "5999:8080"
     environment:
       - ASPNETCORE_URLS=http://+:8080;
+      - Cors=http://localhost:6030
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
     depends_on:
       - quiz-rabbitmq
+
+  ui-master:
+    container_name: ui-master
+    restart: always
+    build:
+      context: ./ui
+      dockerfile: ./quiz-master-ui/Dockerfile
+      args:
+        - VITE_LOCAL_API_URL=http://localhost:5999
+    ports:
+      - "6030:80"
 
   slave-000:
     container_name: slave-000

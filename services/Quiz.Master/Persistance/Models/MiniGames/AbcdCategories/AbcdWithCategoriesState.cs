@@ -21,7 +21,7 @@ public record AbcdWithCategoriesState
     public record SelectedCategory
     {
         public required string CategoryId { get; set; }
-        public required string[] DeviceIds { get; set; }
+        public required List<string> DeviceIds { get; set; }
     }
 
     public record RoundAnswer

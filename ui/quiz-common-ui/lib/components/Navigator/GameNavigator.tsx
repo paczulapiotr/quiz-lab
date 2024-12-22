@@ -1,8 +1,7 @@
-import { GameStatus } from "quiz-common-ui";
 import { useCallback, useMemo } from "react";
 import { Route, Routes } from "react-router";
 import GenericNavigator from "./GenericNavigator";
-import { SyncReceiveData } from "@/services/types";
+import { GameStatus, SyncReceiveData } from "@/services/types";
 import { cleanupSlash } from "@/utility";
 
 type Props = {
@@ -26,7 +25,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
         case GameStatus.GameCreated:
           return `${message.gameId}/created/`;
         case GameStatus.GameJoined:
-          return `${message.gameId}/joined/`;
+          return `${message.gameId}/join/`;
         case GameStatus.GameStarting:
           return `${message.gameId}/starting/`;
         case GameStatus.RulesExplaining:

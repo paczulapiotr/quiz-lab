@@ -42,8 +42,8 @@ public class GetAppliedPowerPlayHandler(IQuizRepository quizRepository) : IQuery
 
         return new GetAppliedPowerPlayResult((powerPlays ?? []).Select(x
             => new AppliedPowerPlay(
-                x.sourceDeviceId,
-                players.FirstOrDefault(p => p.DeviceId == x.sourceDeviceId)?.Name ?? "",
-                x.powerPlay)));
+                x.SourceDeviceId,
+                players.FirstOrDefault(p => p.DeviceId == x.SourceDeviceId)?.Name ?? "",
+                x.PowerPlay)));
     }
 }

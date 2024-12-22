@@ -15,7 +15,7 @@ const Component = ({ appliedPowerPlays }: Props) => {
     <div className={styles.list}>
       {appliedPowerPlays.map((appliedPowerPlay) => (
         <Tile
-          text={PowerPlaysNames[appliedPowerPlay.powerPlay]}
+          text={`${PowerPlaysNames[appliedPowerPlay.powerPlay]} - ${appliedPowerPlay.playerName}`}
           key={appliedPowerPlay.playerId}
         />
       ))}

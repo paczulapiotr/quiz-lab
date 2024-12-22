@@ -4,7 +4,7 @@ import { PowerPlaysEnum } from "../types";
 import { useState } from "react";
 
 type Props = {
-  onSelect: (powerPlay: PowerPlaysEnum, playerId: string) => void;
+  onSelect: (powerPlay: PowerPlaysEnum, deviceId: string) => void;
   players: {
     id: string;
     name: string;
@@ -13,18 +13,18 @@ type Props = {
 
 const Component = ({ onSelect, players }: Props) => {
   const [powerPlay, setPowerPlay] = useState<PowerPlaysEnum>();
-  const [playerId, setPlayerId] = useState<string>();
+  const [deviceId, setDeviceId] = useState<string>();
 
   const choosePowerPlay = (_powerPlay: PowerPlaysEnum) => {
     if (powerPlay !== undefined) return;
     setPowerPlay(_powerPlay);
   };
 
-  const choosePlayer = (_playerId: string) => {
-    if (playerId !== undefined) return;
+  const choosePlayer = (_deviceId: string) => {
+    if (deviceId !== undefined) return;
 
-    setPlayerId(playerId);
-    onSelect(powerPlay!, _playerId);
+    setDeviceId(deviceId);
+    onSelect(powerPlay!, _deviceId);
   };
 
   return powerPlay == null ? (
@@ -54,7 +54,7 @@ const Component = ({ onSelect, players }: Props) => {
     <div className={styles.grid}>
       {players.map((player) => (
         <Tile
-          selected={playerId === player.id}
+          selected={deviceId === player.id}
           onClick={() => choosePlayer(player.id)}
           key={player.id}
           text={player.name}

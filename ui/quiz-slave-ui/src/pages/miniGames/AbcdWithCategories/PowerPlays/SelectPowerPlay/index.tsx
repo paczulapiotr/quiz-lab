@@ -13,14 +13,14 @@ const SelectPowerPlay = ({ gameId }: Props) => {
 
   const sendSelectPowerPlay = async (
     powerPlay: PowerPlaysEnum,
-    playerId: string,
+    deviceId: string,
   ) => {
     await sendInteraction({
       gameId: gameId!,
       interactionType: "PowerPlaySelection",
       data: {
         powerPlay: PowerPlaysNames[powerPlay],
-        playerId,
+        deviceId,
       },
     });
   };

@@ -8,14 +8,14 @@ ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
 WORKDIR /app
 
 # Copy package.json and package-lock.json to install dependencies
-COPY ./quiz-slave-ui/package*.json ./
+COPY ./quiz-slave-ui/package.json ./
 
 # Install dependencies
+RUN npm set registry http://host.docker.internal:4873/
 RUN npm install
 
 # Copy the rest of the application code to the working directory
 COPY ./quiz-slave-ui/. .
-COPY ./quiz-common-ui/ ../quiz-common-ui/
 
 # Build the Vite React app
 RUN npm run build
