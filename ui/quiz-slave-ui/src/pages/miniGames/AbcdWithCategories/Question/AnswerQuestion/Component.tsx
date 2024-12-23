@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tile } from "quiz-common-ui/components";
+import { Tile, TileButton } from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
 
 type Props = {
@@ -22,7 +22,7 @@ const Component = ({ answers, onAnswer, question }: Props) => {
       <Tile text={question} />
       <div className={styles.grid}>
         {answers.map((x) => (
-          <Tile
+          <TileButton
             key={x.id}
             text={x.text}
             onClick={() => answerHandle(x.id)}

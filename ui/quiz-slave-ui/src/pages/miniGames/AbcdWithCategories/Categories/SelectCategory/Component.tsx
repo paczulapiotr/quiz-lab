@@ -1,4 +1,4 @@
-import { Tile } from "quiz-common-ui/components";
+import { TileButton } from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
 import { useState } from "react";
 
@@ -19,7 +19,7 @@ const SelectCategory = ({ categories, onSelect }: Props) => {
   return (
     <div className={styles.grid}>
       {categories.map((c) => (
-        <Tile
+        <TileButton
           text={c.text}
           onClick={() => onSelectHandle(c.id)}
           key={c.id}

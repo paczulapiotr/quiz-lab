@@ -51,7 +51,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:8080;
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
-      - Cors=http://localhost:6010
+      - Cors=http://localhost:5777
       - MasterUrl=http://master:8080/
       - DeviceId=Slave000
     depends_on:

@@ -1,4 +1,4 @@
-import { Tile } from "quiz-common-ui/components";
+import { TileButton } from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
 import { PowerPlaysEnum } from "../types";
 import { useState } from "react";
@@ -29,22 +29,22 @@ const Component = ({ onSelect, players }: Props) => {
 
   return powerPlay == null ? (
     <div className={styles.grid}>
-      <Tile
+      <TileButton
         text="Slime"
         onClick={() => choosePowerPlay(PowerPlaysEnum.Slime)}
         selected={powerPlay === PowerPlaysEnum.Slime}
       />
-      <Tile
+      <TileButton
         text="Freeze"
         onClick={() => choosePowerPlay(PowerPlaysEnum.Freeze)}
         selected={powerPlay === PowerPlaysEnum.Freeze}
       />
-      <Tile
+      <TileButton
         text="Bombs"
         onClick={() => choosePowerPlay(PowerPlaysEnum.Bombs)}
         selected={powerPlay === PowerPlaysEnum.Bombs}
       />
-      <Tile
+      <TileButton
         text="Letters"
         onClick={() => choosePowerPlay(PowerPlaysEnum.Letters)}
         selected={powerPlay === PowerPlaysEnum.Letters}
@@ -53,7 +53,7 @@ const Component = ({ onSelect, players }: Props) => {
   ) : (
     <div className={styles.grid}>
       {players.map((player) => (
-        <Tile
+        <TileButton
           selected={deviceId === player.id}
           onClick={() => choosePlayer(player.id)}
           key={player.id}

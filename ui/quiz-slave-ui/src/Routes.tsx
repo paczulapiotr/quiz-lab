@@ -1,7 +1,6 @@
 import { GameStatus } from "quiz-common-ui";
 import { GameNavigator } from "quiz-common-ui/components";
 import { JoinGame } from "./pages/JoinGame";
-import GameStarting from "./pages/GameStarting";
 import RulesExplaining from "./pages/RulesExplaining";
 import GameEnding from "./pages/GameEnding";
 import MiniGameStarting from "./pages/MiniGameStarting";
@@ -15,7 +14,7 @@ const Routes = () => {
       pages={{
         [GameStatus.GameCreated]: <JoinGame />,
         [GameStatus.GameJoined]: <JoinGame />,
-        [GameStatus.GameStarting]: <GameStarting />,
+        [GameStatus.GameStarting]: <JoinGame starting />,
         [GameStatus.RulesExplaining]: <RulesExplaining />,
         [GameStatus.MiniGameStarting]: <MiniGameStarting />,
         [GameStatus.MiniGameStarted]: (

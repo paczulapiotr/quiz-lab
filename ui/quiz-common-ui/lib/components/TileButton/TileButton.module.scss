@@ -1,0 +1,38 @@
+@use "/lib/variables" as vars;
+
+.tileButton {
+  display: inline-block;
+  background-color: vars.$white;
+  background: none;
+  padding: 1rem;
+  border: 2rem solid transparent;
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: vars.$pastell-purple;
+  box-shadow: 0px 4px 0px vars.$pastell-blue-dark;
+  transition: all 0.2s;
+  position: relative;
+  top: -4px;
+
+  &:active {
+    top: 0px;
+    left: 0px;
+    box-shadow: 0px 0px 0px vars.$pastell-blue-dark;
+  }
+
+  &.blue {
+    background-color: vars.$pastell-blue;
+    color: vars.$white;
+  }
+
+  &.success {
+    border-color: vars.$pastell-green;
+  }
+  &.failure {
+    border-color: vars.$pastell-red;
+  }
+  &.selected {
+    border-color: vars.$pastell-yellow;
+  }
+}

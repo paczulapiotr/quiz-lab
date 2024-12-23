@@ -38,6 +38,7 @@ const StandardQuestionPage = () => {
     setSelected(answer === selected ? "" : answer);
     await sendSync("SelectAnswer", { answer });
   };
+  console.log(selectAnswer);
 
   return (
     <PageTemplate initialTimerSeconds={10} score={0}>
@@ -47,22 +48,18 @@ const StandardQuestionPage = () => {
           <Tile
             text="What is the capital of France?"
             selected={selected === "A"}
-            onClick={() => selectAnswer("A")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "B"}
-            onClick={() => selectAnswer("B")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "C"}
-            onClick={() => selectAnswer("C")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "D"}
-            onClick={() => selectAnswer("D")}
           />
         </div>
       </div>
@@ -71,4 +68,3 @@ const StandardQuestionPage = () => {
 };
 
 export default StandardQuestionPage;
-

@@ -1,11 +1,10 @@
-import { FlyingSquare } from "quiz-common-ui/components";
+import WelcomeLogo from "@/assets/images/welcome-logo.png";
+import styles from "./Welcome.module.scss";
 
 const Welcome = () => {
   return (
-    <div>
-      <h1>Quiz Lab</h1>
-      <p>Waiting for game...</p>
-      <FlyingSquare count={5} />
+    <div className={styles.container}>
+      <img src={WelcomeLogo} alt="welcome image" />
     </div>
   );
 };
