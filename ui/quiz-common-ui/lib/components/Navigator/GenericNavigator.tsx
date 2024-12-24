@@ -6,9 +6,9 @@ import { Route, Routes, useLocation, useNavigate } from "react-router";
 interface Props<TMessage> {
   basePath?: string;
   identifier: string;
-  routes: Record<string, JSX.Element>;
+  routes: Record<string, JSX.Element | undefined>;
   queueName: SyncReceiveDefinitionNames;
-  createNavigationPath: (message: TMessage) => string;
+  createNavigationPath: (message: TMessage) => string | null;
 }
 
 const GenericNavigator = <TMessage,>({
@@ -26,11 +26,9 @@ const GenericNavigator = <TMessage,>({
     : pathname;
 
   useLocalSyncConsumer(queueName, key, (message) => {
-    navigate(
-      cleanupSlash(
-        `${locationBasePath}${createNavigationPath(message as TMessage)}`,
-      ),
-    );
+    const path = createNavigationPath(message as TMessage);
+    if (path == null) return;
+    navigate(cleanupSlash(`${locationBasePath}${path}`));
   });
 
   return (

@@ -1,12 +1,7 @@
-import AdminPanel from "@/AdminPanel";
+import TutorialVideo from "../temp/TutorialVideo";
 
 const RulesExplaining = () => {
-  return (
-    <>
-      <h1>RulesExplaining</h1>
-      <AdminPanel />
-    </>
-  );
+  return <TutorialVideo title="Zasady gry..." />;
 };
 
 export default RulesExplaining;

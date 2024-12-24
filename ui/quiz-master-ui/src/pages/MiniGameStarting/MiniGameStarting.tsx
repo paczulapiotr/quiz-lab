@@ -1,9 +1,7 @@
+import TutorialVideo from "../temp/TutorialVideo";
+
 const MiniGameStarting = () => {
-  return (
-    <>
-      <h1>MiniGameStarting</h1>
-    </>
-  );
+  return <TutorialVideo title="Zasady rundy..." />;
 };
 
 export default MiniGameStarting;

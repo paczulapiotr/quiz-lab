@@ -4,9 +4,14 @@ import { useParams } from "react-router";
 import { GameStatus } from "quiz-common-ui";
 import { useCallback } from "react";
 import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
-import { Tile } from "quiz-common-ui/components";
+import { Tile, Timer } from "quiz-common-ui/components";
+import styles from "./JoinGame.module.scss";
 
-const JoinGame = () => {
+type Props = {
+  starting?: boolean;
+};
+
+const JoinGame = ({ starting = false }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
 
   const { data, isLoading, refetch } = useGetGame(gameId);
@@ -24,19 +29,31 @@ const JoinGame = () => {
     ),
   );
 
-  const players = data?.playerNames ?? [];
-
+  const players = [
+    ...(data?.playerNames ?? []),
+    ...(data ? Array(data.gameSize - data.playerNames.length).fill(null) : []),
+  ];
   return (
     <PageTemplate>
-      <Tile blue text={"Waiting for other players..."} />
+      <p className={styles.waitForPlayers}>
+        {starting ? "Rozpoczynanie gry" : "Czekanie na graczy"}
+      </p>
       {isLoading ? null : (
-        <>
-          <Tile text={`Slots ${players.length}/${data?.gameSize ?? 0}`} />
-          {players.map((player, index) => (
-            <Tile key={`${player}_${index}`} text={`${index + 1}. ${player}`} />
-          ))}
-        </>
+        <div className={styles.grid}>
+          {players.map((player, index) =>
+            player == null ? (
+              <Tile text="..." key={index} className={styles.emptySpot} />
+            ) : (
+              <Tile blue key={`${player}_${index}`} text={`${player}`} />
+            ),
+          )}
+        </div>
       )}
+      {starting ? (
+        <div style={{ marginTop: "auto" }}>
+          <Timer startSeconds={10} />
+        </div>
+      ) : null}
     </PageTemplate>
   );
 };

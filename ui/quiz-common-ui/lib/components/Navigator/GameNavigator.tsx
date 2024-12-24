@@ -7,14 +7,14 @@ import { cleanupSlash } from "@/utility";
 type Props = {
   basePath: string;
   pages: {
-    [GameStatus.GameCreated]: JSX.Element;
-    [GameStatus.GameJoined]: JSX.Element;
-    [GameStatus.GameStarting]: JSX.Element;
-    [GameStatus.RulesExplaining]: JSX.Element;
-    [GameStatus.MiniGameStarting]: JSX.Element;
-    [GameStatus.MiniGameStarted]: JSX.Element;
-    [GameStatus.MiniGameEnding]: JSX.Element;
-    [GameStatus.GameEnding]: JSX.Element;
+    [GameStatus.GameCreated]?: JSX.Element;
+    [GameStatus.GameJoined]?: JSX.Element;
+    [GameStatus.GameStarting]?: JSX.Element;
+    [GameStatus.RulesExplaining]?: JSX.Element;
+    [GameStatus.MiniGameStarting]?: JSX.Element;
+    [GameStatus.MiniGameStarted]?: JSX.Element;
+    [GameStatus.MiniGameEnding]?: JSX.Element;
+    [GameStatus.GameEnding]?: JSX.Element;
   };
 };
 
@@ -39,12 +39,12 @@ const GameNavigator = ({ pages, basePath }: Props) => {
         case GameStatus.GameEnding:
           return `${message.gameId}/end/`;
         default:
-          return "";
+          return null;
       }
     },
     [],
   );
-  const routes = useMemo<Record<string, JSX.Element>>(
+  const routes = useMemo<Record<string, JSX.Element | undefined>>(
     () => ({
       ":gameId/created/*": pages[GameStatus.GameCreated],
       ":gameId/join/*": pages[GameStatus.GameJoined],

@@ -4,7 +4,6 @@ using Quiz.Master.Game.Communication;
 using Quiz.Master.Game.MiniGames;
 using Quiz.Master.Game.Repository;
 using Quiz.Master.Persistance.Models;
-using Quiz.Master.Persistance.Repositories.Abstract;
 
 namespace Quiz.Master.Game;
 

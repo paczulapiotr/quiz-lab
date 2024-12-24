@@ -45,8 +45,6 @@ const JoinGame = ({ starting = false }: Props) => {
     ...(data ? Array(data.gameSize - data.playerNames.length).fill(null) : []),
   ];
 
-  console.log(playerNames);
-
   return (
     <PageTemplate>
       <div className={styles.header}>

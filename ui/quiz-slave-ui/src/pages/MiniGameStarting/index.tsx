@@ -1,9 +1,7 @@
-import { useParams } from "react-router";
+import WatchOtherScreen from "../temp/WatchOtherScreen";
 
 const MiniGameStarting = () => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return <div>{"MiniGameStarting: " + gameId}</div>;
+  return <WatchOtherScreen title={"Zasady rundy"} />;
 };
 
 export default MiniGameStarting;

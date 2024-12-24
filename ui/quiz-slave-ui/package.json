@@ -18,7 +18,7 @@
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
     "motion": "^11.15.0",
-    "quiz-common-ui": "^0.2.3",
+    "quiz-common-ui": "file:../quiz-common-ui",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",

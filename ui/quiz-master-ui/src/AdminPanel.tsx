@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 const AdminPanel = () => {
   const data = useParams<{ gameId: string }>();
   return (
-    <>
+    <div style={{ color: "white" }}>
       <p>{JSON.stringify(data)}</p>
       <p>GAME UPDATES</p>
       <div
@@ -29,7 +29,7 @@ const AdminPanel = () => {
         <SendMiniGameUpdateButton action="QuestionShowStop" />
         <SendMiniGameUpdateButton action="QuestionAnswerShowStop" />
       </div>
-    </>
+    </div>
   );
 };
 

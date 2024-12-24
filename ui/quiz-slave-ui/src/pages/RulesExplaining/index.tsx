@@ -1,9 +1,7 @@
-import { useParams } from "react-router";
+import WatchOtherScreen from "../temp/WatchOtherScreen";
 
 const RulesExplaining = () => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return <div>{"RulesExplaining: " + gameId}</div>;
+  return <WatchOtherScreen title="Zasady gry..." />;
 };
 
 export default RulesExplaining;
