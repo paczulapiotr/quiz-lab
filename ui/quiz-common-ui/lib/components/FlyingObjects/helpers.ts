@@ -23,7 +23,7 @@ const getRandomBorderPosition = (squareSize: number) => {
   return position;
 };
 
-export const flySquare = (square: HTMLDivElement) => {
+export const flySquare = (square: HTMLDivElement, speed: number) => {
   const squareSize = square.offsetWidth;
   const startPosition = getRandomBorderPosition(squareSize);
   const endPosition = getRandomBorderPosition(squareSize);
@@ -31,7 +31,7 @@ export const flySquare = (square: HTMLDivElement) => {
   square.style.top = startPosition.top!;
   square.style.left = startPosition.left!;
 
-  const duration = 30_000; // 5 seconds
+  const duration = 30_000 / speed;
   const startTime = performance.now();
 
   const animate = (time: number) => {
@@ -44,7 +44,7 @@ export const flySquare = (square: HTMLDivElement) => {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      flySquare(square);
+      flySquare(square, speed);
     }
   };
 

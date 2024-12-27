@@ -8,8 +8,12 @@ import { PageTemplate } from "./PageTemplate";
 import { HeaderTile } from "./HeaderTile";
 import { CenteredInstruction } from "./CenteredInstruction";
 import { ScoreTile } from "./ScoreTile";
+import { FlyingObjects } from "./FlyingObjects";
+import { SimpleModal } from "./SimpleModal";
 
 export {
+  SimpleModal,
+  FlyingObjects,
   ScoreTile,
   CenteredInstruction,
   HeaderTile,

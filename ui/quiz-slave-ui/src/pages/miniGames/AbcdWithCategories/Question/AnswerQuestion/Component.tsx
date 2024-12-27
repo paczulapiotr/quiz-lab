@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   HeaderTile,
   ScoreTile,
@@ -6,15 +6,30 @@ import {
   Timer,
 } from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
+import { PowerPlaysEnum } from "../../PowerPlays/types";
+import { applyLetterPowerPlay } from "./PowerPlays/helpers";
+import Bombs from "./PowerPlays/Bombs";
 
 type Props = {
   question: string;
   answers: { id: string; text: string }[];
   onAnswer: (answerId: string) => void;
   score: number;
+  powerPlays: PowerPlaysEnum[];
 };
 
-const Component = ({ answers, onAnswer, question, score }: Props) => {
+// PowerPlaysEnum.Bombs;
+// PowerPlaysEnum.Freeze;
+// PowerPlaysEnum.Letters;
+// PowerPlaysEnum.Slime;
+
+const Component = ({
+  answers,
+  onAnswer,
+  question,
+  score,
+  powerPlays,
+}: Props) => {
   const [selected, setSelected] = useState<string>();
 
   const answerHandle = (ansId: string) => {
@@ -22,6 +37,14 @@ const Component = ({ answers, onAnswer, question, score }: Props) => {
     if (selected != null) return;
     onAnswer(ansId);
   };
+
+  const answerTextDict = useMemo(() => {
+    const dict: Record<string, string> = {};
+    answers.forEach((x) => {
+      dict[x.id] = applyLetterPowerPlay(x.text, powerPlays);
+    });
+    return dict;
+  }, [answers, powerPlays]);
 
   return (
     <>
@@ -31,13 +54,14 @@ const Component = ({ answers, onAnswer, question, score }: Props) => {
         {answers.map((x) => (
           <TileButton
             key={x.id}
-            text={x.text}
+            text={answerTextDict[x.id]}
             onClick={() => answerHandle(x.id)}
             selected={selected === x.id}
           />
         ))}
       </div>
       <Timer startSeconds={29} />
+      <Bombs powerPlays={powerPlays} />
     </>
   );
 };

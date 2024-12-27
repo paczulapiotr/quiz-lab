@@ -18,7 +18,7 @@
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
     "qu": "^0.1.0",
-    "quiz-common-ui": "^0.2.22",
+    "quiz-common-ui": "^0.2.28",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",
