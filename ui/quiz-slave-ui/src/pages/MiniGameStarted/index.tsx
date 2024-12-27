@@ -1,3 +1,4 @@
+import { PageTemplate } from "quiz-common-ui/components";
 import AbcdWithCategories from "../miniGames/AbcdWithCategories";
 
 type Props = {
@@ -10,7 +11,9 @@ const MiniGameStarted = ({ miniGameType, basePath }: Props) => {
     case "AbcdWithCategories":
       return <AbcdWithCategories basePath={basePath} />;
     default:
-      return <p>Unknown mini game type: {miniGameType}</p>;
+      return (
+        <PageTemplate>Unknown mini game type: {miniGameType}</PageTemplate>
+      );
   }
 };
 

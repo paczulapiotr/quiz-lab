@@ -8,7 +8,6 @@ type Props = {
   basePath: string;
   pages: {
     [GameStatus.GameCreated]?: JSX.Element;
-    [GameStatus.GameJoined]?: JSX.Element;
     [GameStatus.GameStarting]?: JSX.Element;
     [GameStatus.RulesExplaining]?: JSX.Element;
     [GameStatus.MiniGameStarting]?: JSX.Element;
@@ -23,7 +22,6 @@ const GameNavigator = ({ pages, basePath }: Props) => {
     (message: SyncReceiveData["GameStatusUpdate"]) => {
       switch (message?.status) {
         case GameStatus.GameCreated:
-          return `${message.gameId}/created/`;
         case GameStatus.GameJoined:
           return `${message.gameId}/join/`;
         case GameStatus.GameStarting:
@@ -46,8 +44,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
   );
   const routes = useMemo<Record<string, JSX.Element | undefined>>(
     () => ({
-      ":gameId/created/*": pages[GameStatus.GameCreated],
-      ":gameId/join/*": pages[GameStatus.GameJoined],
+      ":gameId/join/*": pages[GameStatus.GameCreated],
       ":gameId/starting/*": pages[GameStatus.GameStarting],
       ":gameId/rules/*": pages[GameStatus.RulesExplaining],
       ":gameId/minigame/*": pages[GameStatus.MiniGameStarting],
@@ -65,7 +62,6 @@ const GameNavigator = ({ pages, basePath }: Props) => {
         element={
           <GenericNavigator<SyncReceiveData["GameStatusUpdate"]>
             basePath={cleanupSlash(basePath + "/game")}
-            identifier={"GameNavigator"}
             routes={routes}
             queueName={"GameStatusUpdate"}
             createNavigationPath={createNavigationPath}

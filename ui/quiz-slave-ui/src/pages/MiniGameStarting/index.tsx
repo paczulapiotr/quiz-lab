@@ -1,7 +1,12 @@
+import { PageTemplate } from "quiz-common-ui/components";
 import WatchOtherScreen from "../temp/WatchOtherScreen";
 
 const MiniGameStarting = () => {
-  return <WatchOtherScreen title={"Zasady rundy"} />;
+  return (
+    <PageTemplate>
+      <WatchOtherScreen title={"Zasady rundy"} />;
+    </PageTemplate>
+  );
 };
 
 export default MiniGameStarting;

@@ -1,5 +1,8 @@
-import { PageTemplate } from "@/components/PageTemplate";
-import { GenericNavigator } from "quiz-common-ui/components";
+import {
+  CenteredInstruction,
+  GenericNavigator,
+  PageTemplate,
+} from "quiz-common-ui/components";
 import { SyncReceiveData } from "node_modules/quiz-common-ui/dist/services/types";
 import ShowAppliedPowerPlay from "./PowerPlays/ShowAppliedPowerPlay";
 import SelectCategory from "./Categories/SelectCategory";
@@ -18,10 +21,10 @@ const AbcdWithCategories = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
 
   return (
-    <PageTemplate>
+    <PageTemplate squares>
       <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
+        disableAnimation
         basePath={basePath}
-        identifier={"AbcdWithCategories"}
         queueName={"MiniGameNotification"}
         createNavigationPath={(message) => {
           switch (message.action) {
@@ -55,7 +58,12 @@ const AbcdWithCategories = ({ basePath }: Props) => {
           }
         }}
         routes={{
-          "/powerplay_explain": <p>EXPLAIN POWER PLAYS</p>,
+          "/powerplay_explain": (
+            <CenteredInstruction
+              title="Obejrzyj prezentację zagrywek na monitorze na środku sali"
+              secondaryText="Zasady zagrywek..."
+            />
+          ),
           "/powerplay_select": <SelectPowerPlay gameId={gameId!} />,
           "/powerplay_apply": <ShowAppliedPowerPlay gameId={gameId!} />,
           "/category_select": <SelectCategory gameId={gameId!} />,

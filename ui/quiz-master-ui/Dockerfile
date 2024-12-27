@@ -1,9 +1,6 @@
 # Use an official Node.js runtime as the base image
 FROM node:22-alpine3.20
 
-ARG VITE_LOCAL_API_URL
-ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
-
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -18,6 +15,8 @@ RUN npm install
 COPY ./quiz-master-ui/. .
 
 # Build the Vite React app
+ARG VITE_LOCAL_API_URL
+ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
 RUN npm run build
 
 # Use an official Nginx image to serve the build files

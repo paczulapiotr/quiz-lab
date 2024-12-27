@@ -1,7 +1,28 @@
+import AdminPanel from "@/AdminPanel";
+import { useGetScore } from "@/api/queries/useGetScore";
+import { HeaderTile, Tile } from "quiz-common-ui/components";
+import { useParams } from "react-router";
+import styles from "./GameEnding.module.scss";
+
 const GameEnding = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const { data } = useGetScore(gameId);
+
   return (
     <>
-      <h1>GameEnding</h1>
+      <HeaderTile title="Podsumowanie gry" />
+      <div className={styles.grid}>
+        {data?.playerScores
+          .sort((a, b) => b.totalScore - a.totalScore)
+          .map((player, index) => (
+            <Tile
+              blue={index === 0}
+              text={`${index + 1}. ${player.playerName} - ${player.totalScore}`}
+              key={player.playerDeviceId}
+            />
+          ))}
+      </div>
+      <AdminPanel />
     </>
   );
 };

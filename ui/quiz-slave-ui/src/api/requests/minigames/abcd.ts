@@ -3,10 +3,14 @@ import { PowerPlaysEnum } from "@/pages/miniGames/AbcdWithCategories/PowerPlays/
 import { AxiosResponse } from "axios";
 
 export type GetAppliedPowerPlayResponse = {
-  powerPlays: {
+  players: {
     playerId: string;
     playerName: string;
-    powerPlay: PowerPlaysEnum;
+    powerPlays: {
+      playerId: string;
+      playerName: string;
+      powerPlay: PowerPlaysEnum;
+    }[];
   }[];
 };
 
@@ -62,18 +66,23 @@ export const getQuestion = async (gameId: string) =>
     )
   ).data;
 
-export type GetQuestionAnswerResponse = {
+export type PlayerResult = {
+  id: string;
+  name: string;
   answerId?: string;
-  points: number;
-  answers?: {
-    id: string;
-    text: string;
-    isCorrect: boolean;
-    players: {
-      id: string;
-      name: string;
-    }[];
-  }[];
+  answerPoints: number;
+  roundPoints: number;
+};
+export type AnswerResult = {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+};
+
+export type GetQuestionAnswerResponse = {
+  answer?: PlayerResult;
+  answers: AnswerResult[];
+  players: PlayerResult[];
 };
 
 export const getQuestionAnswer = async (gameId: string) =>

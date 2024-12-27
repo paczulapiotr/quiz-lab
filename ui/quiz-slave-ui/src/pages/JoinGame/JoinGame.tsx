@@ -1,31 +1,32 @@
 import { useJoinGameMutation } from "@/api/mutations/useJoinGameMutation";
 import { useGetGame } from "@/api/queries/useGetGame";
-import { PageTemplate } from "@/components/PageTemplate";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import { GameStatus } from "quiz-common-ui";
 import styles from "./JoinGame.module.scss";
 import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
-import { Tile, TileButton, Timer } from "quiz-common-ui/components";
+import {
+  PageTemplate,
+  Tile,
+  TileButton,
+  Timer,
+} from "quiz-common-ui/components";
 
 type Props = {
   starting?: boolean;
 };
 
 const JoinGame = ({ starting = false }: Props) => {
-  const [joined, setJoined] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const { gameId } = useParams<{ gameId: string }>();
 
   const { mutateAsync } = useJoinGameMutation();
   const { data, isLoading, refetch } = useGetGame(gameId);
-
-  const joinGame = async () =>
-    mutateAsync({ playerName, gameId: gameId! }).then(() => setJoined(true));
+  const joined = data?.yourDeviceId != null;
+  const joinGame = async () => mutateAsync({ playerName, gameId: gameId! });
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
-    "JoinGame",
     useCallback(
       (message) => {
         switch (message?.status) {

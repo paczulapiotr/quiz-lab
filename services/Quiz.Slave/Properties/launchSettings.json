@@ -4,10 +4,19 @@
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchUrl": "todos",
       "applicationUrl": "http://localhost:5666",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "http_second": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5667",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DeviceId": "Slave001",
+        "Cors": "http://localhost:5778"
       }
     }
   }

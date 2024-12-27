@@ -17,7 +17,7 @@ public interface IGameEngine
 public class GameEngine(
 ICommunicationService communicationService,
 IMiniGameHandlerSelector miniGameHandlerSelector,
-IGameStateRepository gameStateRepository) : IGameEngine
+IGameStateRepository gameRepository) : IGameEngine
 {
     public bool IsGameFinished { get; private set; } = false;
     public bool IsGameRunning { get; private set; } = false;
@@ -42,7 +42,7 @@ IGameStateRepository gameStateRepository) : IGameEngine
 
     private async Task<Persistance.Models.Game> StartGame(Guid id, CancellationToken cancellationToken)
     {
-        var gameEntity = await gameStateRepository.GetGame(id, cancellationToken);
+        var gameEntity = await gameRepository.GetGame(id, cancellationToken);
         IsGameRunning = true;
         CurrentGameId = id;
         Players = gameEntity.Players.ToList();
@@ -76,13 +76,13 @@ IGameStateRepository gameStateRepository) : IGameEngine
     private async Task SetStatus(Persistance.Models.Game game, GameStatus status, CancellationToken cancellationToken = default)
     {
         game.Status = status;
-        await gameStateRepository.SaveGameState(game, cancellationToken);
+        await gameRepository.Save(game, cancellationToken: cancellationToken);
     }
 
     private async Task PlayMiniGame(Persistance.Models.Game game, MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
         game.CurrentMiniGame = miniGame;
-        await gameStateRepository.SaveGameState(game, cancellationToken);
+        await gameRepository.Save(game, cancellationToken: cancellationToken);
 
         var gameId = CurrentGameId.ToString();
 
@@ -101,20 +101,12 @@ IGameStateRepository gameStateRepository) : IGameEngine
         await SetStatus(game, GameStatus.MiniGameStarted, cancellationToken);
 
         // - wait for mini game handler to finish
-        var result = await handler.HandleMiniGame(
+        await handler.HandleMiniGame(
             miniGame,
             cancellationToken);
 
-        foreach (var playerScore in result)
-        {
-            var score = miniGame.PlayerScores.FirstOrDefault(x => x.Player?.DeviceId == playerScore.Key);
-            if (score is not null)
-            {
-                score.Score += playerScore.Value;
-            }
-        }
+        await gameRepository.Save(game, cancellationToken: cancellationToken);
 
-        await gameStateRepository.SaveGameState(game, cancellationToken);
 
         // - send mini game ening msg for score table rabbitmq message
         await SetStatus(game, GameStatus.MiniGameEnding, cancellationToken);

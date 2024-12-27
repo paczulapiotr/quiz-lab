@@ -10,7 +10,6 @@ const Welcome = () => {
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
-    "Welcome",
     useCallback(
       (payload) => {
         if (payload?.status === GameStatus.GameCreated) {

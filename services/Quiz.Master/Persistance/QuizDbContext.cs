@@ -10,6 +10,8 @@ public class QuizDbContext : DbContext
     public DbSet<Player> Players { get; set; } = null!;
     public DbSet<Models.Game> Games { get; set; } = null!;
     public DbSet<MiniGameDefinition> MiniGameDefinitions { get; set; } = null!;
+    public DbSet<MiniGameInstance> MiniGameInstances { get; set; } = null!;
+    public DbSet<MiniGameInstanceScore> MiniGameInstanceScores { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

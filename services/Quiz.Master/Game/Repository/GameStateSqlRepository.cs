@@ -16,15 +16,26 @@ public class GameStateSqlRepository : IGameStateRepository
     public async Task<Persistance.Models.Game> GetGame(Guid gameId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Games
-            .Include(g => g.Players)
+            .Include(g => g.Players).ThenInclude(x => x.Scores)
             .Include(x => x.MiniGames)
             .ThenInclude(x => x.MiniGameDefinition)
             .FirstAsync(g => g.Id == gameId, cancellationToken);
     }
 
-    public async Task SaveGameState(Persistance.Models.Game game, CancellationToken cancellationToken = default)
+
+    public async Task Save<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, IEntity
     {
-        dbContext.Update(game);
+        var existingEntity = await dbContext.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == entity.Id, cancellationToken);
+
+        if (existingEntity is null)
+        {
+            dbContext.Add(entity);
+        }
+        else
+        {
+            dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

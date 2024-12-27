@@ -1,10 +1,9 @@
 import { useGetGame } from "@/api/queries/useGetGame";
-import { PageTemplate } from "@/components/PageTemplate";
 import { useParams } from "react-router";
 import { GameStatus } from "quiz-common-ui";
 import { useCallback } from "react";
 import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
-import { Tile, Timer } from "quiz-common-ui/components";
+import { PageTemplate, Tile, Timer } from "quiz-common-ui/components";
 import styles from "./JoinGame.module.scss";
 
 type Props = {
@@ -18,7 +17,6 @@ const JoinGame = ({ starting = false }: Props) => {
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
-    "JoinGame",
     useCallback(
       (payload) => {
         if (payload?.status === GameStatus.GameJoined) {
@@ -34,7 +32,7 @@ const JoinGame = ({ starting = false }: Props) => {
     ...(data ? Array(data.gameSize - data.playerNames.length).fill(null) : []),
   ];
   return (
-    <PageTemplate>
+    <PageTemplate squares>
       <p className={styles.waitForPlayers}>
         {starting ? "Rozpoczynanie gry" : "Czekanie na graczy"}
       </p>

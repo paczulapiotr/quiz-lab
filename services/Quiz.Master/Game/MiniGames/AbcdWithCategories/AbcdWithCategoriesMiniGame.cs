@@ -9,7 +9,7 @@ using Definition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdW
 using State = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesState;
 using RoundDefinition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Round;
 using QuestionDefintiion = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Question;
-using System.Security.Cryptography.Pkcs;
+using Quiz.Master.Game.Repository;
 
 namespace Quiz.Master.Game.MiniGames;
 
@@ -18,6 +18,7 @@ public class AbcdWithCategoriesMiniGame(
     IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
     IPublisher publisher,
+    IGameStateRepository gameStateRepository,
     IMiniGameSaveRepository miniGameSaveRepository) : IMiniGameHandler
 {
     private State _state = new State();
@@ -96,7 +97,7 @@ public class AbcdWithCategoriesMiniGame(
         await publisher.PublishAsync(new MiniGameNotification(_gameId, MiniGameType, Action: "PowerPlayStart"), cancellationToken);
         // HTTP_RECEIVE Receive ZAGRYWKA selection or wait for time to pass
 
-        var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForPowerPlaySelectionMs * 1000).Token;
+        var timeToken = new CancellationTokenSource(miniGameData.Config.TimeForPowerPlaySelectionMs).Token;
         // <deviceId, (PowerPlay, sourceDeviceId)[]>
         var powerPlays = new PowerPlaysDictionary();
         var categoryIds = round.Categories.Select(x => x.Id).ToList();
@@ -197,8 +198,7 @@ public class AbcdWithCategoriesMiniGame(
     private async Task AnswerQuestion(Definition.Configuration config, QuestionDefintiion question, State.RoundState roundState)
     {
         var playersCount = _miniGameInstance.Game.PlayersCount;
-        // var timeToken = new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token;
-        var timeToken = new CancellationTokenSource(60_000).Token;
+        var timeToken = new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token;
         var playerIds = _miniGameInstance.Game.Players.Select(x => x.DeviceId.ToString()).ToList();
         // <deviceId, (answerId, timestamp)>
         var answers = new Dictionary<string, (string answerId, DateTime timestamp)>();
@@ -241,7 +241,7 @@ public class AbcdWithCategoriesMiniGame(
                 Timestamp = timestamp,
             };
         })
-        .OrderByDescending(x => x.Timestamp)
+        .OrderBy(x => x.Timestamp)
         .ToList();
 
         var correctAnswers = 0;
@@ -253,6 +253,13 @@ public class AbcdWithCategoriesMiniGame(
                     config.MaxPointsForAnswer - correctAnswers * config.PointsDecrement,
                     config.MinPointsForAnswer);
                 correctAnswers++;
+
+                var player = _miniGameInstance.Game.Players.FirstOrDefault(p => p.DeviceId == ans.DeviceId);
+
+                if (player is not null)
+                {
+                    await miniGameSaveRepository.AddPlayerScore(_miniGameInstance.Id, player.Id, ans.Points);
+                }
             }
         }
 
@@ -263,7 +270,7 @@ public class AbcdWithCategoriesMiniGame(
 
     private async Task<string> SelectCategoryId(string gameId, RoundDefinition firstRound, int playersCount, int timeForCategorySelectionMs, State.RoundState roundState)
     {
-        var timeToken = new CancellationTokenSource(timeForCategorySelectionMs * 1000).Token;
+        var timeToken = new CancellationTokenSource(timeForCategorySelectionMs).Token;
 
         // <categoryId, deviceId[]>
         var selections = new Dictionary<string, List<string>>();
@@ -292,7 +299,6 @@ public class AbcdWithCategoriesMiniGame(
             {
                 selections.Add(selection!.Value!, [selection!.DeviceId]);
             }
-
         }
 
         // add to state
@@ -313,7 +319,7 @@ public class AbcdWithCategoriesMiniGame(
 
     private async Task SaveState(CancellationToken cancellationToken = default)
     {
-        await miniGameSaveRepository.SaveMiniGame(_miniGameInstance, _state, cancellationToken);
+        await miniGameSaveRepository.SaveMiniGameState(_miniGameInstance.Id, _state, cancellationToken);
     }
 
     private Definition? GetMiniGameDefinition() => JsonSerializer.Deserialize<Definition>(_miniGameInstance.MiniGameDefinition.DefinitionJsonData);

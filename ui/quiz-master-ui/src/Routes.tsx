@@ -4,8 +4,8 @@ import { JoinGame } from "./pages/JoinGame";
 import { RulesExplaining } from "./pages/RulesExplaining";
 import { MiniGameEnding } from "./pages/MiniGameEnding";
 import { GameEnding } from "./pages/GameEnding";
-import AbcdWithCategories from "./pages/miniGames/AbcdWithCategories";
 import { MiniGameStarting } from "./pages/MiniGameStarting";
+import { MiniGameStarted } from "./pages/MiniGameStarted";
 
 const Routes = () => {
   return (
@@ -13,11 +13,15 @@ const Routes = () => {
       basePath=""
       pages={{
         [GameStatus.GameCreated]: <JoinGame />,
-        [GameStatus.GameJoined]: <JoinGame />,
         [GameStatus.GameStarting]: <JoinGame starting />,
         [GameStatus.RulesExplaining]: <RulesExplaining />,
         [GameStatus.MiniGameStarting]: <MiniGameStarting />,
-        [GameStatus.MiniGameStarted]: <AbcdWithCategories />,
+        [GameStatus.MiniGameStarted]: (
+          <MiniGameStarted
+            basePath="minigame_play"
+            miniGameType="AbcdWithCategories"
+          />
+        ),
         [GameStatus.MiniGameEnding]: <MiniGameEnding />,
         [GameStatus.GameEnding]: <GameEnding />,
       }}

@@ -49,9 +49,9 @@ builder.Services.AddQuizCommonServices(opts =>
     opts.AddQueryHandler<GetQuestionHandler, GetQuestionQuery, GetQuestionResult>();
     opts.AddQueryHandler<GetQuestionAnswerHandler, GetQuestionAnswerQuery, GetQuestionAnswerResult>();
     opts.AddQueryHandler<GetSelectedCategoryHandler, GetSelectedCategoryQuery, GetSelectedCategoryResult>();
-
-
+    opts.AddQueryHandler<GetScoresHandler, GetScoresQuery, GetScoresResult>();
 });
+
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddHostedService<GameEngineHostedService>();
 
@@ -83,7 +83,7 @@ builder.Services.AddCors(options =>
     });
     options.AddPolicy("SignalR", opts =>
     {
-        opts.WithOrigins([builder.Configuration["Cors"]!])
+        opts.WithOrigins(builder.Configuration["Cors"]!.Split(","))
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();

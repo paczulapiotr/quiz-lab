@@ -7,9 +7,11 @@ type Props = {
 
 const ShowAppliedPowerPlay = ({ gameId }: Props) => {
   const appliedPowerPlays = useGetAppliedPowerPlay(gameId, true);
-
+  console.log(appliedPowerPlays.data);
   return (
-    <Component appliedPowerPlays={appliedPowerPlays.data?.powerPlays ?? []} />
+    <Component
+      appliedPowerPlays={appliedPowerPlays.data?.players[0]?.powerPlays ?? []}
+    />
   );
 };
 

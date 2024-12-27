@@ -13,7 +13,6 @@ const Routes = () => {
       basePath=""
       pages={{
         [GameStatus.GameCreated]: <JoinGame />,
-        [GameStatus.GameJoined]: <JoinGame />,
         [GameStatus.GameStarting]: <JoinGame starting />,
         [GameStatus.RulesExplaining]: <RulesExplaining />,
         [GameStatus.MiniGameStarting]: <MiniGameStarting />,

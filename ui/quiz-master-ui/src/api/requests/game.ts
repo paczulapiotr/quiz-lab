@@ -25,3 +25,23 @@ export const getGame = async (gameId: string) =>
       `/game/${gameId}`,
     )
   ).data;
+
+export type PlayerScore = {
+  playerName: string;
+  playerDeviceId: string;
+  miniGameScore: number;
+  totalScore: number;
+};
+
+export type GetScoresResponse = {
+  miniGameId: string;
+  miniGameType: number;
+  playerScores: PlayerScore[];
+} & PlayerScore;
+
+export const getScores = async (gameId: string) =>
+  (
+    await instance.get<never, AxiosResponse<GetScoresResponse>>(
+      `/game/${gameId}/mini-game/score`,
+    )
+  ).data;

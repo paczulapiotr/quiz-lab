@@ -10,7 +10,7 @@ function App() {
     defaultOptions: {
       queries: {
         retry: false,
-        staleTime: Infinity,
+        staleTime: 0,
         cacheTime: 0,
       },
     },

@@ -1,3 +1,4 @@
+import { useGetScore } from "@/api/queries/useGetScore";
 import { PowerPlaysEnum, PowerPlaysNames } from "../types";
 import Component from "./Component";
 import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
@@ -10,7 +11,7 @@ type Props = {
 const SelectPowerPlay = ({ gameId }: Props) => {
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
   const powerPlays = useGetPowerPlays(gameId, true);
-
+  const { data: score } = useGetScore(gameId);
   const sendSelectPowerPlay = async (
     powerPlay: PowerPlaysEnum,
     deviceId: string,
@@ -27,6 +28,7 @@ const SelectPowerPlay = ({ gameId }: Props) => {
 
   return (
     <Component
+      score={score?.miniGameScore ?? 0}
       onSelect={sendSelectPowerPlay}
       players={powerPlays.data?.players ?? []}
     />

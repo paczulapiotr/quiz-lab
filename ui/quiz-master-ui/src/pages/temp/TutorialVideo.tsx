@@ -1,5 +1,5 @@
-import AdminPanel from "@/AdminPanel";
 import SampleMp4 from "@/assets/videos/sample_720.mp4";
+import styles from "./TutorialVideo.module.scss";
 
 type Props = {
   title: string;
@@ -7,19 +7,8 @@ type Props = {
 
 const TutorialVideo = ({ title }: Props) => {
   return (
-    <>
-      <video
-        src={SampleMp4}
-        autoPlay
-        width={1920}
-        height={1080}
-        style={{
-          position: "fixed",
-          display: "block",
-          top: 0,
-          left: 0,
-        }}
-      />
+    <div className={styles.tutorial}>
+      <video src={SampleMp4} autoPlay width={1920} height={1080} />
       <p
         style={{
           position: "fixed",
@@ -36,10 +25,7 @@ const TutorialVideo = ({ title }: Props) => {
       >
         {title}
       </p>
-      <div style={{ marginTop: "auto" }}>
-        <AdminPanel />
-      </div>
-    </>
+    </div>
   );
 };
 

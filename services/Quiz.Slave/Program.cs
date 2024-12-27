@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(opts =>
     {
-        opts.WithOrigins([builder.Configuration["Cors"]!])
+        opts.WithOrigins(builder.Configuration["Cors"]!.Split(","))
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();

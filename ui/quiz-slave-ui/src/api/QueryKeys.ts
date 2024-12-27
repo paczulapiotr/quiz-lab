@@ -1,5 +1,6 @@
 const QueryKeys = {
   GAME: "GAME",
+  SCORE: "SCORE",
   CURRENT_MINI_GAME: "CURRENT_MINI_GAME",
   MINIGAMES: {
     ABCD: {

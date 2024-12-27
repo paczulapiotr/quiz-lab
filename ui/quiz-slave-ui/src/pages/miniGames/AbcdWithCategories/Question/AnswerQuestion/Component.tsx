@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { Tile, TileButton } from "quiz-common-ui/components";
+import {
+  HeaderTile,
+  ScoreTile,
+  TileButton,
+  Timer,
+} from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
 
 type Props = {
   question: string;
   answers: { id: string; text: string }[];
   onAnswer: (answerId: string) => void;
+  score: number;
 };
 
-const Component = ({ answers, onAnswer, question }: Props) => {
+const Component = ({ answers, onAnswer, question, score }: Props) => {
   const [selected, setSelected] = useState<string>();
 
   const answerHandle = (ansId: string) => {
@@ -18,8 +24,9 @@ const Component = ({ answers, onAnswer, question }: Props) => {
   };
 
   return (
-    <div>
-      <Tile text={question} />
+    <>
+      <ScoreTile score={score} />
+      <HeaderTile title={question} />
       <div className={styles.grid}>
         {answers.map((x) => (
           <TileButton
@@ -30,7 +37,8 @@ const Component = ({ answers, onAnswer, question }: Props) => {
           />
         ))}
       </div>
-    </div>
+      <Timer startSeconds={29} />
+    </>
   );
 };
 
