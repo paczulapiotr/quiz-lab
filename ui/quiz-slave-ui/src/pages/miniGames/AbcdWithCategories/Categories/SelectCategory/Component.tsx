@@ -17,8 +17,8 @@ const SelectCategory = ({ categories, onSelect, score }: Props) => {
   const [selected, setSelected] = useState<string>();
 
   const onSelectHandle = (categoryId: string) => {
-    setSelected(categoryId);
     if (selected != null) return;
+    setSelected(categoryId);
     onSelect(categoryId);
   };
 

@@ -18,11 +18,6 @@ type Props = {
   powerPlays: PowerPlaysEnum[];
 };
 
-// PowerPlaysEnum.Bombs;
-// PowerPlaysEnum.Freeze;
-// PowerPlaysEnum.Letters;
-// PowerPlaysEnum.Slime;
-
 const Component = ({
   answers,
   onAnswer,
@@ -33,8 +28,8 @@ const Component = ({
   const [selected, setSelected] = useState<string>();
 
   const answerHandle = (ansId: string) => {
-    setSelected(ansId);
     if (selected != null) return;
+    setSelected(ansId);
     onAnswer(ansId);
   };
 
@@ -46,6 +41,10 @@ const Component = ({
     return dict;
   }, [answers, powerPlays]);
 
+  const freezeStacks = powerPlays.filter(
+    (x) => x === PowerPlaysEnum.Freeze,
+  ).length;
+
   return (
     <>
       <ScoreTile score={score} />
@@ -54,6 +53,7 @@ const Component = ({
         {answers.map((x) => (
           <TileButton
             key={x.id}
+            freezeStacks={freezeStacks}
             text={answerTextDict[x.id]}
             onClick={() => answerHandle(x.id)}
             selected={selected === x.id}

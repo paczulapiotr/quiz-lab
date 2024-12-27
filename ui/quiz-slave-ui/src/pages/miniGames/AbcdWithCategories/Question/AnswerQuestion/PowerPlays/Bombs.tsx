@@ -12,7 +12,7 @@ type Props = {
 const Bombs = ({ powerPlays }: Props) => {
   const [bombDetonated, setBombDetonated] = useState<boolean>(false);
   const bombsCount =
-    powerPlays.filter((x) => x === PowerPlaysEnum.Bombs).length || 5;
+    powerPlays.filter((x) => x === PowerPlaysEnum.Bombs).length * 3;
 
   return (
     <>
