@@ -1,5 +1,11 @@
 import { FC, useEffect, useRef } from "react";
-import { Application, Graphics, BLEND_MODES } from "pixi.js";
+import {
+  Application,
+  Graphics,
+  BLEND_MODES,
+  LINE_CAP,
+  LINE_JOIN,
+} from "pixi.js";
 
 const EraserCanvas: FC = () => {
   const canvasRef = useRef<HTMLDivElement | null>(null);
@@ -14,7 +20,7 @@ const EraserCanvas: FC = () => {
     });
 
     if (!canvasRef.current) return;
-    canvasRef.current.appendChild(app.view as unknown as Node);
+    canvasRef.current.appendChild(app.view as HTMLCanvasElement);
 
     // 2. Draw a colored background rectangle
     const background = new Graphics();
@@ -28,35 +34,50 @@ const EraserCanvas: FC = () => {
     app.stage.hitArea = background.getLocalBounds();
 
     let isErasing = false;
+    let lastPos: { x: number; y: number } | null = null;
 
-    // 4. Pointer events
-    app.stage.on("pointerdown", () => {
+    // 4. Start erasing on pointerdown
+    app.stage.on("pointerdown", (event) => {
       isErasing = true;
+      // Save the initial pointer position
+      const { x, y } = event.data.global;
+      lastPos = { x, y };
     });
 
+    // 5. Stop erasing on pointerup
     app.stage.on("pointerup", () => {
       isErasing = false;
+      lastPos = null;
     });
 
+    // 6. On pointer move, draw a thick line with round caps between the last position and current position
     app.stage.on("pointermove", (event) => {
-      if (!isErasing) return;
+      if (!isErasing || !lastPos) return;
 
-      // Grab the pointer position
+      // Current pointer position
       const { x, y } = event.data.global;
 
-      // 5. Create a square “eraser” graphic
-      const eraser = new Graphics();
-      eraser.beginFill(0xffffff);
-      // Draw a 30x30 square centered at the pointer
-      eraser.drawRect(x - 15, y - 15, 30, 30);
-      eraser.endFill();
+      // Create a line to erase between the last position and current position
+      const eraserLine = new Graphics();
+      // 7. Set line style (30px thick, round caps, round joins)
+      eraserLine.lineStyle({
+        width: 30,
+        color: 0xffffff,
+        alpha: 1,
+        cap: LINE_CAP.ROUND,
+        join: LINE_JOIN.ROUND,
+      });
+      eraserLine.blendMode = BLEND_MODES.ERASE;
 
-      // 6. Set blend mode to ERASE so it removes color
-      eraser.blendMode = BLEND_MODES.ERASE;
+      // Move from last position to current pointer position
+      eraserLine.moveTo(lastPos.x, lastPos.y);
+      eraserLine.lineTo(x, y);
 
-      // 7. Add the eraser shape on top of the background
-      //    Everything drawn with blendMode=ERASE will punch out transparent holes
-      background.addChild(eraser);
+      // Add it on top of the background so it can erase
+      background.addChild(eraserLine);
+
+      // Update last position
+      lastPos = { x, y };
     });
 
     // 8. Cleanup on component unmount
