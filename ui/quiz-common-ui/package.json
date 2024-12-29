@@ -1,7 +1,7 @@
 {
   "name": "quiz-common-ui",
   "private": false,
-  "version": "0.2.35",
+  "version": "0.3.10",
   "type": "module",
   "sourceMap": true,
   "exports": {
@@ -37,6 +37,7 @@
   "dependencies": {
     "@microsoft/signalr": "^8.0.7",
     "classnames": "^2.5.1",
+    "lodash": "^4.17.21",
     "react-modal": "^3.16.3",
     "uuid": "^11.0.3"
   },
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

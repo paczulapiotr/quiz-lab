@@ -10,8 +10,10 @@ import { CenteredInstruction } from "./CenteredInstruction";
 import { ScoreTile } from "./ScoreTile";
 import { FlyingObjects } from "./FlyingObjects";
 import { SimpleModal } from "./SimpleModal";
+import { EraserCanvas } from "./EraserCanvas";
 
 export {
+  EraserCanvas,
   SimpleModal,
   FlyingObjects,
   ScoreTile,

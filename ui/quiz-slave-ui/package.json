@@ -21,7 +21,7 @@
     "lodash": "^4.17.21",
     "motion": "^11.15.0",
     "pixi.js": "^7.2.0",
-    "quiz-common-ui": "^0.2.35",
+    "quiz-common-ui": "^0.3.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.1",

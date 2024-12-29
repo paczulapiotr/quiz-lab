@@ -45,6 +45,10 @@ const Component = ({
     (x) => x === PowerPlaysEnum.Freeze,
   ).length;
 
+  const slimeStacks = powerPlays.filter(
+    (x) => x === PowerPlaysEnum.Slime,
+  ).length;
+
   return (
     <>
       <ScoreTile score={score} />
@@ -54,6 +58,7 @@ const Component = ({
           <TileButton
             key={x.id}
             freezeStacks={freezeStacks}
+            slimeStacks={slimeStacks}
             text={answerTextDict[x.id]}
             onClick={() => answerHandle(x.id)}
             selected={selected === x.id}

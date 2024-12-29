@@ -3,6 +3,13 @@
 .tileWrapper {
   position: relative;
 
+  .slime {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+
   .freeze {
     position: absolute;
     top: 0;
