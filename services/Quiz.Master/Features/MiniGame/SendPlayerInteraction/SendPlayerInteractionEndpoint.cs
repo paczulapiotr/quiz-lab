@@ -1,14 +1,15 @@
+using Carter;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.Common.CQRS;
 using Quiz.Master.Extensions;
 
 namespace Quiz.Master.Features.MiniGame.SendPlayerInteraction;
 
-public static partial class Endpoints
+public class SendPlayerInteractionEndpoint : ICarterModule
 {
-    public static void MapSendPlayerInteraction(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapPost("/api/game/{gameId}/mini-game/interaction", async (
+        app.MapPost("/api/game/{gameId}/mini-game/interaction", async (
             [FromRoute] Guid gameId,
             [FromBody] SendPlayerInteractionRequest request,
             IHttpContextAccessor httpContextAccessor,

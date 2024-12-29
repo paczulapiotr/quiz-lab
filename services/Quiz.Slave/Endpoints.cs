@@ -1,9 +1,5 @@
 using System.Net.Http.Headers;
 using Quiz.Common;
-using Quiz.Common.Broker.Publisher;
-using Quiz.Common.Messages;
-using Quiz.Slave.Hubs;
-using Quiz.Slave.Hubs.Models;
 
 namespace Quiz.Slave;
 
@@ -12,12 +8,6 @@ public static class Endpoints
     public static void MapEndpoints(this IEndpointRouteBuilder endpoints)
     {
         MapReverseProxy(endpoints);
-
-        endpoints.MapPost("/select-answer/{answer}", async (string answer, ISyncHubClient syncClient, CancellationToken cancellationToken = default) =>
-        {
-            await syncClient.SelectAnswer(new SelectAnswer(answer), cancellationToken);
-            return Results.Ok("Answered");
-        });
     }
 
     private static void MapReverseProxy(IEndpointRouteBuilder endpoints)

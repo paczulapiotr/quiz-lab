@@ -1,13 +1,14 @@
+using Carter;
 using Quiz.Common.CQRS;
 using Quiz.Master.Extensions;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestionAnswer;
 
-public static partial class Endpoints
+public class GetQuestionAnswerEndpoint : ICarterModule
 {
-    public static void MapGetQuestionAnswerEndpoint(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapGet("/api/game/{gameId}/mini-game/abcd/question-answer", async (Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetQuestionAnswerQuery, GetQuestionAnswerResult> commandHandler) =>
+        app.MapGet("/api/game/{gameId}/mini-game/abcd/question-answer", async (Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetQuestionAnswerQuery, GetQuestionAnswerResult> commandHandler) =>
         {
             var deviceId = httpContextAccessor.GetDeviceId();
             var result = await commandHandler.HandleAsync(new GetQuestionAnswerQuery(gameId, deviceId));

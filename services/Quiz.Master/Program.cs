@@ -1,27 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using Carter;
 using Quiz.Common;
 using Quiz.Common.Broker.Builder;
 using Quiz.Common.Messages.Game;
 using Quiz.Common.WebApplication;
 using Quiz.Master;
-using Quiz.Master.Features.Game.CreateGame;
-using Quiz.Master.Features.Game.GetGame;
-using Quiz.Master.Features.Game.JoinGame;
 using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
 using Quiz.Master.Migrations;
-using Quiz.Master.Features.MiniGame.GetMiniGame;
-using Quiz.Master.Features.MiniGame.SendPlayerInteraction;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetAppliedPowerPlay;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetCategories;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetPowerPlays;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestion;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestionAnswer;
-using Quiz.Master.Features.MiniGame.AbcdWithCategories.GetSelectedCategory;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
+
+builder.Services.AddCarter();
 builder.Services.AddMvcCore();
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
@@ -34,23 +26,7 @@ builder.Services.AddSwaggerGen(c =>
 // Configure SQLite DbContext
 builder.Services.AddDbContextFactory<QuizDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
-builder.Services.AddQuizCommonServices(opts =>
-{
-    opts.AddCommandHandler<JoinGameHandler, JoinGameCommand>();
-    opts.AddCommandHandler<CreateGameHandler, CreateGameCommand>();
-    opts.AddCommandHandler<SendPlayerInteractionHandler, SendPlayerInteractionCommand>();
-    opts.AddQueryHandler<GetGameHandler, GetGameQuery, GetGameResult>();
-    opts.AddQueryHandler<GetMiniGameHandler, GetMiniGameQuery, GetMiniGameResult>();
-
-    // AbcdWithCategories mini game
-    opts.AddQueryHandler<GetAppliedPowerPlayHandler, GetAppliedPowerPlayQuery, GetAppliedPowerPlayResult>();
-    opts.AddQueryHandler<GetCategoriesHandler, GetCategoriesQuery, GetCategoriesResult>();
-    opts.AddQueryHandler<GetPowerPlaysHandler, GetPowerPlaysQuery, GetPowerPlaysResult>();
-    opts.AddQueryHandler<GetQuestionHandler, GetQuestionQuery, GetQuestionResult>();
-    opts.AddQueryHandler<GetQuestionAnswerHandler, GetQuestionAnswerQuery, GetQuestionAnswerResult>();
-    opts.AddQueryHandler<GetSelectedCategoryHandler, GetSelectedCategoryQuery, GetSelectedCategoryResult>();
-    opts.AddQueryHandler<GetScoresHandler, GetScoresQuery, GetScoresResult>();
-});
+builder.Services.AddQuizCommonServices();
 
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddHostedService<GameEngineHostedService>();
@@ -58,7 +34,6 @@ builder.Services.AddHostedService<GameEngineHostedService>();
 builder.Services
     .AddMessageBroker(
         builder.Configuration.GetConnectionString("RabbitMq")!,
-        new SystemJsonSerializer(),
         opts =>
         {
             var deviceId = DeviceIdHelper.DeviceUniqueId;
@@ -94,12 +69,11 @@ builder.Services.AddQuizServices();
 builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
-
 //Apply migrations on startup
 await app.MigrateDatabaseAsync();
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
-app.MapEndpoints();
+app.MapCarter();
 app.MapHub<SyncHub>("/sync").RequireCors("SignalR");
 app.UseCors();
 app.UseSwagger();

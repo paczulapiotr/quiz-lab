@@ -11,7 +11,7 @@ namespace Quiz.Common.WebApplication;
 
 public static class WebApplicationExtensions
 {
-    public static void AddQuizCommonServices(this IServiceCollection services, Action<WebApplicationConfig> configure)
+    public static void AddQuizCommonServices(this IServiceCollection services, Action<WebApplicationConfig>? configure = null)
     {
         // services.AddSingleton<>();
         services.AddHealthChecks();
@@ -20,7 +20,11 @@ public static class WebApplicationExtensions
         services.AddSingleton(typeof(IBehaviorPipeline<,>), typeof(LoggingBehavior<,>));
 
         var config = new WebApplicationConfig(services);
-        configure(config);
+
+        if (configure is not null)
+        {
+            configure(config);
+        }
     }
 
     public static void AddQuizHub<

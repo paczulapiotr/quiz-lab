@@ -1,13 +1,14 @@
+using Carter;
 using Quiz.Common.CQRS;
 using Quiz.Master.Extensions;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetPowerPlays;
 
-public static partial class Endpoints
+public class GetPowerPlaysEndpoint : ICarterModule
 {
-    public static void MapGetPowerPlaysEndpoint(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapGet("/api/game/{gameId}/mini-game/abcd/power-plays", async (Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetPowerPlaysQuery, GetPowerPlaysResult> commandHandler) =>
+        app.MapGet("/api/game/{gameId}/mini-game/abcd/power-plays", async (Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetPowerPlaysQuery, GetPowerPlaysResult> commandHandler) =>
         {
             var deviceId = httpContextAccessor.GetDeviceId();
             var Game = await commandHandler.HandleAsync(new GetPowerPlaysQuery(gameId, deviceId));

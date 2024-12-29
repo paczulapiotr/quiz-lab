@@ -1,5 +1,4 @@
 using Quiz.Common.Broker.Consumer;
-using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.QueueDefinitions;
 using Quiz.Common.Messages.Game;
 using Quiz.Master.Hubs;
@@ -16,9 +15,8 @@ internal class MiniGameNotificationConsumer : ConsumerBase<MiniGameNotification>
         IConnection connection,
         ISyncHubClient syncHubClient,
         IQueueConsumerDefinition<MiniGameNotification> queueDefinition,
-        ILogger<MiniGameNotificationConsumer> logger,
-        IJsonSerializer jsonSerializer)
-    : base(connection, queueDefinition, logger, jsonSerializer)
+        ILogger<MiniGameNotificationConsumer> logger)
+    : base(connection, queueDefinition, logger)
     {
         this.syncHubClient = syncHubClient;
     }

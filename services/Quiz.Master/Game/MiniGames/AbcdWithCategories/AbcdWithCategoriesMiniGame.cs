@@ -9,7 +9,6 @@ using Definition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdW
 using State = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesState;
 using RoundDefinition = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Round;
 using QuestionDefintiion = Quiz.Master.Persistance.Models.MiniGames.AbcdCategories.AbcdWithCategoriesDefinition.Question;
-using Quiz.Master.Game.Repository;
 
 namespace Quiz.Master.Game.MiniGames;
 
@@ -18,7 +17,6 @@ public class AbcdWithCategoriesMiniGame(
     IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
     IPublisher publisher,
-    IGameStateRepository gameStateRepository,
     IMiniGameSaveRepository miniGameSaveRepository) : IMiniGameHandler
 {
     private State _state = new State();

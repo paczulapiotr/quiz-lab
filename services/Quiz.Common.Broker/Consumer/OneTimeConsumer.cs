@@ -1,10 +1,10 @@
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using static System.Text.Json.JsonSerializer;
 
 namespace Quiz.Common.Broker.Consumer;
 
@@ -15,15 +15,13 @@ where TMessage : class, IMessage
     private readonly IConnection _connection;
     protected readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
     protected IChannel _channel = null!;
-    protected readonly IJsonSerializer jsonSerializer;
     protected readonly ILogger logger;
 
-    public OneTimeConsumer(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger, IJsonSerializer jsonSerializer)
+    public OneTimeConsumer(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger)
     {
         _connection = connection;
         _queueDefinition = queueDefinition;
         this.logger = logger;
-        this.jsonSerializer = jsonSerializer;
     }
 
     protected async Task InitChannel(CancellationToken cancellationToken = default)
@@ -118,7 +116,7 @@ where TMessage : class, IMessage
             {
                 var body = ea.Body.ToArray();
                 var messageJson = Encoding.UTF8.GetString(body);
-                var message = jsonSerializer.Deserialize<TMessage>(messageJson);
+                var message = Deserialize<TMessage>(messageJson);
                 messageId = message?.MessageId;
                 correlationId = message?.CorrelationId;
                 logger.LogTrace($"[{correlationId}/{messageId}] received message {typeof(TMessage)}: {messageJson}");

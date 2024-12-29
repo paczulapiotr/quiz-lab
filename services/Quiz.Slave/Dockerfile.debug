@@ -28,7 +28,7 @@ COPY ./Quiz.Common/ ./Quiz.Common/
 COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
 COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
 RUN dotnet publish "./Quiz.Slave" -c $BUILD_CONFIGURATION \
--p:PublishAot=false -p:PublishSingleFile=false -o /src/publish
+-p:PublishSingleFile=false -o /src/publish
 
 # Final stage/image
 FROM base AS final
