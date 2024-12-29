@@ -1,6 +1,4 @@
-// utils
-export { setupCounter } from "./utils/counter";
+import { GameStatus, GameStatusNames } from "./services/types";
+import { LocalSyncServiceProvider } from "./contexts";
 
-// components
-export { Header } from "./components/header";
-export { Counter } from "./components/counter";
+export { GameStatus, GameStatusNames, LocalSyncServiceProvider };

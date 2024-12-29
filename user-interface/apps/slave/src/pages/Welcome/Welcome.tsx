@@ -1,4 +1,4 @@
-import { GameStatus } from "quiz-common-ui";
+import { GameStatus } from "@repo/ui";
 import { FlyingSquare } from "@repo/ui/components";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { useCallback } from "react";
