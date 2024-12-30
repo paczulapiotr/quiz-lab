@@ -1,4 +1,4 @@
-namespace Quiz.Master.Persistance.Models;
+namespace Quiz.Master.MiniGames.Models.Abstract;
 
 public abstract record AnswerBase
 {

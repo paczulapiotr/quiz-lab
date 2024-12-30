@@ -1,4 +1,5 @@
-namespace Quiz.Master.Persistance.Models.MiniGames;
+namespace Quiz.Master.MiniGames.Models;
+
 
 public abstract record MiniGameDefinitionBase<TConfig>
 where TConfig : class, new()

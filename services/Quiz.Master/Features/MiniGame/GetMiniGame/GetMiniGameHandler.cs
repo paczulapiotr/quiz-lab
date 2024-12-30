@@ -2,9 +2,9 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
+using Quiz.Master.Core.Models;
+using Quiz.Master.MiniGames.Models.AbcdCategories;
 using Quiz.Master.Persistance;
-using Quiz.Master.Persistance.Models;
-using Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
@@ -16,7 +16,7 @@ public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<
 
     public async ValueTask<GetMiniGameResult?> HandleAsync(GetMiniGameQuery request, CancellationToken cancellationToken = default)
     {
-        var activeGame = await quizRepository.Query<Persistance.Models.Game>()
+        var activeGame = await quizRepository.Query<Core.Models.Game>()
             .Include(x => x.Players)
             .Include(x => x.MiniGames)
             .ThenInclude(x => x.MiniGameDefinition)
@@ -44,7 +44,9 @@ public class GetMiniGameHandler(IQuizRepository quizRepository) : IQueryHandler<
     {
         return type switch
         {
-            MiniGameType.AbcdWithCategories => string.IsNullOrWhiteSpace(stateJsonData) ? new AbcdWithCategoriesState() : JsonSerializer.Deserialize<AbcdWithCategoriesState>(stateJsonData),
+            MiniGameType.AbcdWithCategories => string.IsNullOrWhiteSpace(stateJsonData)
+                ? new AbcdWithCategoriesState()
+                : JsonSerializer.Deserialize<AbcdWithCategoriesState>(stateJsonData),
             _ => null
         };
     }

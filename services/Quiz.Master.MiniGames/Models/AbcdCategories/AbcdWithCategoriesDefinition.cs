@@ -1,4 +1,6 @@
-namespace Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
+using Quiz.Master.MiniGames.Models.Abstract;
+
+namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
 public record AbcdWithCategoriesDefinition : MiniGameDefinitionBase<AbcdWithCategoriesDefinition.Configuration>
 {

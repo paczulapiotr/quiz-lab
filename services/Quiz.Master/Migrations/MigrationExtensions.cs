@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Json.Schema;
 using Quiz.Master.Persistance;
-using Quiz.Master.Persistance.Models;
+using Quiz.Master.Core.Models;
 
 namespace Quiz.Master.Migrations;
 

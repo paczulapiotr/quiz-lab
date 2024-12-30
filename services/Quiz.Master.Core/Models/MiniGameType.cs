@@ -1,5 +1,5 @@
 
-namespace Quiz.Master.Persistance.Models;
+namespace Quiz.Master.Core.Models;
 
 public enum MiniGameType
 {

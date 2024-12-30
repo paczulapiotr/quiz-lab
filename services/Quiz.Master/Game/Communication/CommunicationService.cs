@@ -9,40 +9,6 @@ public class CommunicationService(
     IOneTimeConsumer<GameStatusUpdate> gameStatusConsumer)
      : ICommunicationService
 {
-
-    // public async Task SendRoundEndingMessage(string gameId, CancellationToken cancellationToken = default)
-    // {
-    //     await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundEnding), cancellationToken);
-    //     Task.Delay(10_000)
-    //         .ContinueWith(async (cancel) =>
-    //         {
-    //             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundEnded), cancellationToken);
-    //         })
-    //         .ConfigureAwait(false);
-    // }
-
-    // public async Task ReceiveRoundEndedMessage(string gameId, CancellationToken cancellationToken = default)
-    // {
-    //     await ReceiveStatusMessage(gameId, GameStatus.RoundEnded, cancellationToken: cancellationToken);
-    // }
-
-    // public async Task SendRoundStartingMessage(string gameId, CancellationToken cancellationToken = default)
-    // {
-    //     await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundStarting), cancellationToken);
-    //     Task.Delay(10_000)
-    //         .ContinueWith(async (cancel)
-    //             =>
-    //         {
-    //             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RoundStarted), cancellationToken);
-    //         })
-    //                 .ConfigureAwait(false);
-    // }
-
-    // public async Task ReceiveRoundStartedMessage(string gameId, CancellationToken cancellationToken = default)
-    // {
-    //     await ReceiveStatusMessage(gameId, GameStatus.RoundStarted, cancellationToken: cancellationToken);
-    // }
-
     public async Task SendRulesExplainMessage(string gameId, CancellationToken cancellationToken = default)
     {
         await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RulesExplaining), cancellationToken);

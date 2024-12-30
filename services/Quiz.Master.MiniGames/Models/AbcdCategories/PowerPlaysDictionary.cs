@@ -1,5 +1,5 @@
 
-namespace Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
+namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
 public enum PowerPlay
 {

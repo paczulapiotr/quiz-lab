@@ -1,10 +1,10 @@
-namespace Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
+namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
 public record AbcdWithCategoriesState
 {
-    public string CurrentRoundId { get; set; } = string.Empty;
-    public string CurrentCategoryId { get; set; } = string.Empty;
-    public string CurrentQuestionId { get; set; } = string.Empty;
+    public string? CurrentRoundId { get; set; } = string.Empty;
+    public string? CurrentCategoryId { get; set; } = string.Empty;
+    public string? CurrentQuestionId { get; set; } = string.Empty;
     public List<RoundState> Rounds { get; set; } = new List<RoundState>();
 
     public record RoundState

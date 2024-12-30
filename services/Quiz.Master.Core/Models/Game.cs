@@ -1,6 +1,4 @@
-using Quiz.Common.Messages.Game;
-
-namespace Quiz.Master.Persistance.Models;
+namespace Quiz.Master.Core.Models;
 
 public record Game : IEntity
 {

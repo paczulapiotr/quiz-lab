@@ -1,8 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
+using Quiz.Master.Core.Models;
 using Quiz.Master.Persistance;
-using Quiz.Master.Persistance.Models;
+
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
@@ -14,7 +15,7 @@ public class GetScoresHandler(IQuizRepository quizRepository) : IQueryHandler<Ge
 {
     public async ValueTask<GetScoresResult?> HandleAsync(GetScoresQuery request, CancellationToken cancellationToken = default)
     {
-        var activeGame = await quizRepository.Query<Persistance.Models.Game>()
+        var activeGame = await quizRepository.Query<Core.Models.Game>()
             .Include(x => x.Players).ThenInclude(x => x.Scores)
             .Include(x => x.MiniGames)
             .ThenInclude(x => x.MiniGameDefinition)

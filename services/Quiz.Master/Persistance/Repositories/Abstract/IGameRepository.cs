@@ -1,0 +1,7 @@
+namespace Quiz.Master.Persistance.Repositories.Abstract;
+
+public interface IGameRepository
+{
+    Task UpdateAsync(Core.Models.Game game, CancellationToken cancellationToken = default);
+    Task<Core.Models.Game> FindAsync(Guid gameId, CancellationToken cancellationToken = default);
+}
