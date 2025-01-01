@@ -1,6 +1,5 @@
 import { PageTemplate } from "@/components/PageTemplate";
 import { GenericNavigator } from "@repo/ui/components";
-import { SyncReceiveData } from "node_modules/quiz-common-ui/dist/services/types";
 import ShowAppliedPowerPlay from "./PowerPlays/ShowAppliedPowerPlay";
 import SelectCategory from "./Categories/SelectCategory";
 import ShowCategory from "./Categories/ShowCategory";
@@ -9,6 +8,7 @@ import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import SelectPowerPlay from "./PowerPlays/SelectPowerPlay";
 import { useParams } from "react-router";
+import { SyncReceiveData } from "@repo/ui/services/types";
 
 type Props = {
   basePath: string;

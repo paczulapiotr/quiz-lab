@@ -1,6 +1,6 @@
-import { useLocalSyncConsumer } from "@/hooks";
-import { SyncReceiveDefinitionNames } from "@/services/types";
-import { cleanupSlash } from "@/utility";
+import { useLocalSyncConsumer } from "#/hooks";
+import { SyncReceiveDefinitionNames } from "#/services/types";
+import { cleanupSlash } from "#/utility";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
 
 interface Props<TMessage> {
@@ -28,8 +28,8 @@ const GenericNavigator = <TMessage,>({
   useLocalSyncConsumer(queueName, key, (message) => {
     navigate(
       cleanupSlash(
-        `${locationBasePath}${createNavigationPath(message as TMessage)}`,
-      ),
+        `${locationBasePath}${createNavigationPath(message as TMessage)}`
+      )
     );
   });
 

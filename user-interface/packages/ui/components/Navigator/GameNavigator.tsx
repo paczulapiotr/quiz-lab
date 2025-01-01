@@ -2,8 +2,8 @@ import { GameStatus } from "@repo/ui";
 import { useCallback, useMemo } from "react";
 import { Route, Routes } from "react-router";
 import GenericNavigator from "./GenericNavigator";
-import { SyncReceiveData } from "@/services/types";
-import { cleanupSlash } from "@/utility";
+import { SyncReceiveData } from "#/services/types";
+import { cleanupSlash } from "#/utility";
 
 type Props = {
   basePath: string;
@@ -43,7 +43,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
           return "";
       }
     },
-    [],
+    []
   );
   const routes = useMemo<Record<string, JSX.Element>>(
     () => ({
@@ -56,7 +56,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
       ":gameId/minigame_finish/*": pages[GameStatus.MiniGameEnding],
       ":gameId/end/*": pages[GameStatus.GameEnding],
     }),
-    [pages],
+    [pages]
   );
 
   return (

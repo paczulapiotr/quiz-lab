@@ -1,4 +1,4 @@
-import StartSvg from "@/assets/icons/star.svg";
+import StartSvg from "#/assets/icons/star.svg";
 import styles from "./ScoreTile.module.scss";
 
 type Props = {
