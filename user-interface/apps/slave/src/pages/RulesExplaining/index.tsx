@@ -1,9 +1,12 @@
-import { useParams } from "react-router";
+import { PageTemplate } from "@repo/ui/components";
+import WatchOtherScreen from "../temp/WatchOtherScreen";
 
 const RulesExplaining = () => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return <div>{"RulesExplaining: " + gameId}</div>;
+  return (
+    <PageTemplate>
+      <WatchOtherScreen title="Zasady gry..." />
+    </PageTemplate>
+  );
 };
 
 export default RulesExplaining;

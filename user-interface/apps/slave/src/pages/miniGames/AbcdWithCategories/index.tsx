@@ -1,5 +1,4 @@
-import { PageTemplate } from "@/components/PageTemplate";
-import { GenericNavigator } from "@repo/ui/components";
+
 import ShowAppliedPowerPlay from "./PowerPlays/ShowAppliedPowerPlay";
 import SelectCategory from "./Categories/SelectCategory";
 import ShowCategory from "./Categories/ShowCategory";
@@ -8,6 +7,7 @@ import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import SelectPowerPlay from "./PowerPlays/SelectPowerPlay";
 import { useParams } from "react-router";
+import { PageTemplate, GenericNavigator, CenteredInstruction } from "@repo/ui/components";
 import { SyncReceiveData } from "@repo/ui/services/types";
 
 type Props = {
@@ -18,10 +18,10 @@ const AbcdWithCategories = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
 
   return (
-    <PageTemplate>
+    <PageTemplate squares>
       <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
+        disableAnimation
         basePath={basePath}
-        identifier={"AbcdWithCategories"}
         queueName={"MiniGameNotification"}
         createNavigationPath={(message) => {
           switch (message.action) {
@@ -55,7 +55,12 @@ const AbcdWithCategories = ({ basePath }: Props) => {
           }
         }}
         routes={{
-          "/powerplay_explain": <p>EXPLAIN POWER PLAYS</p>,
+          "/powerplay_explain": (
+            <CenteredInstruction
+              title="Obejrzyj prezentację zagrywek na monitorze na środku sali"
+              secondaryText="Zasady zagrywek..."
+            />
+          ),
           "/powerplay_select": <SelectPowerPlay gameId={gameId!} />,
           "/powerplay_apply": <ShowAppliedPowerPlay gameId={gameId!} />,
           "/category_select": <SelectCategory gameId={gameId!} />,

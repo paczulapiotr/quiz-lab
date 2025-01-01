@@ -17,8 +17,8 @@ export const LocalSyncServiceProvider = ({
       () => {
         setConnected(false);
         console.log("Disconnected from LocalSyncService");
-      },
-    ),
+      }
+    )
   );
 
   useEffect(() => {

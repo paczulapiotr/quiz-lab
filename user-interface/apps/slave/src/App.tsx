@@ -1,16 +1,17 @@
 import { Welcome } from "./pages/Welcome";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { LocalSyncServiceProvider } from "@repo/ui";
 import "./App.scss";
 import GameRoutes from "./Routes";
+import FrontScreen from "./pages/FrontScreen";
+import { LocalSyncServiceProvider } from "@repo/ui/contexts";
 
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
-        staleTime: Infinity,
+        staleTime: 0,
         cacheTime: 0,
       },
     },
@@ -24,6 +25,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route index element={<Welcome />} />
+            <Route path="front" element={<FrontScreen />} />
             <Route path="*" element={<GameRoutes />} />
           </Routes>
         </BrowserRouter>

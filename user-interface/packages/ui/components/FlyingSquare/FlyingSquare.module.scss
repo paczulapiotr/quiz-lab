@@ -5,15 +5,5 @@
   height: 10rem;
   background-color: vars.$pastell-purple-light;
   opacity: 0.2;
-  position: fixed;
-  animation: rotate 45s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  z-index: -1;
 }

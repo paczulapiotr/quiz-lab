@@ -22,7 +22,6 @@ const Latency = () => {
 
   useLocalSyncConsumer(
     "Pong",
-    "Latency",
     useCallback(async () => {
       const newLatency = Date.now() - timestamp.current;
       setLatency(newLatency);

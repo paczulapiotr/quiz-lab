@@ -1,28 +1,34 @@
-import { Tile } from "@repo/ui/components";
+import { ScoreTile, HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
 
 type Props = {
-  answerId: string;
+  score: number;
+  answerScore: number;
+  answerId?: string;
   answers: {
     id: string;
     text: string;
     isCorrect: boolean;
-    players: { id: string; name: string }[];
   }[];
 };
 
-const Component = ({ answers, answerId }: Props) => {
+const Component = ({ answers, answerId, answerScore, score }: Props) => {
   return (
-    <div className={styles.grid}>
-      {answers.map((a) => (
-        <Tile
-          key={a.id}
-          text={`${a.text} - ${a.players.map((x) => x.name).join(", ")}`}
-          success={a.isCorrect}
-          failure={a.isCorrect ? false : a.id === answerId}
-        />
-      ))}
-    </div>
+    <>
+      <ScoreTile score={score} />
+      <HeaderTile title="Odpowiedzi" />
+      <div className={styles.grid}>
+        {answers.map((a) => (
+          <Tile
+            key={a.id}
+            text={`${a.text}${a.id === answerId ? ` - +${answerScore}` : ""}`}
+            success={a.isCorrect}
+            failure={a.isCorrect ? false : a.id === answerId}
+          />
+        ))}
+      </div>
+      <Timer startSeconds={9} />
+    </>
   );
 };
 

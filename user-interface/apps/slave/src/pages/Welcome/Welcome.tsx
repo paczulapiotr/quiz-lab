@@ -1,15 +1,16 @@
-import { GameStatus } from "@repo/ui";
-import { FlyingSquare } from "@repo/ui/components";
+//import { FlyingSquare } from "@repo/ui/components";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
+import WelcomeLogo from "@/assets/images/welcome-logo.png";
+import styles from "./Welcome.module.scss";
+import { GameStatus } from "@repo/ui";
 
 const Welcome = () => {
   const navigate = useNavigate();
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
-    "Welcome",
     useCallback(
       (payload) => {
         if (payload?.status === GameStatus.GameCreated) {
@@ -21,10 +22,8 @@ const Welcome = () => {
   );
 
   return (
-    <div>
-      <h1>Quiz Lab</h1>
-      <p>Waiting for game...</p>
-      <FlyingSquare count={5} />
+    <div className={styles.container}>
+      <img src={WelcomeLogo} alt="welcome image" />
     </div>
   );
 };

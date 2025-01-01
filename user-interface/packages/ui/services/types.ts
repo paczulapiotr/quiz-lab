@@ -1,5 +1,5 @@
 export type SyncReceiveCallback<T extends SyncReceiveDefinitionNames> = (
-  data?: SyncReceiveData[T],
+  data?: SyncReceiveData[T]
 ) => void;
 
 // Extendable

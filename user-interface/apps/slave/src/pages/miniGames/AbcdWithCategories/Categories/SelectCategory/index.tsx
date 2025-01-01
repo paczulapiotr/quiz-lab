@@ -1,6 +1,7 @@
 import { useGetCategories } from "@/api/queries/minigames/abcd/useGetCategories";
 import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
 import Component from "./Component";
+import { useGetScore } from "@/api/queries/useGetScore";
 
 type Props = {
   gameId: string;
@@ -9,7 +10,7 @@ type Props = {
 const SelectCategory = ({ gameId }: Props) => {
   const { data } = useGetCategories(gameId, true);
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
-
+  const { data: score } = useGetScore(gameId);
   const onSelectHandle = async (categoryId: string) => {
     await sendInteraction({
       gameId: gameId!,
@@ -19,7 +20,11 @@ const SelectCategory = ({ gameId }: Props) => {
   };
 
   return (
-    <Component categories={data?.categories ?? []} onSelect={onSelectHandle} />
+    <Component
+      categories={data?.categories ?? []}
+      onSelect={onSelectHandle}
+      score={score?.miniGameScore ?? 0}
+    />
   );
 };
 

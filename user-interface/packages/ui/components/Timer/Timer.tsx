@@ -44,7 +44,7 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
           style={{ width: `${percentage}%` }}
           className={classNames(
             styles["progress-fill"],
-            styles[getProgressColor()],
+            styles[getProgressColor()]
           )}
         />
       </div>

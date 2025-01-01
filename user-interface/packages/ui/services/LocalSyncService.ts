@@ -25,14 +25,14 @@ export class LocalSyncService {
   constructor(
     private wsUrl: string,
     onConnected?: () => void,
-    onDisconnected?: () => void,
+    onDisconnected?: () => void
   ) {
     if (onConnected) this.onConnectedCallbacks.push(onConnected);
     if (onDisconnected) this.onDisconnectedCallbacks.push(onDisconnected);
 
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.wsUrl)
-      .withKeepAliveInterval(120_000)
+      .withKeepAliveInterval(20_000)
       // .withAutomaticReconnect()
       .build();
   }
@@ -47,20 +47,20 @@ export class LocalSyncService {
 
   removeOnConnectedCallback = (cb: () => void) => {
     this.onConnectedCallbacks = this.onConnectedCallbacks.filter(
-      (callback) => callback !== cb,
+      (callback) => callback !== cb
     );
   };
 
   removeOnDisconnectedCallback = (cb: () => void) => {
     this.onDisconnectedCallbacks = this.onDisconnectedCallbacks.filter(
-      (callback) => callback !== cb,
+      (callback) => callback !== cb
     );
   };
 
   onSync = <T extends SyncReceiveDefinitionNames>(
     definitionName: T,
     callback: SyncReceiveCallback<T>,
-    key: string,
+    key: string
   ) => {
     (
       this.callbacks[definitionName] as Record<
@@ -88,7 +88,7 @@ export class LocalSyncService {
 
   sendSync = async <T extends SyncSendDefinitionNames>(
     definitionName: T,
-    data?: SyncSendData[T],
+    data?: SyncSendData[T]
   ) => {
     if (data != null) {
       await this.hubConnection?.invoke(definitionName, data);
@@ -115,7 +115,7 @@ export class LocalSyncService {
   async init() {
     if (this.isConnected()) {
       console.warn(
-        `LocalSyncService is already connected to ${this.hubConnection?.baseUrl}`,
+        `LocalSyncService is already connected to ${this.hubConnection?.baseUrl}`
       );
       return;
     }
