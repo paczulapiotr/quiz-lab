@@ -1,0 +1,39 @@
+@use "/src/variables" as vars;
+
+.score {
+  color: vars.$pastell-purple;
+  background-color: vars.$white;
+  border-radius: 10rem;
+  width: fit-content;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  box-shadow: 0.3rem 0.4rem 0 0.2em vars.$pastell-blue-dark;
+  font-weight: 600;
+
+  img {
+    width: 2rem;
+    animation: pulse 10s linear infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  50% {
+    transform: scale(1.2) rotate(0deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
