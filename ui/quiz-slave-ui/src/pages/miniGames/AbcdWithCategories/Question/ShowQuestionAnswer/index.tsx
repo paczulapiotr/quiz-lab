@@ -6,11 +6,14 @@ type Props = {
 };
 
 const ShowQuestionAnswer = ({ gameId }: Props) => {
-  const questionAnswer = useGetQuestionAnswer(gameId, true);
+  const { data } = useGetQuestionAnswer(gameId, true);
+
   return (
     <Component
-      answerId={questionAnswer.data?.answerId ?? ""}
-      answers={questionAnswer.data?.answers ?? []}
+      answerId={data?.answer?.answerId}
+      answerScore={data?.answer?.answerPoints ?? 0}
+      score={data?.answer?.roundPoints ?? 0}
+      answers={data?.answers ?? []}
     />
   );
 };

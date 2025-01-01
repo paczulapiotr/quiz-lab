@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Quiz.Common.Broker.JsonSerializer;
 using Quiz.Common.Broker.Messages;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -12,9 +11,8 @@ where TMessage : class, IMessage
     public ConsumerBase(
         IConnection connection,
         IQueueConsumerDefinition<TMessage> queueDefinition,
-        ILogger logger,
-        IJsonSerializer jsonSerializer)
-         : base(connection, queueDefinition, logger, jsonSerializer)
+        ILogger logger)
+         : base(connection, queueDefinition, logger)
     {
     }
 

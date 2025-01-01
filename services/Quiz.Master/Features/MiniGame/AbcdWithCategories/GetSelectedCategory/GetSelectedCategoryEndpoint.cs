@@ -1,12 +1,13 @@
+using Carter;
 using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetSelectedCategory;
 
-public static partial class Endpoints
+public class GetSelectedCategoryEndpoint : ICarterModule
 {
-    public static void MapGetSelectedCategoryEndpoint(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapGet("/api/game/{gameId}/mini-game/abcd/selected-category", async (Guid gameId, IQueryHandler<GetSelectedCategoryQuery, GetSelectedCategoryResult> commandHandler) =>
+        app.MapGet("/api/game/{gameId}/mini-game/abcd/selected-category", async (Guid gameId, IQueryHandler<GetSelectedCategoryQuery, GetSelectedCategoryResult> commandHandler) =>
         {
             var Game = await commandHandler.HandleAsync(new GetSelectedCategoryQuery(gameId));
 

@@ -32,7 +32,7 @@ export class LocalSyncService {
 
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.wsUrl)
-      .withKeepAliveInterval(120_000)
+      .withKeepAliveInterval(20_000)
       // .withAutomaticReconnect()
       .build();
   }

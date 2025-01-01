@@ -1,2 +1,2 @@
-import GameStarting from "./MiniGameEnding";
-export { GameStarting };
+import MiniGameEnding from "./MiniGameEnding";
+export { MiniGameEnding };

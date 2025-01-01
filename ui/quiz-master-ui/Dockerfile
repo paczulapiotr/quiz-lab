@@ -1,24 +1,22 @@
 # Use an official Node.js runtime as the base image
 FROM node:22-alpine3.20
 
-ARG VITE_LOCAL_API_URL
-ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
-
 # Set the working directory inside the container
-WORKDIR /app/quiz-master-ui
+WORKDIR /app
 
 # Copy package.json and package-lock.json to install dependencies
-COPY ./quiz-master-ui/package*.json ./
+COPY ./quiz-master-ui/package.json ./
 
 # Install dependencies
+RUN npm set registry http://host.docker.internal:4873/
 RUN npm install
 
 # Copy the rest of the application code to the working directory
 COPY ./quiz-master-ui/. .
-COPY ./quiz-common-ui/package.json ../quiz-common-ui/package.json
-COPY ./quiz-common-ui/dist/ ../quiz-common-ui/dist/
 
 # Build the Vite React app
+ARG VITE_LOCAL_API_URL
+ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
 RUN npm run build
 
 # Use an official Nginx image to serve the build files

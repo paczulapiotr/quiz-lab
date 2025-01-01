@@ -1,5 +1,5 @@
 import { PowerPlaysEnum, PowerPlaysNames } from "../types";
-import { Tile } from "quiz-common-ui/components";
+import { HeaderTile, Tile, Timer } from "quiz-common-ui/components";
 import styles from "./Component.module.scss";
 
 type Props = {
@@ -12,14 +12,18 @@ type Props = {
 
 const Component = ({ appliedPowerPlays }: Props) => {
   return (
-    <div className={styles.list}>
-      {appliedPowerPlays.map((appliedPowerPlay) => (
-        <Tile
-          text={PowerPlaysNames[appliedPowerPlay.powerPlay]}
-          key={appliedPowerPlay.playerId}
-        />
-      ))}
-    </div>
+    <>
+      <HeaderTile title="Zagrane zagrywki" />
+      <div className={styles.list}>
+        {appliedPowerPlays.map((appliedPowerPlay) => (
+          <Tile
+            text={`${PowerPlaysNames[appliedPowerPlay.powerPlay]} - ${appliedPowerPlay.playerName}`}
+            key={appliedPowerPlay.playerId}
+          />
+        ))}
+      </div>
+      <Timer startSeconds={9} />
+    </>
   );
 };
 

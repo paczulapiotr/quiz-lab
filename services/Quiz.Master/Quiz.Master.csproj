@@ -15,9 +15,12 @@
     <ProjectReference Include="..\Quiz.Common.Broker\Quiz.Common.Broker.csproj" />
     <ProjectReference Include="..\Quiz.Common.Messages\Quiz.Common.Messages.csproj" />
     <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
+    <ProjectReference Include="..\Quiz.Master.Core\Quiz.Master.Core.csproj" />
+    <ProjectReference Include="..\Quiz.Master.MiniGames\Quiz.Master.MiniGames.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Carter" Version="9.0.0" />
     <PackageReference Include="JsonSchema.Net" Version="7.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />

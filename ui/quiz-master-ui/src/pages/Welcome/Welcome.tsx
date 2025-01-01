@@ -1,11 +1,27 @@
-import { FlyingSquare } from "quiz-common-ui/components";
+import WelcomeLogo from "@/assets/images/welcome-logo.png";
+import styles from "./Welcome.module.scss";
+import { useLocalSyncConsumer } from "quiz-common-ui/hooks";
+import { useCallback } from "react";
+import { useNavigate } from "react-router";
+import { GameStatus } from "quiz-common-ui";
 
 const Welcome = () => {
+  const navigate = useNavigate();
+
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    useCallback(
+      (payload) => {
+        if (payload?.status === GameStatus.GameCreated) {
+          navigate(`/game/${payload?.gameId}/join`);
+        }
+      },
+      [navigate],
+    ),
+  );
   return (
-    <div>
-      <h1>Quiz Lab</h1>
-      <p>Waiting for game...</p>
-      <FlyingSquare count={5} />
+    <div className={styles.container}>
+      <img src={WelcomeLogo} alt="welcome image" />
     </div>
   );
 };

@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master", "Quiz.Master\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Lights", "Quiz.Lights\Quiz.Lights.csproj", "{2AD6D8D5-1642-4D91-A69D-ED654713D9DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master.MiniGames", "Quiz.Master.MiniGames\Quiz.Master.MiniGames.csproj", "{EA1AE7C7-2C1B-4536-98C9-320099F4117F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master.Core", "Quiz.Master.Core\Quiz.Master.Core.csproj", "{11F20C0A-2A26-4508-81C6-9EF8B6247F15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{2AD6D8D5-1642-4D91-A69D-ED654713D9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AD6D8D5-1642-4D91-A69D-ED654713D9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AD6D8D5-1642-4D91-A69D-ED654713D9DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA1AE7C7-2C1B-4536-98C9-320099F4117F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA1AE7C7-2C1B-4536-98C9-320099F4117F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA1AE7C7-2C1B-4536-98C9-320099F4117F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA1AE7C7-2C1B-4536-98C9-320099F4117F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

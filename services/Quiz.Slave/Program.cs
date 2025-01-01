@@ -7,11 +7,6 @@ using Quiz.Common;
 using Quiz.Slave;
 using Quiz.Common.Messages.Game;
 
-var jsonSerializerOptions = new JsonSerializerOptions(AppJsonSerializerContext.Default.Options)
-{
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-};
-
 var builder = WebApplication.CreateSlimBuilder(args);
 var rabbitConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -19,23 +14,25 @@ DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
+
 // Register the GPIO hosted service with configuration
 builder.Services.Configure<GpioSettings>(builder.Configuration.GetSection("GpioSettings"));
 builder.Services.AddHostedService<GpioHostedService>();
 builder.Services.AddHostedService<ConsumerHostedService>();
-// Add SignalR services with custom JsonSerializerOptions
+
+// Add SignalR
 builder.Services.AddSignalR().AddJsonProtocol(options =>
 {
-    options.PayloadSerializerOptions = jsonSerializerOptions;
+    options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(opts =>
     {
-        opts.WithOrigins([builder.Configuration["Cors"]!])
+        opts.WithOrigins(builder.Configuration["Cors"]!.Split(","))
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -46,7 +43,6 @@ builder.Services.AddCors(options =>
 builder.Services
     .AddMessageBroker(
         rabbitConnectionString,
-        new AppJsonSerialization(jsonSerializerOptions),
         opts =>
         {
             var uniqueId = DeviceIdHelper.DeviceUniqueId;
@@ -70,5 +66,4 @@ app.MapHub<SyncHub>("/sync");
 
 // Map endpoints
 app.MapEndpoints();
-
 app.Run();

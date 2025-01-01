@@ -14,7 +14,7 @@ public class GetGameHandler(IQuizRepository quizRepository, IHttpContextAccessor
 
     public async ValueTask<GetGameResult?> HandleAsync(GetGameQuery request, CancellationToken cancellationToken = default)
     {
-        var activeGame = await quizRepository.Query<Persistance.Models.Game>()
+        var activeGame = await quizRepository.Query<Core.Models.Game>()
             .Include(x => x.Players)
             .Where(x => x.Id == request.GameId)
             .OrderByDescending(x => x.CreatedAt)

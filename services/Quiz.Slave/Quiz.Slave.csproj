@@ -9,8 +9,6 @@
     <SelfContained>true</SelfContained>
     <RootNamespace>Quiz.Slave</RootNamespace>
     <PublishSingleFile>true</PublishSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
-    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>

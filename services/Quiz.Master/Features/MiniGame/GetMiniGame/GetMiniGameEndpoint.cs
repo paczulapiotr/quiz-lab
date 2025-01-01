@@ -1,14 +1,15 @@
+using Carter;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.Common.CQRS;
 using Quiz.Master.Extensions;
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
-public static partial class Endpoints
+public class GetMiniGameEndpoint : ICarterModule
 {
-    public static void MapGetMiniGame(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapGet("/api/game/{gameId}/mini-game", async ([FromRoute] Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetMiniGameQuery, GetMiniGameResult> commandHandler) =>
+        app.MapGet("/api/game/{gameId}/mini-game", async ([FromRoute] Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetMiniGameQuery, GetMiniGameResult> commandHandler) =>
         {
             var deviceId = httpContextAccessor.GetDeviceId();
             var Game = await commandHandler.HandleAsync(new GetMiniGameQuery(gameId, deviceId));

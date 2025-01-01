@@ -1,9 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
+using Quiz.Master.Core.Models;
+using Quiz.Master.MiniGames.Models.AbcdCategories;
 using Quiz.Master.Persistance;
-using Quiz.Master.Persistance.Models;
-using Quiz.Master.Persistance.Models.MiniGames.AbcdCategories;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetPowerPlays;
 

@@ -21,7 +21,7 @@
         "quoteArgs": false
       },
       "sourceFileMap": {
-        "/src/": "${workspaceFolder}/"
+        "/src/": "${workspaceFolder}/services/"
       }
     }
   ]
