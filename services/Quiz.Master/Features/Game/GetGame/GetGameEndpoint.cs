@@ -1,12 +1,13 @@
+using Carter;
 using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.Game.GetGame;
 
-public static partial class Endpoints
+public class GetGameEndpoint : ICarterModule
 {
-    public static void MapGetGame(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapGet("/api/game/{gameId}", async (Guid gameId, IQueryHandler<GetGameQuery, GetGameResult> commandHandler) =>
+        app.MapGet("/api/game/{gameId}", async (Guid gameId, IQueryHandler<GetGameQuery, GetGameResult> commandHandler) =>
         {
             var Game = await commandHandler.HandleAsync(new GetGameQuery(gameId));
 

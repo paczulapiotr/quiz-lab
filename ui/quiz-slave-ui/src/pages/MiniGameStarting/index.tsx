@@ -1,9 +1,12 @@
-import { useParams } from "react-router";
+import { PageTemplate } from "quiz-common-ui/components";
+import WatchOtherScreen from "../temp/WatchOtherScreen";
 
 const MiniGameStarting = () => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return <div>{"MiniGameStarting: " + gameId}</div>;
+  return (
+    <PageTemplate>
+      <WatchOtherScreen title={"Zasady rundy"} />;
+    </PageTemplate>
+  );
 };
 
 export default MiniGameStarting;

@@ -15,7 +15,7 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
     public async ValueTask<NoResult?> HandleAsync(JoinGameCommand request, CancellationToken cancellationToken = default)
     {
         var deviceId = httpContextAccessor.GetDeviceId();
-        var game = await quizRepository.Query<Persistance.Models.Game>(true)
+        var game = await quizRepository.Query<Core.Models.Game>(true)
             .Include(x => x.Players)
             .FirstOrDefaultAsync(x => x.Id == request.GameId, cancellationToken);
 
@@ -34,7 +34,7 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
             throw new InvalidOperationException("Player already joined");
         }
 
-        game.Players.Add(new Persistance.Models.Player
+        game.Players.Add(new Core.Models.Player
         {
             Name = request.PlayerName,
             DeviceId = deviceId

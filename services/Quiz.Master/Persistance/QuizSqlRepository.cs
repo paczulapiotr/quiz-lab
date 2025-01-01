@@ -1,3 +1,5 @@
+using Quiz.Master.Core;
+
 namespace Quiz.Master.Persistance;
 
 public class QuizSqlRepository : IQuizRepository

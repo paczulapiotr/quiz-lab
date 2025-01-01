@@ -1,11 +1,10 @@
 import { useCallback, useState } from "react";
 import styles from "./StandardQuestionPage.module.scss";
-import { PageTemplate } from "@/components/PageTemplate";
 // import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
 // import { useParams } from "react-router";
 import { GameStatus } from "quiz-common-ui";
 import { useLocalSync, useLocalSyncConsumer } from "quiz-common-ui/hooks";
-import { Tile } from "quiz-common-ui/components";
+import { PageTemplate, Tile } from "quiz-common-ui/components";
 
 const StandardQuestionPage = () => {
   const { sendSync } = useLocalSync();
@@ -15,7 +14,6 @@ const StandardQuestionPage = () => {
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
-    "StandardQuestionPage",
     useCallback((message) => {
       if (message?.status === GameStatus.MiniGameStarting) {
         // refetch();
@@ -25,7 +23,6 @@ const StandardQuestionPage = () => {
 
   useLocalSyncConsumer(
     "SelectAnswer",
-    "StandardQuestionPage",
     useCallback(
       (data) => {
         setSelected(data?.answer === selected ? "" : data!.answer);
@@ -38,31 +35,28 @@ const StandardQuestionPage = () => {
     setSelected(answer === selected ? "" : answer);
     await sendSync("SelectAnswer", { answer });
   };
+  console.log(selectAnswer);
 
   return (
-    <PageTemplate initialTimerSeconds={10} score={0}>
+    <PageTemplate initialTimerSeconds={10}>
       <div className={styles.question}>
         <Tile text="What is the capital of France?" blue />
         <div className={styles.answers}>
           <Tile
             text="What is the capital of France?"
             selected={selected === "A"}
-            onClick={() => selectAnswer("A")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "B"}
-            onClick={() => selectAnswer("B")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "C"}
-            onClick={() => selectAnswer("C")}
           />
           <Tile
             text="What is the capital of France?"
             selected={selected === "D"}
-            onClick={() => selectAnswer("D")}
           />
         </div>
       </div>
@@ -71,4 +65,3 @@ const StandardQuestionPage = () => {
 };
 
 export default StandardQuestionPage;
-

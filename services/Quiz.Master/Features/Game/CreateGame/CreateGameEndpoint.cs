@@ -1,14 +1,15 @@
+using Carter;
 using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.Game.CreateGame;
 
 public record CreateGameRequest(uint GameSize);
 
-public static partial class Endpoints
+public class CreateGameEndpoint : ICarterModule
 {
-    public static void MapCreateGame(this IEndpointRouteBuilder endpoints)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        endpoints.MapPost("/api/game/create", async (CreateGameRequest request, ICommandHandler<CreateGameCommand> commandHandler) =>
+        app.MapPost("/api/game/create", async (CreateGameRequest request, ICommandHandler<CreateGameCommand> commandHandler) =>
         {
             await commandHandler.HandleAsync(new CreateGameCommand(request.GameSize));
 
