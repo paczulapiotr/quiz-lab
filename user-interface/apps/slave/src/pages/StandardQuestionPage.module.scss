@@ -1,0 +1,8 @@
+.question {
+  .answers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+}

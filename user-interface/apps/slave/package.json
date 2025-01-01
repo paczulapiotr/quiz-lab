@@ -1,0 +1,46 @@
+{
+  "name": "slave",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --clearScreen false",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
+    "@repo/ui": "*",
+    "axios": "^1.7.7",
+    "classnames": "^2.5.1",
+    "motion": "^11.15.0",
+    "quiz-common-ui": "file:../quiz-common-ui",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.1.1",
+    "react-query": "^3.39.3",
+    "react-router": "^7.0.1",
+    "react-smooth": "^4.0.4"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "eslint": "^8.57.0",
+    "sass": "^1.83.0",
+    "typescript": "5.5.4",
+    "vite": "^5.1.4",
+    "vitest": "^2.1.5"
+  }
+}

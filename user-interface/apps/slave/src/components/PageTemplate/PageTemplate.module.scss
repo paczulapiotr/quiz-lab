@@ -1,0 +1,46 @@
+.page {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .topRight {
+    position: sticky;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    margin-bottom: 2rem;
+    margin-left: auto;
+    width: min-content;
+    display: flex;
+    align-items: center;
+  }
+
+  .container {
+    z-index: 100;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .content {
+      z-index: 100;
+      position: relative;
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+    }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: auto;
+    }
+  }
+}
