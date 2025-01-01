@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { Route, Routes } from "react-router";
 import GenericNavigator from "./GenericNavigator";
-import { GameStatus, SyncReceiveData } from "#/services/types";
-import { cleanupSlash } from "#/utility";
+import { GameStatus, SyncReceiveData } from "../../services/types";
+import { cleanupSlash } from "../../utility";
 
 type Props = {
   basePath: string;

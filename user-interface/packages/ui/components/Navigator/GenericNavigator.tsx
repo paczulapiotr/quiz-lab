@@ -1,6 +1,6 @@
-import { useLocalSyncConsumer } from "#/hooks";
-import { SyncReceiveDefinitionNames } from "#/services/types";
-import { cleanupSlash } from "#/utility";
+import { useLocalSyncConsumer } from "../../hooks";
+import { SyncReceiveDefinitionNames } from "../../services/types";
+import { cleanupSlash } from "../../utility";
 import { AnimatePresence } from "motion/react";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
 

@@ -12,16 +12,18 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
     if (timeLeft > 0) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1_000);
-      return () => clearInterval(interval); // Clear the interval on unmount
     } else {
       setTimeout(() => {
         onTimeUp?.();
       }, 100);
     }
+
+    return () => { interval != null && clearInterval(interval); }
   }, [timeLeft, onTimeUp]);
 
   useEffect(() => {

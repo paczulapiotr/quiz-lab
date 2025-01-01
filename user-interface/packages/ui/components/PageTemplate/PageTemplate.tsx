@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from "react";
 import styles from "./PageTemplate.module.scss";
-import { FlyingSquare, Timer } from "#/components";
+import { FlyingSquare, Timer } from "../../components";
 import { motion as m } from "motion/react";
 import classNames from "classnames";
 

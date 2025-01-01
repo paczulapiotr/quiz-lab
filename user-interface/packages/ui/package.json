@@ -5,9 +5,6 @@
   "scripts": {
     "lint": "eslint \"**/*.ts\""
   },
-  "imports": {
-    "#/*": "./*"
-  },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",

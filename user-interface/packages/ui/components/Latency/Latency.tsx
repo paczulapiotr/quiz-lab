@@ -1,7 +1,7 @@
-import { useLocalSyncConsumer } from "#/hooks/useLocalSyncConsumer";
-import { useLocalSyncService } from "#/hooks/useLocalSyncService";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Latency.module.scss";
+import { useLocalSyncConsumer } from "../../hooks";
+import { useLocalSyncService } from "../../hooks/useLocalSyncService";
 
 const Latency = () => {
   const [latency, setLatency] = useState<number>(0);
