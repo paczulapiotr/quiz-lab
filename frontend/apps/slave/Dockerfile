@@ -1,33 +1,41 @@
 # Use an official Node.js runtime as the base image
-FROM node:22-alpine3.20
+FROM node:22-alpine3.20 AS base
 
+FROM base AS builder
+
+RUN apk update
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+RUN npm i --global turbo
+COPY . .
+RUN turbo prune slave --docker
+
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk update
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# First install dependencies (as they change less often)
+COPY --from=builder /app/out/json/ .
+RUN npm install
+
+# Build the project and its dependencies
 ARG VITE_LOCAL_API_URL
 ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
 
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json to install dependencies
-COPY ./quiz-slave-ui/package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code to the working directory
-COPY ./quiz-slave-ui/. .
-COPY ./quiz-common-ui/ ../quiz-common-ui/
-
-# Build the Vite React app
-RUN npm run build
+COPY --from=builder /app/out/full/ .
+RUN npx turbo build
 
 # Use an official Nginx image to serve the build files
 FROM nginx:1.27-alpine
 
 # Copy the build output to the Nginx HTML directory
-COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=installer /app/apps/slave/dist/ /usr/share/nginx/html
 
 # Copy the custom Nginx configuration file
-COPY ./quiz-slave-ui/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./apps/master/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to serve the app
 EXPOSE 80

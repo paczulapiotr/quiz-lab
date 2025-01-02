@@ -34,7 +34,7 @@ services:
     restart: always
     build:
       context: ./frontend
-      dockerfile: ./quiz-master-ui/Dockerfile
+      dockerfile: ./apps/master/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:5999
     ports:
@@ -116,7 +116,7 @@ services:
     restart: always
     build:
       context: ./frontend
-      dockerfile: ./quiz-slave-ui/Dockerfile
+      dockerfile: ./apps/slave/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6020
     ports:
@@ -127,7 +127,7 @@ services:
     restart: always
     build:
       context: ./frontend
-      dockerfile: ./quiz-slave-ui/Dockerfile
+      dockerfile: ./apps/slave/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6021
     ports:
@@ -140,7 +140,7 @@ services:
     restart: always
     build:
       context: ./frontend
-      dockerfile: ./quiz-slave-ui/Dockerfile
+      dockerfile: ./apps/slave/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6022
     ports:
@@ -153,7 +153,7 @@ services:
     restart: always
     build:
       context: ./frontend
-      dockerfile: ./quiz-slave-ui/Dockerfile
+      dockerfile: ./apps/slave/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6023
     ports:
