@@ -18,7 +18,7 @@ services:
     container_name: master
     restart: always
     build:
-      context: ./services
+      context: ./backend
       dockerfile: ./Quiz.Master/Dockerfile.debug
     ports:
       - "5999:8080"
@@ -33,7 +33,7 @@ services:
     container_name: ui-master
     restart: always
     build:
-      context: ./ui
+      context: ./frontend
       dockerfile: ./quiz-master-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:5999
@@ -44,7 +44,7 @@ services:
     container_name: slave-000
     restart: always
     build:
-      context: ./services
+      context: ./backend
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6020:8080"
@@ -61,7 +61,7 @@ services:
     container_name: slave-001
     restart: always
     build:
-      context: ./services
+      context: ./backend
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6021:8080"
@@ -79,7 +79,7 @@ services:
     container_name: slave-002
     restart: always
     build:
-      context: ./services
+      context: ./backend
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6022:8080"
@@ -97,7 +97,7 @@ services:
     container_name: slave-003
     restart: always
     build:
-      context: ./services
+      context: ./backend
       dockerfile: ./Quiz.Slave/Dockerfile.debug
     ports:
       - "6023:8080"
@@ -115,7 +115,7 @@ services:
     container_name: ui-000
     restart: always
     build:
-      context: ./ui
+      context: ./frontend
       dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6020
@@ -126,7 +126,7 @@ services:
     container_name: ui-001
     restart: always
     build:
-      context: ./ui
+      context: ./frontend
       dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6021
@@ -139,7 +139,7 @@ services:
     container_name: ui-002
     restart: always
     build:
-      context: ./ui
+      context: ./frontend
       dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6022
@@ -152,7 +152,7 @@ services:
     container_name: ui-003
     restart: always
     build:
-      context: ./ui
+      context: ./frontend
       dockerfile: ./quiz-slave-ui/Dockerfile
       args:
         - VITE_LOCAL_API_URL=http://localhost:6023
