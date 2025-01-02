@@ -9,6 +9,7 @@ using Quiz.Master.Hubs;
 using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
 using Quiz.Master.Migrations;
+using Quiz.Master.Lights;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -65,7 +66,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddQuizServices();
+builder.Services.AddQuizServices(builder.Configuration);
 builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();

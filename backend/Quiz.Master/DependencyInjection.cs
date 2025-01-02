@@ -7,15 +7,18 @@ using Quiz.Master.Persistance.Repositories.Abstract;
 using Quiz.Common.CQRS;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.Game.MiniGames.AbcdWithCategories;
-
 using IAbcdWithCategoriesEventService = Quiz.Master.MiniGames.Handlers.AbcdWithCategories.IMiniGameEventService;
+using Quiz.Master.Lights;
 
 namespace Quiz.Master;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddQuizServices(this IServiceCollection services)
+    public static IServiceCollection AddQuizServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpClient();
+        services.Configure<LightsConfig>(configuration.GetSection("Lights"));
+        services.AddScoped<ILightsClient, LightsClient>();
         services.AddScoped<IQuizRepository, QuizSqlRepository>();
         services.AddScoped<IGameRepository, SqlGameRepository>();
         services.AddScoped<IMiniGameRepository, SqlMiniGameRepository>();
