@@ -145,8 +145,9 @@ where TMessage : class, IMessage
         _channel?.Dispose();
     }
 
-    public async Task RegisterAsync(CancellationToken cancellationToken = default)
+    public async Task RegisterAsync(string? routingKey = null, CancellationToken cancellationToken = default)
     {
-        await _queueDefinition.RegisterConsumerAsync(_channel, cancellationToken);
+        await InitChannel(cancellationToken);
+        await _queueDefinition.RegisterConsumerAsync(_channel, routingKey, cancellationToken);
     }
 }

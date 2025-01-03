@@ -4,6 +4,7 @@ namespace Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 
 public interface IMiniGameEventService
 {
+    public Task Initialize(string gameId, CancellationToken cancellationToken = default);
     public Task SendOnPowerPlayExplain(string gameId, CancellationToken cancellationToken = default);
     public Task WaitForPowerPlayExplained(string gameId, CancellationToken cancellationToken = default);
     public Task SendOnPowerPlayStart(string gameId, CancellationToken cancellationToken = default);

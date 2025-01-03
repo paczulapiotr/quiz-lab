@@ -11,7 +11,7 @@ public class RabbitMQPublisher(IConnection connection, IQueuePublisherDefinition
     private IChannel? _channel = null;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-    public async Task PublishAsync<T>(T message, IQueuePublisherDefinition<T> queueDefinition, CancellationToken cancellationToken = default) where T : IMessage
+    public async Task PublishAsync<T>(T message, IQueuePublisherDefinition<T> queueDefinition, string? routingKey = null, CancellationToken cancellationToken = default) where T : IMessage
     {
         if (_channel == null || _channel.IsClosed)
         {
@@ -25,15 +25,16 @@ public class RabbitMQPublisher(IConnection connection, IQueuePublisherDefinition
         var stringBody = Serialize(message);
         var body = Encoding.UTF8.GetBytes(stringBody);
 
-        await _channel.BasicPublishAsync(queueDefinition.ExchangeName, queueDefinition.RoutingKey, body, cancellationToken);
+        var exchangeRoutingKey = queueDefinition.MapRoutingKey(routingKey);
+        await _channel.BasicPublishAsync(queueDefinition.ExchangeName, exchangeRoutingKey, body, cancellationToken);
     }
 
-    public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default) where T : IMessage
+    public async Task PublishAsync<T>(T message, string? routingKey = null, CancellationToken cancellationToken = default) where T : IMessage
     {
         var queueDefinition = queueDefinitionProvider.GetPublisherDefinition<T>();
 
         ArgumentNullException.ThrowIfNull(queueDefinition, nameof(queueDefinition));
 
-        await PublishAsync(message, queueDefinition, cancellationToken);
+        await PublishAsync(message, queueDefinition, routingKey, cancellationToken);
     }
 }

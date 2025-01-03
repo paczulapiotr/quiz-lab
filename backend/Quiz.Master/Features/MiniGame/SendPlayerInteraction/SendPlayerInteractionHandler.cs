@@ -11,12 +11,13 @@ public class SendPlayerInteractionHandler(IPublisher publisher) : ICommandHandle
 {
     public async ValueTask<NoResult?> HandleAsync(SendPlayerInteractionCommand request, CancellationToken cancellationToken = default)
     {
+        var gameId = request.GameId.ToString();
         await publisher.PublishAsync(new PlayerInteraction(
-            request.GameId.ToString(),
+            gameId,
             request.DeviceId,
             request.InteractionType,
             request.Value,
-            request.Data), cancellationToken);
+            request.Data), gameId, cancellationToken);
 
         return NoResult.Instance;
     }

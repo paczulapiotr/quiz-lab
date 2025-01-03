@@ -24,6 +24,7 @@ public class GameEngineHostedService(
 
         backgroundTask = Task.Run(async () =>
         {
+            await gameStatusConsumer.RegisterAsync(routingKey: "new", cancellationToken: token);
             while (!token.IsCancellationRequested)
             {
                 token.ThrowIfCancellationRequested();

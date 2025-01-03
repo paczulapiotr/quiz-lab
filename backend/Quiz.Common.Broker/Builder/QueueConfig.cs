@@ -23,7 +23,6 @@ public class QueueConfig
     >(IQueueConsumerDefinition<TMessage> queueDefinition)
     where TConsumer : class, IConsumer<TMessage>
     where TMessage : IMessage
-
     {
         _services.AddSingleton<IConsumer, TConsumer>();
         _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
@@ -34,13 +33,11 @@ public class QueueConfig
     public QueueConfig AddOneTimeConsumer<TMessage>(IQueueConsumerDefinition<TMessage> queueDefinition)
     where TMessage : class, IMessage
     {
-        _services.AddSingleton<IOneTimeConsumer<TMessage>>(service
+        _services.AddTransient<IOneTimeConsumer<TMessage>>(service
             => new OneTimeConsumer<TMessage>(
                 service.GetRequiredService<IConnection>(),
                 queueDefinition,
                 service.GetRequiredService<ILogger<OneTimeConsumer<TMessage>>>()));
-        _services.AddSingleton<IQueueConsumerDefinition>(queueDefinition);
-        _services.AddSingleton(queueDefinition);
 
         return this;
     }

@@ -37,11 +37,11 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
         }
-        var gameId = _miniGameInstance.GameId.ToString();
+        await eventService.Initialize(_gameId, cancellationToken);
         await RunRoundBase(firstRoundDefinition.Id, cancellationToken);
 
-        await eventService.SendOnPowerPlayExplain(gameId, cancellationToken);
-        await eventService.WaitForPowerPlayExplained(gameId, cancellationToken);
+        await eventService.SendOnPowerPlayExplain(_gameId, cancellationToken);
+        await eventService.WaitForPowerPlayExplained(_gameId, cancellationToken);
 
         // For each question after first one
         foreach (var roundDefinition in _definition.Rounds.Skip(1))
@@ -100,7 +100,10 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
     private async Task SelectPowerPlays(string roundId, CancellationToken cancellationToken)
     {
         await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
-        var timeToken = new CancellationTokenSource(_definition.Config.TimeForPowerPlaySelectionMs).Token;
+        var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            new CancellationTokenSource(_definition.Config.TimeForAnswerSelectionMs).Token)
+            .Token;
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
 
@@ -111,7 +114,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         for (int i = 0; i < _playersCount; i++)
         {
             var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.SourceDeviceId)).Distinct().ToArray();
-            var selection = await eventService.GetPowerPlaySelection(_gameId, cancellationToken);
+            var selection = await eventService.GetPowerPlaySelection(_gameId, timeToken);
 
             if (selection is null || timeToken.IsCancellationRequested)
             {
@@ -250,7 +253,11 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         var roundDefinition = GetRoundDefinition(roundId);
         var config = _definition.Config;
         var selections = new Dictionary<string, List<string>>();
-        var timeToken = new CancellationTokenSource(config.TimeForCategorySelectionMs).Token;
+        var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token)
+            .Token;
+            
         // <categoryId, deviceId[]>
         var categoryIds = roundDefinition?.Categories.Select(x => x.Id).ToList();
 

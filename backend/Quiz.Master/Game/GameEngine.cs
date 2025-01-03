@@ -28,6 +28,7 @@ IMiniGameRepository miniGameRepository) : IGameEngine
 
     public async Task Run(Guid Id, CancellationToken cancellationToken = default)
     {
+        await communicationService.Initialize(Id.ToString(), cancellationToken);
         var gameEntity = await StartGame(Id, cancellationToken);
 
         foreach (var miniGame in MiniGames)

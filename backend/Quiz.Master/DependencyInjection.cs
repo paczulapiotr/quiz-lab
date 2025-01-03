@@ -25,7 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
         services.AddScoped<ICommunicationService, CommunicationService>();
 
-        services.AddScoped<IAbcdWithCategoriesEventService, MiniGameEvenService>();
+        services.AddScoped<IAbcdWithCategoriesEventService, MiniGameEventService>();
         services.AddScoped<AbcdWithCategoriesHandler>();
 
         services.AddScoped<IGameEngine, GameEngine>();

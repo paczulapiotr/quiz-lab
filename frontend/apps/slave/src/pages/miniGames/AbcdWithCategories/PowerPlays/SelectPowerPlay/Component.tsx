@@ -34,11 +34,11 @@ const Component = ({ onSelect, players, score }: Props) => {
         <>
           <HeaderTile title="Wybierz zagrywkę" />
           <div className={styles.grid}>
-            {/* <TileButton
+            <TileButton
               text="Slime"
               onClick={() => choosePowerPlay(PowerPlaysEnum.Slime)}
               selected={powerPlay === PowerPlaysEnum.Slime}
-            /> */}
+            />
             <TileButton
               text="Freeze"
               onClick={() => choosePowerPlay(PowerPlaysEnum.Freeze)}

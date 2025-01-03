@@ -11,7 +11,7 @@ public class CommunicationService(
 {
     public async Task SendRulesExplainMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RulesExplaining), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.RulesExplaining), gameId, cancellationToken);
     }
 
     public async Task ReceiveRulesExplainedMessage(string gameId, CancellationToken cancellationToken = default)
@@ -21,7 +21,7 @@ public class CommunicationService(
 
     public async Task SendGameEndingMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameEnding), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameEnding), gameId, cancellationToken);
     }
 
     public async Task ReceiveGameEndedMessage(string gameId, CancellationToken cancellationToken = default)
@@ -31,7 +31,7 @@ public class CommunicationService(
 
     public async Task SendMiniGameStartingMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.MiniGameStarting), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.MiniGameStarting), gameId, cancellationToken);
     }
 
     public async Task ReceiveMiniGameStartedMessage(string gameId, CancellationToken cancellationToken = default)
@@ -41,7 +41,7 @@ public class CommunicationService(
 
     public async Task SendMiniGameEndingMessage(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.MiniGameEnding), cancellationToken);
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.MiniGameEnding), gameId, cancellationToken);
     }
 
     public async Task ReceiveMiniGameEndedMessage(string gameId, CancellationToken cancellationToken = default)
@@ -59,5 +59,10 @@ public class CommunicationService(
                 return;
             }
         }
+    }
+
+    public async Task Initialize(string gameId, CancellationToken cancellationToken = default)
+    {
+        await gameStatusConsumer.RegisterAsync(gameId, cancellationToken);
     }
 }

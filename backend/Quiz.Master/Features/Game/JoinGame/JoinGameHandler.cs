@@ -41,15 +41,16 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
         });
 
         await quizRepository.SaveChangesAsync(cancellationToken);
-        await publisher.PublishAsync(new GameStatusUpdate(request.GameId.ToString(), GameStatus.GameJoined, deviceId), cancellationToken);
+        var gameId = request.GameId.ToString();
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
 
         if (game.Players.Count == game.GameSize)
         {
-            await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarting), cancellationToken);
+            await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarting), cancellationToken: cancellationToken);
             Task.Delay(10_000)
                 .ContinueWith(async (CancellationToken) =>
                 {
-                    await publisher.PublishAsync(new GameStatusUpdate(game.Id.ToString(), GameStatus.GameStarted));
+                    await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarted), "new", cancellationToken);
                 })
                 .ConfigureAwait(false);
         }

@@ -1,3 +1,4 @@
+using System.Text;
 using Quiz.Common.Broker.Messages;
 using RabbitMQ.Client;
 
@@ -13,41 +14,47 @@ public enum ExchangeType
 public abstract class QueueDefinition<TMessage>
 : IQueueDefinition<TMessage> where TMessage : IMessage
 {
-
     private static readonly IDictionary<string, object?> _queueDefaultArguments = new Dictionary<string, object?>
     {
-        { "x-message-ttl", 60_000 },
-        { "x-expires", 24 * 60 * 60_000 }
+        { "x-message-ttl", 60_000 }, // 1 minute
+        { "x-expires", 4 * 60 * 60_000 } // 4 hours
     };
+    private string _queueSufix;
+
+    private string NameBase => typeof(TMessage).Name.ToLowerInvariant();
 
     public ExchangeType ExchangeType { get; init; }
     public string ExchangeName { get; init; }
+    public Type MessageType => typeof(TMessage);
+    public string QueueName { private set; get; }
 
-    public string QueueName { get; private set; } = "";
-
-    public string RoutingKey { get; init; }
-    private string NameBase => typeof(TMessage).Name.ToLowerInvariant();
-
-    protected QueueDefinition(ExchangeType exchangeType, string queueSufix = "", string routingKey = "")
+    protected QueueDefinition(ExchangeType exchangeType, string queueSufix = "")
     {
+        _queueSufix = queueSufix;
         ExchangeType = exchangeType;
         ExchangeName = $"{NameBase}-exchange";
-        SetQueueName(queueSufix);
-        RoutingKey = string.IsNullOrWhiteSpace(routingKey) ? ExchangeType switch
-        {
-            ExchangeType.Fanout => "",
-            ExchangeType.Topic => $"{NameBase}.#",
-            ExchangeType.Direct => NameBase,
-            _ => throw new ArgumentOutOfRangeException(nameof(ExchangeType), ExchangeType, null)
-        } : routingKey;
+        QueueName = CreateQueueName();
     }
 
-    private void SetQueueName(string? queueName)
+    private string CreateQueueName(string? queueIdentifier = null)
     {
-        QueueName = string.IsNullOrWhiteSpace(queueName) ? $"{NameBase}-queue" : $"{NameBase}-{queueName}-queue";
-    }
+        var builder = new StringBuilder(NameBase);
+        if (!string.IsNullOrWhiteSpace(_queueSufix))
+        {
+            builder.Append('-');
+            builder.Append(_queueSufix);
+        }
 
-    public Type MessageType => typeof(TMessage);
+        if(!string.IsNullOrWhiteSpace(queueIdentifier))
+        {
+            builder.Append('-');
+            builder.Append(queueIdentifier);
+        }
+
+        builder.Append("-queue");
+
+        return builder.ToString();
+    }
 
     public async Task RegisterPublisherAsync(IChannel channel, CancellationToken cancellationToken = default)
     {
@@ -62,7 +69,7 @@ public abstract class QueueDefinition<TMessage>
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
     }
 
-    public async Task RegisterConsumerAsync(IChannel channel, CancellationToken cancellationToken = default)
+    public async Task RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default)
     {
         var exchange = ExchangeType switch
         {
@@ -72,14 +79,24 @@ public abstract class QueueDefinition<TMessage>
             _ => throw new ArgumentOutOfRangeException(nameof(ExchangeType), ExchangeType, null),
         };
 
+        QueueName = CreateQueueName(routingKey);
+
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: _queueDefaultArguments, cancellationToken: cancellationToken);
-        await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: RoutingKey, arguments: null, cancellationToken: cancellationToken);
+        await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: MapRoutingKey(routingKey), arguments: null, cancellationToken: cancellationToken);
     }
 
     public QueueDefinition<TMessage> ToConsumer(string queueName = "")
     {
-        SetQueueName(queueName);
+        _queueSufix = queueName;
         return this;
     }
+
+    public string MapRoutingKey(string? routingKey = null) => ExchangeType switch
+    {
+        ExchangeType.Fanout => "",
+        ExchangeType.Topic => $"{NameBase}.{(string.IsNullOrWhiteSpace(routingKey) ? "#" : routingKey)}",
+        ExchangeType.Direct => NameBase,
+        _ => throw new ArgumentOutOfRangeException(nameof(ExchangeType), ExchangeType, null)
+    };
 }

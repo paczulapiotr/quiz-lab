@@ -24,12 +24,12 @@ public static class MessageBrokerBuilderExtensions
                 using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
                 foreach (var def in publisherDefinitions)
                 {
-                    await def.RegisterPublisherAsync(channel, cancellationToken);
+                    await def.RegisterPublisherAsync(channel, cancellationToken: cancellationToken);
                 }
 
                 foreach (var def in consumerDefinitions)
                 {
-                    await def.RegisterConsumerAsync(channel, cancellationToken);
+                    await def.RegisterConsumerAsync(channel, cancellationToken: cancellationToken);
                 }
                 break;
             }

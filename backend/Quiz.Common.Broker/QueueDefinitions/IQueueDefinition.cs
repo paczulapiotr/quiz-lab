@@ -12,7 +12,7 @@ public interface IQueueExchange
 public interface IQueuePublisherDefinition : IQueueExchange
 {
     public ExchangeType ExchangeType { get; }
-    public string RoutingKey { get; }
+    public string MapRoutingKey(string? routingKey = null);
     Task RegisterPublisherAsync(IChannel channel, CancellationToken cancellationToken = default);
 }
 
@@ -22,7 +22,7 @@ public interface IQueuePublisherDefinition<TMessage> : IQueuePublisherDefinition
 public interface IQueueConsumerDefinition : IQueueExchange
 {
     public string QueueName { get; }
-    Task RegisterConsumerAsync(IChannel channel, CancellationToken cancellationToken = default);
+    Task RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default);
 }
 
 public interface IQueueConsumerDefinition<TMessage> : IQueueConsumerDefinition where TMessage : IMessage { }

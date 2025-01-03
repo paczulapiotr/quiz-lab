@@ -7,6 +7,6 @@ internal partial class SyncHub
 {
     public async Task GameStatusUpdate(GameStatusUpdateSyncMessage message)
     {
-        await _publisher.PublishAsync(new GameStatusUpdate(message.GameId, message.Status));
+        await _publisher.PublishAsync(new GameStatusUpdate(message.GameId, message.Status), message.GameId);
     }
 }

@@ -10,7 +10,7 @@ public record MiniGameUpdate(string GameId, string MiniGameType, string Action, 
 
 public class MiniGameUpdateDefinition : QueueDefinition<MiniGameUpdate>
 {
-    public MiniGameUpdateDefinition(string UniqueId = "") : base(ExchangeType.Fanout, queueSufix: UniqueId)
+    public MiniGameUpdateDefinition(string UniqueId = "") : base(ExchangeType.Topic, queueSufix: UniqueId)
     {
     }
 }

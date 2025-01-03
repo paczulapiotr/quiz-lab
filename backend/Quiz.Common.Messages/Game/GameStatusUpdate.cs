@@ -25,7 +25,7 @@ public record GameStatusUpdate(string GameId, GameStatus Status, string? Correla
 
 public class GameStatusUpdateDefinition : QueueDefinition<GameStatusUpdate>
 {
-    public GameStatusUpdateDefinition(string UniqueId = "") : base(ExchangeType.Fanout, queueSufix: UniqueId)
+    public GameStatusUpdateDefinition(string UniqueId = "") : base(ExchangeType.Topic, queueSufix: UniqueId)
     {
     }
 

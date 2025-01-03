@@ -7,23 +7,47 @@ using Quiz.Master.MiniGames.Models.AbcdCategories;
 
 namespace Quiz.Master.Game.MiniGames.AbcdWithCategories;
 
-public class MiniGameEvenService(
-    ILogger<MiniGameEvenService> logger,
+public class MiniGameEventService(
+    ILogger<MiniGameEventService> logger,
     IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
     IPublisher publisher) : IMiniGameEventService
 {
+    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+    private bool _isSetup = false;
     private static string Type => MiniGameType.AbcdWithCategories.ToString();
+
+    public async Task Initialize(string gameId, CancellationToken cancellationToken)
+    {
+        if(_isSetup) return;
+
+        try
+        {
+            await _semaphore.WaitAsync(cancellationToken);
+            await playerInteraction.RegisterAsync(gameId, cancellationToken);
+            await miniGameUpdate.RegisterAsync(gameId, cancellationToken);
+            _isSetup = true;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error while setting up MiniGameEventService");
+            throw;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
 
     public async Task SendOnPowerPlayExplain(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayExplainStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayExplainStart"), gameId, cancellationToken);
     }
 
     public async Task WaitForPowerPlayExplained(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "PowerPlayExplainStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayExplainStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayExplainStop"), gameId, cancellationToken);
     }
 
     public async Task<IMiniGameEventService.CategorySelection?> GetCategorySelection(string gameId, CancellationToken cancellationToken = default)
@@ -63,7 +87,7 @@ public class MiniGameEvenService(
 
     public async Task SendOnPowerPlayApplication(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayApplyStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayApplyStart"), gameId, cancellationToken);
     }
 
     public async Task<IMiniGameEventService.AnswerSelection?> GetQuestionAnswerSelection(string gameId, CancellationToken cancellationToken = default)
@@ -81,55 +105,55 @@ public class MiniGameEvenService(
 
     public async Task SendOnCategorySelected(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "CategoryShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "CategoryShowStart"), gameId, cancellationToken);
     }
 
     public async Task SendOnCategorySelection(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "CategorySelectStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "CategorySelectStart"), gameId, cancellationToken);
     }
 
     public async Task SendOnPowerPlayStart(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayStart"), gameId, cancellationToken);
     }
 
     public async Task SendOnQuestionAnswersPresentation(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionAnswerShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionAnswerShowStart"), gameId, cancellationToken);
     }
 
     public async Task SendOnQuestionPresentation(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionShowStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionShowStart"), gameId, cancellationToken);
     }
 
     public async Task SendOnQuestionSelection(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionAnswerStart"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "QuestionAnswerStart"), gameId, cancellationToken);
     }
 
     public async Task WaitForCategoryPresented(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "CategoryShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "CategoryShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "CategoryShowStop"), gameId, cancellationToken);
     }
 
     public async Task WaitForPowerPlayApplied(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "PowerPlayApplyStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayApplyStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: "PowerPlayApplyStop"), gameId, cancellationToken);
     }
 
     public async Task WaitForQuestionAnswersPresented(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "QuestionAnswerShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "QuestionAnswerShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "QuestionAnswerShowStop"), gameId, cancellationToken);
     }
 
     public async Task WaitForQuestionPresented(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "QuestionShowStop", cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "QuestionShowStop"), cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "QuestionShowStop"), gameId, cancellationToken);
     }
 }
