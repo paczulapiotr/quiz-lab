@@ -1,4 +1,4 @@
-namespace Quiz.Master.Lights;
+namespace Quiz.Master.Services.Lights;
 
 public record LightsConfig
 {

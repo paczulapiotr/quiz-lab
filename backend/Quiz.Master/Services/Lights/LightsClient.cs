@@ -3,19 +3,21 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 
-namespace Quiz.Master.Lights;
+namespace Quiz.Master.Services.Lights;
 
 public class LightsClient : ILightsClient, IDisposable
 {
     private readonly HttpClient httpClient;
     private readonly LightsConfig lightsConfig;
+    private readonly ILogger<LightsClient> logger;
 
-    public LightsClient(IOptions<LightsConfig> lightsConfig, IHttpClientFactory httpClientFactory)
+    public LightsClient(IOptions<LightsConfig> lightsConfig, IHttpClientFactory httpClientFactory, ILogger<LightsClient> logger)
     {
         this.lightsConfig = lightsConfig.Value;
         httpClient = httpClientFactory.CreateClient();
         httpClient.BaseAddress = new Uri(new Uri(this.lightsConfig.BaseUrl), "/api/services/light/");
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.lightsConfig.Token);
+        this.logger = logger;
     }
 
     public async Task SetColor(string deviceId, int r, int g, int b, int brightness)
@@ -31,7 +33,13 @@ public class LightsClient : ILightsClient, IDisposable
             }), Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("turn_on", content);
-            response.EnsureSuccessStatusCode();
+            if(response.IsSuccessStatusCode) {
+                logger.LogInformation("Successfully turned on light {lightId} with color {r}, {g}, {b} and brightness {brightness}", lightId, r, g, b, brightness);
+            } else {
+                logger.LogError("Failed to turn on light {lightId} with color {r}, {g}, {b} and brightness {brightness}", lightId, r, g, b, brightness);
+            }
+        } else {
+            logger.LogError("Failed to find light for deviceId {deviceId}", deviceId);
         }
     }
 
@@ -48,7 +56,13 @@ public class LightsClient : ILightsClient, IDisposable
             }), Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("turn_on", content);
-            response.EnsureSuccessStatusCode();
+            if(response.IsSuccessStatusCode) {
+                logger.LogInformation("Successfully turned on light {lightId} with color temperature {colorTemperature} and brightness {brightness}", lightId, colorTemperature, brightness);
+            } else {
+                logger.LogError("Failed to turn on light {lightId} with color temperature {colorTemperature} and brightness {brightness}", lightId, colorTemperature, brightness);
+            }
+        } else {
+            logger.LogError("Failed to find light for deviceId {deviceId}", deviceId);
         }
     }
 
@@ -63,7 +77,13 @@ public class LightsClient : ILightsClient, IDisposable
                 }), Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("turn_off", content);
-            response.EnsureSuccessStatusCode();
+            if(response.IsSuccessStatusCode) {
+                logger.LogInformation("Successfully turned off light {lightId}", lightId);
+            } else {
+                logger.LogError("Failed to turn off light {lightId}", lightId);
+            }
+        } else {
+            logger.LogError("Failed to find light for deviceId {deviceId}", deviceId);
         }
     }
 

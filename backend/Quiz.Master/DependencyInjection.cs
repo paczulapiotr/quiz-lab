@@ -8,7 +8,7 @@ using Quiz.Common.CQRS;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.Game.MiniGames.AbcdWithCategories;
 using IAbcdWithCategoriesEventService = Quiz.Master.MiniGames.Handlers.AbcdWithCategories.IMiniGameEventService;
-using Quiz.Master.Lights;
+using Quiz.Master.Services.Lights;
 
 namespace Quiz.Master;
 
