@@ -7,7 +7,7 @@ namespace Quiz.Master.Persistance.Repositories;
 
 public class StorageGameRepository(IDatabaseStorage storage) : IGameRepository
 {
-    public async Task<Core.Models.Game> FindGameAsync(Guid gameId, CancellationToken cancellationToken = default)
+    public async Task<Core.Models.Game> FindAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
         return await storage.FindGameAsync(gameId, cancellationToken);
     }

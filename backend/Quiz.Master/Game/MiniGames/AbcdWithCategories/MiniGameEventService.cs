@@ -173,7 +173,7 @@ public class MiniGameEventService(
     private async Task<IEnumerable<Player>> GetPlayersAsync(string gameId, CancellationToken cancellationToken = default)
     {
         if(!Guid.TryParse(gameId, out var id)) throw new ArgumentException("Invalid gameId");
-        var game = await repository.FindGameAsync(id, cancellationToken);
+        var game = await repository.FindAsync(id, cancellationToken);
         return game.Players;
     }
 }

@@ -34,7 +34,7 @@ IMiniGameRepository miniGameRepository) : IGameEngine
 
     private async Task<Core.Models.Game> StartGame(Guid id, CancellationToken cancellationToken)
     {
-        var game = await gameRepository.FindGameAsync(id, cancellationToken);
+        var game = await gameRepository.FindAsync(id, cancellationToken);
         var gameIdString = id.ToString()!;
 
         game.StartedAt = DateTime.UtcNow;
@@ -91,7 +91,7 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         await handler.Handle(
             new Master.MiniGames.MiniGameInstance(miniGame.Id, miniGame.MiniGameDefinitionId, game.Id, playerIds),
             (playerId, score, token) => miniGameRepository.UpsertPlayerScoreAsync(miniGame.Id, playerId, score, token),
-            (state, token) => miniGameRepository.UpdateStateAsync(miniGame.Id, state, token),
+            (state, token) => miniGameRepository.UpdateMiniGameStateAsync(miniGame.Id, state, token),
             cancellationToken);
 
         await gameRepository.UpdateAsync(game, cancellationToken: cancellationToken);

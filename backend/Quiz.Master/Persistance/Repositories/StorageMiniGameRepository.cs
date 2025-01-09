@@ -16,7 +16,7 @@ public class StorageMiniGameRepository(IDatabaseStorage databaseStorage) : IMini
         return await databaseStorage.FindMiniGameDefinitionAsync<TDefinition>(definitionId, cancellationToken);
     }
 
-    public async Task UpdateStateAsync<TState>(Guid miniGameId, TState stateData, CancellationToken cancellationToken = default)
+    public async Task UpdateMiniGameStateAsync<TState>(Guid miniGameId, TState stateData, CancellationToken cancellationToken = default)
     where TState : MiniGameStateData, new()
     {
         var miniGame = await databaseStorage.FindMiniGameAsync<TState>(miniGameId, cancellationToken);
