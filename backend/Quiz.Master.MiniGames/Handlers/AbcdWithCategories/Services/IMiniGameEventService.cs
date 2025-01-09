@@ -23,9 +23,9 @@ public interface IMiniGameEventService
     public Task WaitForQuestionAnswersPresented(string gameId, CancellationToken cancellationToken = default);
 
 
-    public record PowerPlaySelection(string DeviceId, PowerPlay PowerPlay);
+    public record PowerPlaySelection(Guid PlayerId, Guid TargetPlayerId, PowerPlay PowerPlay);
 
-    public record CategorySelection(string DeviceId, string CategoryId);
+    public record CategorySelection(Guid PlayerId, string CategoryId);
 
-    public record AnswerSelection(string DeviceId, string AnswerId, DateTime Timestamp);
+    public record AnswerSelection(Guid PlayerId, string AnswerId, DateTime Timestamp);
 }

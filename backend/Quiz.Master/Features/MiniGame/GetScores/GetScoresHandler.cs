@@ -1,57 +1,54 @@
 
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
 using Quiz.Master.Core.Models;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
 
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
-public record GetScoresResult(string MiniGameId, MiniGameType MiniGameType, string? PlayerName, string? PlayerDeviceId, int MiniGameScore, int TotalScore, PlayerScore[] PlayerScores);
+public record GetScoresResult(string MiniGameId, MiniGameType MiniGameType, string? PlayerName, Guid? PlayerId, int MiniGameScore, int TotalScore, PlayerScore[] PlayerScores);
 public record PlayerScore(string PlayerName, string PlayerDeviceId, int MiniGameScore, int TotalScore);
 public record GetScoresQuery(Guid GameId, string DeviceId) : IQuery<GetScoresResult>;
 
-public class GetScoresHandler(IQuizRepository quizRepository) : IQueryHandler<GetScoresQuery, GetScoresResult>
+public class GetScoresHandler(IDatabaseStorage storage) : IQueryHandler<GetScoresQuery, GetScoresResult>
 {
     public async ValueTask<GetScoresResult?> HandleAsync(GetScoresQuery request, CancellationToken cancellationToken = default)
     {
-        var activeGame = await quizRepository.Query<Core.Models.Game>()
-            .Include(x => x.Players).ThenInclude(x => x.Scores)
-            .Include(x => x.MiniGames)
-            .ThenInclude(x => x.MiniGameDefinition)
-            .Where(x => x.Id == request.GameId)
-            .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync();
-
-        var currentMiniGame = activeGame?.CurrentMiniGame;
-        var players = activeGame?.Players;
-        var player = players?.FirstOrDefault(x => x.DeviceId == request.DeviceId);
-
-        if (currentMiniGame is null)
+        var activeGame = await storage.FindGameAsync(request.GameId, cancellationToken);
+        var currentMiniGameId = activeGame?.CurrentMiniGameId;
+        if (currentMiniGameId is null || activeGame is null)
         {
             throw new InvalidOperationException("Mini game not found");
         }
 
-        var (miniGameScore, totalScore) = GetPlayerScores(player, currentMiniGame.Id);
+        var currentMiniGame = await storage.FindMiniGameAsync<MiniGameStateData>(currentMiniGameId.Value, cancellationToken);
+        var gameDefinition = await storage.FindGameDefinitionAsync(activeGame.GameDefinitionId, cancellationToken);
+
+        var players = activeGame?.Players;
+        var player = players?.FirstOrDefault(x => x.DeviceId == request.DeviceId);
+
+        var playerScores = await storage.ListPlayerScores(request.GameId, cancellationToken);
+        var (miniGameScore, totalScore) = GetPlayerScores(playerScores, player, currentMiniGameId.Value);
 
         return new GetScoresResult(
             currentMiniGame.Id.ToString(),
-            currentMiniGame.MiniGameDefinition.Type,
+            currentMiniGame.Type,
             player?.Name,
-            player?.DeviceId,
+            player?.Id,
             miniGameScore,
             totalScore,
             players?.Select(x =>
             {
-                var (playerMiniGameScore, playerTotalScore) = GetPlayerScores(x, currentMiniGame.Id);
+                var (playerMiniGameScore, playerTotalScore) = GetPlayerScores(playerScores, x, currentMiniGame.Id);
                 return new PlayerScore(x.Name, x.DeviceId, playerMiniGameScore, playerTotalScore);
             }).ToArray() ?? []);
     }
 
-    private static (int miniGameScore, int totalScore) GetPlayerScores(Player? player, Guid miniGameId)
+    private static (int miniGameScore, int totalScore) GetPlayerScores(IEnumerable<(Player player, Dictionary<Guid, int> scores)> playerScores, Player? player, Guid miniGameId)
     {
-        var totalScore = player?.Scores.Sum(x => x.Score) ?? 0;
-        var miniGameScore = player?.Scores.FirstOrDefault(x => x.MiniGameInstanceId == miniGameId)?.Score ?? 0;
+        var (_, playerScore) = playerScores.FirstOrDefault(x => x.player.Id == player?.Id);
+        var miniGameScore = playerScore?.Where(x => x.Key == miniGameId).Sum(x => x.Value) ?? 0;
+        var totalScore = playerScores.Sum(x => x.scores.Sum(y => y.Value));
 
         return (miniGameScore, totalScore);
     }

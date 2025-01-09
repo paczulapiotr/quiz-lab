@@ -9,7 +9,7 @@ public enum PowerPlay
     Letters,
 }
 
-public class PowerPlaysDictionary : Dictionary<string, List<PowerPlaysDictionary.Item>>
+public class PowerPlaysDictionary : Dictionary<Guid, List<PowerPlaysDictionary.Item>>
 {
-    public record Item(string SourceDeviceId, PowerPlay PowerPlay);
+    public record Item(Guid FromPlayerId, PowerPlay PowerPlay);
 }

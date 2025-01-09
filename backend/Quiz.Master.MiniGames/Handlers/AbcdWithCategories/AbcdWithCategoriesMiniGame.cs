@@ -2,23 +2,24 @@ using System.Text.Json;
 using Definition = Quiz.Master.MiniGames.Models.AbcdCategories.AbcdWithCategoriesDefinition;
 using State = Quiz.Master.MiniGames.Models.AbcdCategories.AbcdWithCategoriesState;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
+using Quiz.Master.Game.MiniGames;
+using Quiz.Master.Core.Models;
 
 namespace Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 
-public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMiniGameHandler
+public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMiniGameRepository repository) : IMiniGameHandler
 {
     private State _state = new State();
     private MiniGameInstance _miniGameInstance { get; set; } = null!;
-    private Definition _definition { get; set; } = null!;
+    private MiniGameDefinition<Definition> _definition { get; set; } = null!;
     private string _gameId => _miniGameInstance?.GameId.ToString() ?? string.Empty;
-    private IEnumerable<string> _playerIds => _miniGameInstance.PlayerIds;
+    private IEnumerable<Guid> _playerIds => _miniGameInstance.PlayerIds;
     private int _playersCount => _playerIds.Count();
     private PlayerScoreUpdateDelegate _onPlayerScoreUpdate { get; set; } = null!;
     private MiniGameStateUpdateDelegate _onStateUpdate { get; set; } = null!;
 
-    public async Task<Dictionary<string, int>> Handle(
+    public async Task<Dictionary<Guid, int>> Handle(
         MiniGameInstance game,
-        string definitionJson,
         PlayerScoreUpdateDelegate onPlayerScoreUpdate,
         MiniGameStateUpdateDelegate onStateUpdate,
         CancellationToken cancellationToken = default)
@@ -26,13 +27,13 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         _miniGameInstance = game;
         _onPlayerScoreUpdate = onPlayerScoreUpdate;
         _onStateUpdate = onStateUpdate;
-        _definition = GetMiniGameDefinition(definitionJson);
+        _definition = await repository.FindMiniGameDefinitionAsync<Definition>(game.DefinitionId, cancellationToken);
 
         if (_definition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration");
         }
-        var firstRoundDefinition = _definition.Rounds.FirstOrDefault();
+        var firstRoundDefinition = _definition.Definition.Rounds.FirstOrDefault();
         if (firstRoundDefinition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
@@ -44,7 +45,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         await eventService.WaitForPowerPlayExplained(_gameId, cancellationToken);
 
         // For each question after first one
-        foreach (var roundDefinition in _definition.Rounds.Skip(1))
+        foreach (var roundDefinition in _definition.Definition.Rounds.Skip(1))
         {
             // Save PowerPlay selection for every player
             var roundState = new State.RoundState { RoundId = roundDefinition.Id };
@@ -71,25 +72,25 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
     private Definition.Round? GetRoundDefinition(string roundId)
     {
-        var roundDefinition = _definition.Rounds.FirstOrDefault(x => x.Id == roundId);
+        var roundDefinition = _definition.Definition.Rounds.FirstOrDefault(x => x.Id == roundId);
         return roundDefinition;
     }
 
-    private Dictionary<string, int> CalculatePoints()
+    private Dictionary<Guid, int> CalculatePoints()
     {
-        var result = new Dictionary<string, int>();
+        var result = new Dictionary<Guid, int>();
 
         foreach (var round in _state.Rounds)
         {
             foreach (var answer in round.Answers)
             {
-                if (result.ContainsKey(answer.DeviceId))
+                if (result.ContainsKey(answer.PlayerId))
                 {
-                    result[answer.DeviceId] += answer.Points;
+                    result[answer.PlayerId] += answer.Points;
                 }
                 else
                 {
-                    result.Add(answer.DeviceId, answer.Points);
+                    result.Add(answer.PlayerId, answer.Points);
                 }
             }
         }
@@ -102,7 +103,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(_definition.Config.TimeForAnswerSelectionMs).Token)
+            new CancellationTokenSource(_definition.Definition.Config.TimeForAnswerSelectionMs).Token)
             .Token;
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
@@ -113,7 +114,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
         for (int i = 0; i < _playersCount; i++)
         {
-            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.SourceDeviceId)).Distinct().ToArray();
+            var playersThatSelected = powerPlays.Values.SelectMany(x => x.Select(x => x.FromPlayerId)).Distinct().ToArray();
             var selection = await eventService.GetPowerPlaySelection(_gameId, timeToken);
 
             if (selection is null || timeToken.IsCancellationRequested)
@@ -121,13 +122,13 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
                 break;
             }
 
-            if (powerPlays.ContainsKey(selection.DeviceId))
+            if (powerPlays.ContainsKey(selection.PlayerId))
             {
-                powerPlays[selection.DeviceId].Add(new(selection.DeviceId, selection.PowerPlay));
+                powerPlays[selection.TargetPlayerId].Add(new(selection.PlayerId, selection.PowerPlay));
             }
             else
             {
-                powerPlays.Add(selection.DeviceId, [new(selection.DeviceId, selection.PowerPlay)]);
+                powerPlays.Add(selection.TargetPlayerId, [new(selection.PlayerId, selection.PowerPlay)]);
             }
         }
 
@@ -170,19 +171,19 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
     private async Task AnswerQuestion(string roundId, CancellationToken cancellationToken)
     {
-        var config = _definition.Config;
+        var config = _definition.Definition.Config;
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token)
             .Token;
 
-        var questionDefinition = _definition.Rounds
+        var questionDefinition = _definition.Definition.Rounds
             .FirstOrDefault(x => _state.CurrentRoundId == x.Id)
             ?.Categories.FirstOrDefault(x => x.Id == _state.CurrentCategoryId)
             ?.Questions.FirstOrDefault(x => x.Id == _state.CurrentQuestionId);
 
-        // <deviceId, (answerId, timestamp)>
-        var answers = new Dictionary<string, (string answerId, DateTime timestamp)>();
+        // <playerId, (answerId, timestamp)>
+        var answers = new Dictionary<Guid, (string answerId, DateTime timestamp)>();
 
         for (int i = 0; i < _playerIds.Count(); i++)
         {
@@ -193,7 +194,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
                 break;
             }
 
-            answers.TryAdd(answer.DeviceId, (answer.AnswerId, answer.Timestamp));
+            answers.TryAdd(answer.PlayerId, (answer.AnswerId, answer.Timestamp));
         }
 
         var correctAnswerIds = questionDefinition?.Answers.Where(x => x.IsCorrect).Select(x => x.Id).ToList();
@@ -209,7 +210,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
             return new State.RoundAnswer
             {
-                DeviceId = playerId,
+                PlayerId = playerId,
                 Points = 0,
                 AnswerId = answerId,
                 IsCorrect = string.IsNullOrWhiteSpace(answerId) ? false : correctAnswerIds?.Contains(answerId) ?? false,
@@ -229,11 +230,9 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
                     config.MinPointsForAnswer);
                 correctAnswers++;
 
-                var playerId = _playerIds.FirstOrDefault(id => id == ans.DeviceId);
-
-                if (playerId is not null)
+                if (_playerIds.Any(id => id == ans.PlayerId))
                 {
-                    await _onPlayerScoreUpdate(playerId, ans.Points, cancellationToken);
+                    await _onPlayerScoreUpdate(ans.PlayerId, ans.Points, cancellationToken);
                 }
             }
         }
@@ -251,8 +250,8 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
         var gameId = _miniGameInstance.GameId.ToString();
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
-        var config = _definition.Config;
-        var selections = new Dictionary<string, List<string>>();
+        var config = _definition.Definition.Config;
+        var selections = new Dictionary<string, List<Guid>>();
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token)
@@ -273,11 +272,11 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
             if (selections.ContainsKey(selection.CategoryId))
             {
-                selections[selection.CategoryId].Add(selection.DeviceId);
+                selections[selection.CategoryId].Add(selection.PlayerId);
             }
             else
             {
-                selections.Add(selection.CategoryId, [selection.DeviceId]);
+                selections.Add(selection.CategoryId, [selection.PlayerId]);
             }
         }
 
@@ -287,7 +286,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
             roundState.SelectedCategories = selections.Select(x => new State.SelectedCategory
             {
                 CategoryId = x.Key,
-                DeviceIds = x.Value
+                PlayerIds = x.Value
             }).ToList();
         }
 
@@ -299,6 +298,12 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService) : IMi
 
         _state.CurrentCategoryId = selectedCategory?.Id;
         _state.CurrentQuestionId = questionDefinition?.Id;
+
+        var round = _state.Rounds.FirstOrDefault(x => x.RoundId == roundId);
+        if (round is not null && selectedCategory is not null)
+        {
+            round.CategoryId = selectedCategory.Id;
+        }
 
         await _onStateUpdate(_state, cancellationToken);
     }

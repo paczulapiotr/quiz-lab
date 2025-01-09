@@ -3,9 +3,9 @@ namespace Quiz.Master.Core.Models;
 public record Game : IEntity
 {
     public Guid Id { get; set; }
+    public Guid GameDefinitionId { get; set; }
+    public ICollection<SimpleMiniGame> MiniGames { get; set; } = new List<SimpleMiniGame>();
     public GameStatus Status { get; set; }
-    public IEnumerable<MiniGameInstance> MiniGames { get; set; } = new List<MiniGameInstance>();
-    public MiniGameInstance? CurrentMiniGame { get; set; }
     public Guid? CurrentMiniGameId { get; set; }
     public uint GameSize { get; set; }
     public ICollection<Player> Players { get; set; } = new List<Player>();

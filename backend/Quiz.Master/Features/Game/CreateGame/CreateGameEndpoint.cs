@@ -3,7 +3,7 @@ using Quiz.Common.CQRS;
 
 namespace Quiz.Master.Features.Game.CreateGame;
 
-public record CreateGameRequest(uint GameSize);
+public record CreateGameRequest(uint GameSize, Guid GameDefinitionId);
 
 public class CreateGameEndpoint : ICarterModule
 {
@@ -11,7 +11,7 @@ public class CreateGameEndpoint : ICarterModule
     {
         app.MapPost("/api/game/create", async (CreateGameRequest request, ICommandHandler<CreateGameCommand> commandHandler) =>
         {
-            await commandHandler.HandleAsync(new CreateGameCommand(request.GameSize));
+            await commandHandler.HandleAsync(new CreateGameCommand(request.GameSize, request.GameDefinitionId));
 
             return Results.Created();
         })

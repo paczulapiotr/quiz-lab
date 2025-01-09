@@ -1,36 +1,35 @@
 
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
 using Quiz.Master.Extensions;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
 
 namespace Quiz.Master.Features.Game.GetGame;
 
 public record GetGameResult(string GameId, uint GameSize, IEnumerable<string> PlayerNames, string[] Rounds, bool IsStarted = false, bool IsFinished = false, string? YourPlayerName = null, string? YourDeviceId = null);
 public record GetGameQuery(Guid GameId) : IQuery<GetGameResult>;
 
-public class GetGameHandler(IQuizRepository quizRepository, IHttpContextAccessor httpContextAccessor) : IQueryHandler<GetGameQuery, GetGameResult>
+public class GetGameHandler(IDatabaseStorage storage, IHttpContextAccessor httpContextAccessor) : IQueryHandler<GetGameQuery, GetGameResult>
 {
 
     public async ValueTask<GetGameResult?> HandleAsync(GetGameQuery request, CancellationToken cancellationToken = default)
     {
-        var activeGame = await quizRepository.Query<Core.Models.Game>()
-            .Include(x => x.Players)
-            .Where(x => x.Id == request.GameId)
-            .OrderByDescending(x => x.CreatedAt)
-            .FirstOrDefaultAsync();
+        var game = await storage.FindGameAsync(request.GameId, cancellationToken);
+        
+        if(game is null || game.IsFinished) {
+            return new GetGameResult(string.Empty, 0, [], []);
+        }
 
-        var player = activeGame?.Players.FirstOrDefault(x => x.DeviceId == httpContextAccessor.GetDeviceId());
+        var player = game.Players.FirstOrDefault(x => x.DeviceId == httpContextAccessor.GetDeviceId());
 
-        return activeGame is null
+        return game is null
             ? new GetGameResult(string.Empty, 0, [], [])
             : new GetGameResult(
-                activeGame.Id.ToString(),
-                activeGame.GameSize,
-                activeGame.Players.OrderByDescending(x => x.CreatedAt).Select(x => x.Name),
-                activeGame.MiniGames.Select(x => x.ToString()).ToArray(),
-                activeGame.IsStarted,
-                activeGame.IsFinished,
+                game.Id.ToString(),
+                game.GameSize,
+                game.Players.OrderByDescending(x => x.CreatedAt).Select(x => x.Name),
+                game.MiniGames.Select(x => x.ToString()).ToArray(),
+                game.IsStarted,
+                game.IsFinished,
                 player?.Name,
                 player?.DeviceId
                 );

@@ -1,10 +1,7 @@
 
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetCategories;
 
@@ -12,29 +9,20 @@ public record GetCategoriesQuery(Guid GameId) : IQuery<GetCategoriesResult>;
 public record GetCategoriesResult(IEnumerable<Category> Categories);
 public record Category(string Id, string Text);
 
-public class GetCategoriesHandler(IQuizRepository quizRepository) : IQueryHandler<GetCategoriesQuery, GetCategoriesResult>
+public class GetCategoriesHandler(IDatabaseStorage storage) : IQueryHandler<GetCategoriesQuery, GetCategoriesResult>
 {
     public async ValueTask<GetCategoriesResult?> HandleAsync(GetCategoriesQuery request, CancellationToken cancellationToken = default)
     {
-        var miniGame = await quizRepository.Query<MiniGameInstance>()
-            .Include(x => x.MiniGameDefinition)
-            .Where(x => x.Game.Id == request.GameId && x.MiniGameDefinition.Type == MiniGameType.AbcdWithCategories)
-            .FirstOrDefaultAsync();
+        var game = await storage.FindGameAsync(request.GameId, cancellationToken);
+        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
+        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
 
         if (miniGame == null)
         {
             throw new InvalidOperationException("Mini game not found");
         }
 
-        var state = JsonSerializer.Deserialize<AbcdWithCategoriesState>(miniGame.StateJsonData);
-        var definition = JsonSerializer.Deserialize<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinition.DefinitionJsonData);
-
-        if (state is null || definition is null)
-        {
-            throw new InvalidOperationException("Mini game state or definition not found");
-        }
-
-        var categories = definition.Rounds?.FirstOrDefault(x => x.Id == state.CurrentRoundId)
+        var categories = miniGameDefinition.Definition.Rounds?.FirstOrDefault(x => x.Id == miniGame.State.CurrentRoundId)
             ?.Categories;
 
         if (categories is null)

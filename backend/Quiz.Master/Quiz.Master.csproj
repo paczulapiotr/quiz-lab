@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Quiz.Common\Quiz.Common.csproj" />
     <ProjectReference Include="..\Quiz.Master.Core\Quiz.Master.Core.csproj" />
     <ProjectReference Include="..\Quiz.Master.MiniGames\Quiz.Master.MiniGames.csproj" />
+    <ProjectReference Include="..\Quiz.Storage\Quiz.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,10 +38,10 @@
     <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Migrations\JsonDefinitions\MiniGameDefinitions.json">
+    <Content Update="Migrations\MiniGameDefinitions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Migrations\JsonDefinitions\MiniGameDefinitions.Schema.json">
+    <Content Update="Migrations\MiniGameDefinitions.Schema.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

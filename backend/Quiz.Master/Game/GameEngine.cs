@@ -9,8 +9,6 @@ namespace Quiz.Master.Game;
 
 public interface IGameEngine
 {
-    bool IsGameRunning { get; }
-    bool IsGameFinished { get; }
     Task Run(Guid Id, CancellationToken cancellationToken = default);
 }
 
@@ -20,56 +18,43 @@ IMiniGameHandlerSelector miniGameHandlerSelector,
 IGameRepository gameRepository,
 IMiniGameRepository miniGameRepository) : IGameEngine
 {
-    public bool IsGameFinished { get; private set; } = false;
-    public bool IsGameRunning { get; private set; } = false;
-    public Guid? CurrentGameId { get; private set; }
-    public List<Player> Players { get; private set; } = [];
-    public List<MiniGameInstance> MiniGames { get; private set; } = [];
-
     public async Task Run(Guid Id, CancellationToken cancellationToken = default)
     {
         await communicationService.Initialize(Id.ToString(), cancellationToken);
-        var gameEntity = await StartGame(Id, cancellationToken);
-
-        foreach (var miniGame in MiniGames)
+        var game = await StartGame(Id, cancellationToken);
+        var gameDefinition = await gameRepository.FindGameDefinitionAsync(game.GameDefinitionId, cancellationToken);
+        
+        foreach (var definition in gameDefinition.MiniGames)
         {
-            await PlayMiniGame(gameEntity, miniGame, cancellationToken);
+            await PlayMiniGame(game, definition, cancellationToken);
         }
 
-        await FinishGame(gameEntity, cancellationToken);
+        await FinishGame(game, cancellationToken);
     }
 
     private async Task<Core.Models.Game> StartGame(Guid id, CancellationToken cancellationToken)
     {
-        var gameEntity = await gameRepository.FindAsync(id, cancellationToken);
-        IsGameRunning = true;
-        CurrentGameId = id;
-        Players = gameEntity.Players.ToList();
-        MiniGames = gameEntity.MiniGames.ToList();
-        var gameIdString = CurrentGameId.ToString()!;
+        var game = await gameRepository.FindGameAsync(id, cancellationToken);
+        var gameIdString = id.ToString()!;
 
-        gameEntity.StartedAt = DateTime.UtcNow;
-        await SetStatus(gameEntity, Status.RulesExplaining, cancellationToken);
+        game.StartedAt = DateTime.UtcNow;
+        await SetStatus(game, Status.RulesExplaining, cancellationToken);
         await communicationService.SendRulesExplainMessage(gameIdString, cancellationToken);
         await communicationService.ReceiveRulesExplainedMessage(gameIdString, cancellationToken);
-        await SetStatus(gameEntity, Status.RulesExplained, cancellationToken);
+        await SetStatus(game, Status.RulesExplained, cancellationToken);
 
-        return gameEntity!;
+        return game!;
     }
 
     private async Task FinishGame(Core.Models.Game gameEntity, CancellationToken cancellationToken)
     {
-        var gameId = CurrentGameId.ToString()!;
-
-        gameEntity.CurrentMiniGame = null;
+        var gameId = gameEntity.Id.ToString()!;
+        gameEntity.CurrentMiniGameId = null;
         gameEntity.FinishedAt = DateTime.UtcNow;
         await SetStatus(gameEntity, Status.GameEnding, cancellationToken);
         await communicationService.SendGameEndingMessage(gameId, cancellationToken);
         await communicationService.ReceiveGameEndedMessage(gameId, cancellationToken);
         await SetStatus(gameEntity, Status.GameEnded, cancellationToken);
-
-        IsGameRunning = false;
-        IsGameFinished = true;
     }
 
     private async Task SetStatus(Core.Models.Game game, Status status, CancellationToken cancellationToken = default)
@@ -78,12 +63,13 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         await gameRepository.UpdateAsync(game, cancellationToken: cancellationToken);
     }
 
-    private async Task PlayMiniGame(Core.Models.Game game, MiniGameInstance miniGame, CancellationToken cancellationToken = default)
+    private async Task PlayMiniGame(Core.Models.Game game, SimpleMiniGameDefinition definition, CancellationToken cancellationToken = default)
     {
-        game.CurrentMiniGame = miniGame;
+        var miniGame = await CreateMiniGame(definition, game.Id, cancellationToken);
+        game.CurrentMiniGameId = miniGame.Id;
         await gameRepository.UpdateAsync(game, cancellationToken: cancellationToken);
 
-        var gameId = CurrentGameId.ToString();
+        var gameId = game.Id.ToString();
 
         if (gameId is null)
         {
@@ -91,7 +77,7 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         }
 
         // - pick round questions and handler
-        var handler = miniGameHandlerSelector.GetHandler(miniGame.MiniGameDefinition.Type, cancellationToken);
+        var handler = miniGameHandlerSelector.GetHandler(miniGame.Type, cancellationToken);
 
         // - send mini game start rabbitmq message
         await SetStatus(game, Status.MiniGameStarting, cancellationToken);
@@ -99,13 +85,12 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         await communicationService.ReceiveMiniGameStartedMessage(gameId, cancellationToken);
         await SetStatus(game, Status.MiniGameStarted, cancellationToken);
 
-        var playerIds = game.Players.Select(x => x.DeviceId).ToList();
+        var playerIds = game.Players.Select(x => x.Id).ToList();
 
         // - wait for mini game handler to finish
         await handler.Handle(
-            new Master.MiniGames.MiniGameInstance(miniGame.Id, game.Id, playerIds),
-            miniGame.MiniGameDefinition.DefinitionJsonData,
-            (deviceId, score, token) => miniGameRepository.UpsertPlayerScoreAsync(miniGame.Id, deviceId, score, token),
+            new Master.MiniGames.MiniGameInstance(miniGame.Id, miniGame.MiniGameDefinitionId, game.Id, playerIds),
+            (playerId, score, token) => miniGameRepository.UpsertPlayerScoreAsync(miniGame.Id, playerId, score, token),
             (state, token) => miniGameRepository.UpdateStateAsync(miniGame.Id, state, token),
             cancellationToken);
 
@@ -117,5 +102,19 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         await communicationService.SendMiniGameEndingMessage(gameId, cancellationToken);
         await communicationService.ReceiveMiniGameEndedMessage(gameId, cancellationToken);
         await SetStatus(game, Status.MiniGameEnded, cancellationToken);
+    }
+
+    private async Task<MiniGameInstance<MiniGameStateData>> CreateMiniGame(SimpleMiniGameDefinition definition, Guid gameId, CancellationToken cancellationToken)
+    {
+        var miniGame = new MiniGameInstance<MiniGameStateData>
+        {
+            GameId = gameId,
+            MiniGameDefinitionId = definition.MiniGameDefinitionId,
+            Type = definition.Type,
+            PlayerScores = new List<MiniGameInstanceScore>()
+        };
+
+        await miniGameRepository.InsertMiniGameAsync(miniGame, cancellationToken);
+        return miniGame;
     }
 }

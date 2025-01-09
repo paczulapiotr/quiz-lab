@@ -1,42 +1,25 @@
 
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetAppliedPowerPlay;
 
 public record GetAppliedPowerPlayQuery(Guid GameId, string DeviceId) : IQuery<GetAppliedPowerPlayResult>;
 public record GetAppliedPowerPlayResult(IEnumerable<PlayersAppliedPower> players);
-public record PlayersAppliedPower(string PlayerId, string PlayerName, List<AppliedPowerPlay> PowerPlays);
-public record AppliedPowerPlay(string PlayerId, string PlayerName, PowerPlay PowerPlay);
+public record PlayersAppliedPower(Guid PlayerId, string PlayerName, List<AppliedPowerPlay> PowerPlays);
+public record AppliedPowerPlay(Guid PlayerId, string PlayerName, PowerPlay PowerPlay);
 
-public class GetAppliedPowerPlayHandler(IQuizRepository quizRepository) : IQueryHandler<GetAppliedPowerPlayQuery, GetAppliedPowerPlayResult>
+public class GetAppliedPowerPlayHandler(IDatabaseStorage storage) : IQueryHandler<GetAppliedPowerPlayQuery, GetAppliedPowerPlayResult>
 {
 
     public async ValueTask<GetAppliedPowerPlayResult?> HandleAsync(GetAppliedPowerPlayQuery request, CancellationToken cancellationToken = default)
     {
-        var miniGame = await quizRepository.Query<MiniGameInstance>()
-            .Include(x => x.MiniGameDefinition)
-            .Include(x => x.Game).ThenInclude(x => x.Players)
-            .Where(x => x.Game.Id == request.GameId && x.MiniGameDefinition.Type == MiniGameType.AbcdWithCategories)
-            .FirstOrDefaultAsync();
-
-        if (miniGame == null)
-        {
-            throw new InvalidOperationException("Mini game not found");
-        }
-
-        var state = JsonSerializer.Deserialize<AbcdWithCategoriesState>(miniGame.StateJsonData);
-
-        if (state is null)
-        {
-            throw new InvalidOperationException("Mini game state not found");
-        }
-
-        var players = miniGame.Game.Players;
+        var game = await storage.FindGameAsync(request.GameId, cancellationToken);
+        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
+        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
+        var state = miniGame.State;
+        var players = game.Players;
 
         var playersToMap = string.IsNullOrWhiteSpace(request.DeviceId)
             ? players
@@ -47,14 +30,14 @@ public class GetAppliedPowerPlayHandler(IQuizRepository quizRepository) : IQuery
         var playersAppliedPower = new List<PlayersAppliedPower>();
         foreach (var player in playersToMap)
         {
-            var powerPlaysForPlayer = powerPlays?.FirstOrDefault(x => x.Key == player.DeviceId).Value;
+            var powerPlaysForPlayer = powerPlays?.FirstOrDefault(x => x.Key == player.Id).Value;
             var playerAppliedPowerPlay = new PlayersAppliedPower(
-                player.DeviceId,
+                player.Id,
                 player.Name,
                 powerPlaysForPlayer?.Select(x
                     => new AppliedPowerPlay(
-                        x.SourceDeviceId,
-                        players.FirstOrDefault(p => p.DeviceId == x.SourceDeviceId)?.Name ?? "", x.PowerPlay)).ToList() ?? []);
+                        x.FromPlayerId,
+                        players.FirstOrDefault(p => p.Id == x.FromPlayerId)?.Name ?? "", x.PowerPlay)).ToList() ?? []);
             playersAppliedPower.Add(playerAppliedPowerPlay);
         }
 

@@ -4,6 +4,7 @@ using Quiz.Common.Messages.Game;
 using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
+using Quiz.Master.Persistance.Repositories.Abstract;
 
 namespace Quiz.Master.Game.MiniGames.AbcdWithCategories;
 
@@ -11,6 +12,7 @@ public class MiniGameEventService(
     ILogger<MiniGameEventService> logger,
     IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
+    IGameRepository repository,
     IPublisher publisher) : IMiniGameEventService
 {
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -52,6 +54,7 @@ public class MiniGameEventService(
 
     public async Task<IMiniGameEventService.CategorySelection?> GetCategorySelection(string gameId, CancellationToken cancellationToken = default)
     {
+ 
         var selection = await playerInteraction.ConsumeFirstAsync(
             condition: x => x.GameId == gameId
                 && x.InteractionType == "CategorySelection"
@@ -60,8 +63,10 @@ public class MiniGameEventService(
 
         if (selection?.Value is null) return null;
 
-        return new IMiniGameEventService.CategorySelection(selection.DeviceId, selection.Value);
+        var players = await GetPlayersAsync(gameId, cancellationToken);
+        var playerId = players.First(x => x.DeviceId == selection.DeviceId).Id;
 
+        return new IMiniGameEventService.CategorySelection(playerId, selection.Value);
     }
 
     public async Task<IMiniGameEventService.PowerPlaySelection?> GetPowerPlaySelection(string gameId, CancellationToken cancellationToken = default)
@@ -74,9 +79,14 @@ public class MiniGameEventService(
         try
         {
             var actionData = selection!.Data!;
-            var deviceId = actionData["deviceId"]!;
+            var targetDeviceId = actionData["deviceId"]!;
             var powerPlay = Enum.Parse<PowerPlay>(actionData["powerPlay"]);
-            return new IMiniGameEventService.PowerPlaySelection(deviceId, powerPlay);
+
+            var players = await GetPlayersAsync(gameId, cancellationToken);
+            var playerId = players.First(x => x.DeviceId == selection.DeviceId).Id;
+            var targetPlayerId = players.First(x => x.DeviceId == targetDeviceId).Id;
+
+            return new IMiniGameEventService.PowerPlaySelection(playerId, targetPlayerId, powerPlay);
         }
         catch (Exception e)
         {
@@ -100,7 +110,10 @@ public class MiniGameEventService(
 
         if (answer?.Value is null) return null;
 
-        return new IMiniGameEventService.AnswerSelection(answer.DeviceId, answer.Value, answer.Timestamp);
+        var players = await GetPlayersAsync(gameId, cancellationToken);
+        var playerId = players.First(x => x.DeviceId == answer.DeviceId).Id;
+
+        return new IMiniGameEventService.AnswerSelection(playerId, answer.Value, answer.Timestamp);
     }
 
     public async Task SendOnCategorySelected(string gameId, CancellationToken cancellationToken = default)
@@ -155,5 +168,12 @@ public class MiniGameEventService(
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == "QuestionShowStop", cancellationToken: cancellationToken);
         await publisher.PublishAsync(new MiniGameNotification(gameId, Type, "QuestionShowStop"), gameId, cancellationToken);
+    }
+
+    private async Task<IEnumerable<Player>> GetPlayersAsync(string gameId, CancellationToken cancellationToken = default)
+    {
+        if(!Guid.TryParse(gameId, out var id)) throw new ArgumentException("Invalid gameId");
+        var game = await repository.FindGameAsync(id, cancellationToken);
+        return game.Players;
     }
 }

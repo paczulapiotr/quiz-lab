@@ -1,23 +1,20 @@
 
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.CQRS;
 using Quiz.Common.Messages.Game;
 using Quiz.Master.Extensions;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
 
 namespace Quiz.Master.Features.Game.JoinGame;
 
 public record JoinGameCommand(Guid GameId, string PlayerName) : ICommand;
 
-public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publisher, IHttpContextAccessor httpContextAccessor) : ICommandHandler<JoinGameCommand>
+public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHttpContextAccessor httpContextAccessor) : ICommandHandler<JoinGameCommand>
 {
     public async ValueTask<NoResult?> HandleAsync(JoinGameCommand request, CancellationToken cancellationToken = default)
     {
         var deviceId = httpContextAccessor.GetDeviceId();
-        var game = await quizRepository.Query<Core.Models.Game>(true)
-            .Include(x => x.Players)
-            .FirstOrDefaultAsync(x => x.Id == request.GameId, cancellationToken);
+        var game = await storage.FindGameAsync(request.GameId, cancellationToken);
 
         if (game is null)
         {
@@ -37,10 +34,13 @@ public class JoinGameHandler(IQuizRepository quizRepository, IPublisher publishe
         game.Players.Add(new Core.Models.Player
         {
             Name = request.PlayerName,
-            DeviceId = deviceId
+            DeviceId = deviceId,
+            Id = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
         });
 
-        await quizRepository.SaveChangesAsync(cancellationToken);
+        await storage.UpdateGameAsync(game, cancellationToken);
+
         var gameId = request.GameId.ToString();
         await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
 

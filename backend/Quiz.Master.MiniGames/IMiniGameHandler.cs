@@ -1,16 +1,17 @@
 
+using Quiz.Master.Core.Models;
+
 namespace Quiz.Master.MiniGames;
 
 public interface IMiniGameHandler
 {
-    // <deviceId, score>
-    Task<Dictionary<string, int>> Handle(
+    // <playerId, score>
+    Task<Dictionary<Guid, int>> Handle(
         MiniGameInstance game,
-        string definitionJson,
         PlayerScoreUpdateDelegate onPlayerScoreUpdate,
         MiniGameStateUpdateDelegate onStateUpdate,
         CancellationToken cancellationToken = default);
 }
 
-public delegate Task PlayerScoreUpdateDelegate(string playerId, int score, CancellationToken cancellationToken);
-public delegate Task MiniGameStateUpdateDelegate(object state, CancellationToken cancellationToken);
+public delegate Task PlayerScoreUpdateDelegate(Guid playerId, int score, CancellationToken cancellationToken);
+public delegate Task MiniGameStateUpdateDelegate(MiniGameStateData state, CancellationToken cancellationToken);

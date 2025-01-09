@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master.MiniGames", "Qu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Master.Core", "Quiz.Master.Core\Quiz.Master.Core.csproj", "{11F20C0A-2A26-4508-81C6-9EF8B6247F15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Storage", "Quiz.Storage\Quiz.Storage.csproj", "{A9355D28-9A3E-4E14-8665-F7BE72B60D9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11F20C0A-2A26-4508-81C6-9EF8B6247F15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9355D28-9A3E-4E14-8665-F7BE72B60D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9355D28-9A3E-4E14-8665-F7BE72B60D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9355D28-9A3E-4E14-8665-F7BE72B60D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9355D28-9A3E-4E14-8665-F7BE72B60D9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,44 +1,35 @@
 
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.CQRS;
 using Quiz.Common.Messages.Game;
-using Quiz.Master.Core.Models;
-using Quiz.Master.MiniGames.Models.AbcdCategories;
-using Quiz.Master.Persistance;
+using Quiz.Storage;
+using GameStatus = Quiz.Master.Core.Models.GameStatus;
 
 namespace Quiz.Master.Features.Game.CreateGame;
 
-public record CreateGameCommand(uint GameSize) : ICommand;
+public record CreateGameCommand(uint GameSize, Guid GameDefinitionId) : ICommand;
 
 public class CreateGameHandler : ICommandHandler<CreateGameCommand>
 {
-    private readonly IQuizRepository quizRepository;
     private readonly IPublisher publisher;
+    private readonly IDatabaseStorage storage;
 
-    public CreateGameHandler(IQuizRepository quizRepository, IPublisher publisher)
+    public CreateGameHandler(IDatabaseStorage storage, IPublisher publisher)
     {
-        this.quizRepository = quizRepository;
+        this.storage = storage;
         this.publisher = publisher;
     }
     public async ValueTask<NoResult?> HandleAsync(CreateGameCommand request, CancellationToken cancellationToken = default)
     {
-        var definition = await quizRepository.Query<MiniGameDefinition>().FirstOrDefaultAsync(x => x.Type == MiniGameType.AbcdWithCategories);
-        var metadata = JsonSerializer.Deserialize<AbcdWithCategoriesDefinition>(definition?.DefinitionJsonData!);
-
         var game = new Core.Models.Game
         {
             GameSize = request.GameSize,
-            MiniGames = new List<MiniGameInstance>() {
-                new MiniGameInstance {
-                    MiniGameDefinitionId = definition!.Id,
-                }
-            }
+            GameDefinitionId = request.GameDefinitionId,
+            Status = GameStatus.GameCreated,
+            CreatedAt = DateTime.UtcNow,
         };
-        await quizRepository.AddAsync(game);
+        await storage.InsertGameAsync(game, cancellationToken);
 
-        await quizRepository.SaveChangesAsync();
         var gameId = game.Id.ToString();
         await publisher.PublishAsync(new GameStatusUpdate(gameId, Common.Messages.Game.GameStatus.GameCreated), cancellationToken: cancellationToken);
 

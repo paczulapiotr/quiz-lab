@@ -19,9 +19,8 @@ public static class DependencyInjection
         services.AddHttpClient();
         services.Configure<LightsConfig>(configuration.GetSection("Lights"));
         services.AddScoped<ILightsClient, LightsClient>();
-        services.AddScoped<IQuizRepository, QuizSqlRepository>();
-        services.AddScoped<IGameRepository, SqlGameRepository>();
-        services.AddScoped<IMiniGameRepository, SqlMiniGameRepository>();
+        services.AddScoped<IGameRepository, StorageGameRepository>();
+        services.AddScoped<IMiniGameRepository, StorageMiniGameRepository>();
         services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
         services.AddScoped<ICommunicationService, CommunicationService>();
 

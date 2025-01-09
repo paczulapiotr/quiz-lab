@@ -1,6 +1,6 @@
 namespace Quiz.Master.Core.Models;
 
-public record MiniGameDefinition : IEntity
+public record MiniGameDefinition<TDefinition> : IEntity where TDefinition : MiniGameDefinitionData, new()
 {
     public Guid Id { get; set; }
     public required string Description { get; set; }
@@ -9,6 +9,9 @@ public record MiniGameDefinition : IEntity
     public DateTime? UpdatedAt { get; set; }
     public DateTime? ArchivedAt { get; set; }
     public bool Archived { get; set; }
-    public string DefinitionJsonData { get; set; } = string.Empty; // JSON property for storing rounds information
+    public TDefinition Definition { get; set; } = new(); // property for storing rounds definition information
 
+}
+
+public record MiniGameDefinitionData {
 }

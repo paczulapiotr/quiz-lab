@@ -5,32 +5,27 @@ using Quiz.Common.Broker.Builder;
 using Quiz.Common.Messages.Game;
 using Quiz.Common.WebApplication;
 using Quiz.Master;
+using Quiz.Storage;
 using Quiz.Master.Hubs;
-using Quiz.Master.Persistance;
 using Quiz.Master.Consumers;
 using Quiz.Master.Migrations;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
-
+var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
+var databaseName = builder.Configuration["Mongo:Database"]!;
+builder.Services.AddStorage(connectionString, databaseName);
 builder.Services.AddCarter();
 builder.Services.AddMvcCore();
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Quiz.Master", Version = "v1" });
 });
-
-// Configure SQLite DbContext
-builder.Services.AddDbContextFactory<QuizDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 builder.Services.AddQuizCommonServices();
-
 builder.Services.AddHostedService<ConsumerHostedService>();
 builder.Services.AddHostedService<GameEngineHostedService>();
-
 builder.Services
     .AddMessageBroker(
         builder.Configuration.GetConnectionString("RabbitMq")!,
@@ -47,7 +42,6 @@ builder.Services
             opts.AddConsumer<MiniGameNotification, MiniGameNotificationConsumer>(new MiniGameNotificationDefinition().ToConsumer(deviceId));
             opts.AddConsumer<GameStatusUpdate, GameStatusUpdateConsumer>(new GameStatusUpdateDefinition().ToConsumer(deviceId));
         });
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(opts =>
@@ -64,13 +58,10 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
 builder.Services.AddQuizServices(builder.Configuration);
 builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
-//Apply migrations on startup
-await app.MigrateDatabaseAsync();
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
 app.MapCarter();
@@ -78,5 +69,6 @@ app.MapHub<SyncHub>("/sync").RequireCors("SignalR");
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
+Migration.Run(app.Services);
 app.Run();
 

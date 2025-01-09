@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Quiz.Master.Core\Quiz.Master.Core.csproj" />
+      <ProjectReference Include="..\Quiz.Master.MiniGames\Quiz.Master.MiniGames.csproj" />
+    </ItemGroup>
+
+</Project>

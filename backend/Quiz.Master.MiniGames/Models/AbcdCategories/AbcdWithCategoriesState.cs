@@ -1,6 +1,8 @@
+using Quiz.Master.Core.Models;
+
 namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
-public record AbcdWithCategoriesState
+public record AbcdWithCategoriesState : MiniGameStateData
 {
     public string? CurrentRoundId { get; set; } = string.Empty;
     public string? CurrentCategoryId { get; set; } = string.Empty;
@@ -21,12 +23,12 @@ public record AbcdWithCategoriesState
     public record SelectedCategory
     {
         public required string CategoryId { get; set; }
-        public required List<string> DeviceIds { get; set; }
+        public required List<Guid> PlayerIds { get; set; }
     }
 
     public record RoundAnswer
     {
-        public required string DeviceId { get; set; }
+        public required Guid PlayerId { get; set; }
         public string? AnswerId { get; set; } = null;
         public bool IsCorrect { get; set; }
         public DateTime? Timestamp { get; set; }
