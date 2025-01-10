@@ -4,26 +4,27 @@ import { useParams } from "react-router";
 import styles from "./MiniGameEnding.module.scss";
 import { useEffect } from "react";
 import { PageTemplate, HeaderTile, Tile } from "@repo/ui/components";
-import { useLocalSync } from "@repo/ui/hooks";
 import { GameStatus } from "@repo/ui/services/types";
+import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import Times from "@repo/ui/config/times";
 
 const MiniGameEnding = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const { data } = useGetScore(gameId);
-  const { sendSync } = useLocalSync();
-  console.log(data);
+  const { mutate } = useUpdateGameStatus();
+
   useEffect(() => {
     const timeout = setTimeout(
       () =>
-        sendSync("GameStatusUpdate", {
+        mutate({
           gameId: gameId!,
           status: GameStatus.MiniGameEnded,
         }),
-      10_000,
+      Times.GameEndingSeconds * 1000,
     );
 
     return () => clearTimeout(timeout);
-  }, [gameId, sendSync]);
+  }, [gameId, mutate]);
 
   return (
     <PageTemplate squares>

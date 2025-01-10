@@ -47,12 +47,6 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
         if (game.Players.Count == game.GameSize)
         {
             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarting), cancellationToken: cancellationToken);
-            Task.Delay(10_000)
-                .ContinueWith(async (CancellationToken) =>
-                {
-                    await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarted), "new", cancellationToken);
-                })
-                .ConfigureAwait(false);
         }
 
         return await ValueTask.FromResult(NoResult.Instance);

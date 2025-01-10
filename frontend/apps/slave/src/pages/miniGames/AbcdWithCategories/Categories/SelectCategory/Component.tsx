@@ -1,6 +1,7 @@
 import { ScoreTile, HeaderTile, TileButton, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
 import { useState } from "react";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   categories: { text: string; id: string }[];
@@ -31,7 +32,7 @@ const SelectCategory = ({ categories, onSelect, score }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={29} />
+      <Timer startSeconds={Times.Abdc.CategorSelectionSeconds} />
     </>
   );
 };

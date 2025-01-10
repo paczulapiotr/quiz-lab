@@ -3,6 +3,7 @@ import styles from "./Component.module.scss";
 import { PowerPlaysEnum } from "../types";
 import { useState } from "react";
 import { ScoreTile, HeaderTile, TileButton, CenteredInstruction, Timer } from "@repo/ui/components";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   score: number;
@@ -73,7 +74,7 @@ const Component = ({ onSelect, players, score }: Props) => {
       ) : (
         <CenteredInstruction title="Poczekaj na resztę" secondaryText="" />
       )}
-      <Timer startSeconds={29} />
+      <Timer startSeconds={Times.Abdc.PowerPlaySelectionSeconds} />
     </>
   );
 };

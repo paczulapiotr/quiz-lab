@@ -6,6 +6,7 @@ import styles from "./JoinGame.module.scss";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { GameStatus } from "@repo/ui";
 import { PageTemplate, TileButton, Tile, Timer } from "@repo/ui/components";
+import Times from "@repo/ui/config/times";
 
 
 type Props = {
@@ -81,7 +82,7 @@ const JoinGame = ({ starting = false }: Props) => {
       ) : null}
       {starting ? (
         <div style={{ marginTop: "auto" }}>
-          <Timer startSeconds={10} />
+          <Timer startSeconds={Times.GameStartingSeconds} />
         </div>
       ) : null}
     </PageTemplate>

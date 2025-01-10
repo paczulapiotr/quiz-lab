@@ -1,5 +1,6 @@
 import { ScoreTile, HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   selections: {
@@ -25,7 +26,7 @@ const Component = ({ selections, score }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={9} />
+      <Timer startSeconds={Times.Abdc.CategorShowSeconds} />
     </>
   );
 };

@@ -12,3 +12,17 @@ export const getMiniGame = async (gameId: string) =>
       `/game/${gameId}/mini-game`,
     )
   ).data;
+
+export type UpdateMiniGameRequest = {
+  action: string;
+  gameId: string;
+};
+
+export const updateMiniGame = async (
+  { gameId, action }: UpdateMiniGameRequest) => (
+  await instance.post<never, never, Pick<UpdateMiniGameRequest, "action">>(
+    `/game/${gameId}/mini-game/update`,
+    {
+      action
+    },
+  ));

@@ -1,4 +1,5 @@
 import { CenteredInstruction, Timer } from "@repo/ui/components";
+import Times from "@repo/ui/config/times";
 
 const Component = () => {
   return (
@@ -7,7 +8,7 @@ const Component = () => {
         title="Wybierz zagrywkę na swoim monitorze"
         secondaryText=""
       />
-      <Timer startSeconds={29} />
+      <Timer startSeconds={Times.Abdc.PowerPlaySelectionSeconds} />
     </>
   );
 };

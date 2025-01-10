@@ -1,7 +1,8 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
-import { useLocalSync } from "@repo/ui/hooks";
 import styles from "./Component.module.scss";
 import { useParams } from "react-router";
+import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   answers: {
@@ -20,12 +21,12 @@ type Props = {
 
 const Component = ({ answers, players }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
-  const { sendSync } = useLocalSync();
+  const { mutate } = useUpdateMiniGame();
+  
   const onTimeUp = () =>
-    sendSync("MiniGameUpdate", {
+    mutate({
       gameId: gameId!,
       action: "QuestionAnswerShowStop",
-      miniGameType: "AbcdWithCategories",
     });
 
   return (
@@ -44,7 +45,7 @@ const Component = ({ answers, players }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={9} onTimeUp={onTimeUp} />
+      <Timer startSeconds={Times.Abdc.AnswerShowSeconds} onTimeUp={onTimeUp} />
     </>
   );
 };

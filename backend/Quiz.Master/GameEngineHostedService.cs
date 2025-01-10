@@ -38,7 +38,7 @@ public class GameEngineHostedService(
                 var gameId = Guid.Parse(status.GameId);
 
                 // Initialize game engine 
-                await gameEngine.Run(gameId, token);
+                gameEngine.Run(gameId, token);
             }
         }, token);
 

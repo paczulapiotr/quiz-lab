@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./Timer.module.scss";
 import classNames from "classnames";
 
@@ -10,27 +10,37 @@ type Props = {
 const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
   const [timeLeft, setTimeLeft] = useState(startSeconds);
   const [percentage, setPercentage] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const onTimeUpCalled = useRef(false);
+  const endTimeRef = useRef<number>(Date.now() + startSeconds * 1000);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1_000);
-    } else {
-      setTimeout(() => {
-        onTimeUp?.();
-      }, 100);
+  const updateTimer = useCallback(() => {
+    const timeRemaining = Math.max(0, endTimeRef.current - Date.now());
+    const secondsLeft = Math.ceil(timeRemaining / 1000);
+    setTimeLeft(secondsLeft);
+
+    if (timeRemaining <= 0 && !onTimeUpCalled.current) {
+      onTimeUpCalled.current = true;
+      onTimeUp?.();
+      clearInterval(intervalRef.current!);
     }
 
-    return () => { interval != null && clearInterval(interval); }
-  }, [timeLeft, onTimeUp]);
+    // Calculate the percentage of time passed
+    const timeElapsed = startSeconds * 1000 - timeRemaining;
+    setPercentage((timeElapsed / (startSeconds * 1000)) * 100);
+  },[onTimeUp, startSeconds])
 
   useEffect(() => {
-    // Calculate the percentage of time passed
-    const timeElapsed = startSeconds - (timeLeft - 1);
-    setPercentage((timeElapsed / startSeconds) * 100);
-  }, [timeLeft, startSeconds]);
+    updateTimer(); // Invoke immediately to set initial state
+
+    intervalRef.current = setInterval(updateTimer, 100);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [startSeconds, onTimeUp, updateTimer]);
 
   // Determine color based on the percentage
   const getProgressColor = () => {
@@ -43,7 +53,7 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
     <div className={styles.timer}>
       <div className={styles["progress-bar"]}>
         <div
-          style={{ width: `${percentage}%` }}
+          style={{ width: `${percentage}%`}}
           className={classNames(
             styles["progress-fill"],
             styles[getProgressColor()]
@@ -58,4 +68,5 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
     </div>
   );
 };
+
 export default Timer;

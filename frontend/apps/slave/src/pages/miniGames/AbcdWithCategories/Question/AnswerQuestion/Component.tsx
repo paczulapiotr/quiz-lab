@@ -5,6 +5,7 @@ import { PowerPlaysEnum } from "../../PowerPlays/types";
 import { applyLetterPowerPlay } from "./PowerPlays/helpers";
 import Bombs from "./PowerPlays/Bombs";
 import { ScoreTile, HeaderTile, TileButton, Timer } from "@repo/ui/components";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   question: string;
@@ -61,7 +62,7 @@ const Component = ({
           />
         ))}
       </div>
-      <Timer startSeconds={29} />
+      <Timer startSeconds={Times.Abdc.QestionAnswerSeconds} />
       <Bombs powerPlays={powerPlays} />
     </>
   );

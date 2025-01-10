@@ -1,5 +1,6 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   question: string;
@@ -15,7 +16,7 @@ const Component = ({ answers, question }: Props) => {
           <Tile key={x.id} text={x.text} />
         ))}
       </div>
-      <Timer startSeconds={29} />
+      <Timer startSeconds={Times.Abdc.QestionAnswerSeconds} />
     </>
   );
 };

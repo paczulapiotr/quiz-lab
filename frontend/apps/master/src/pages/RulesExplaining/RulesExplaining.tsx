@@ -1,26 +1,27 @@
 import { PageTemplate } from "@repo/ui/components";
-import { useLocalSync } from "@repo/ui/hooks";
 import { GameStatus } from "@repo/ui/services/types";
 import TutorialVideo from "../temp/TutorialVideo";
 import { useEffect } from "react";
 import { useParams } from "react-router";
+import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import Times from "@repo/ui/config/times";
 
 const RulesExplaining = () => {
   const { gameId } = useParams<{ gameId: string }>();
-  const { sendSync } = useLocalSync();
+  const { mutate } = useUpdateGameStatus();
 
   useEffect(() => {
     const timeout = setTimeout(
       () =>
-        sendSync("GameStatusUpdate", {
+        mutate({
           gameId: gameId!,
           status: GameStatus.RulesExplained,
         }),
-      10_000,
+      Times.TEMP.RulesExplainSeconds * 1000,
     );
 
     return () => clearTimeout(timeout);
-  }, [gameId, sendSync]);
+  }, [gameId, mutate]);
 
   return (
     <PageTemplate>

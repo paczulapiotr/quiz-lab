@@ -1,4 +1,5 @@
 import { ScoreTile, Tile, Timer } from "@repo/ui/components";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   questionId: string;
@@ -11,7 +12,7 @@ const Component = ({ question, score }: Props) => {
     <>
       <ScoreTile score={score} />
       <Tile blue text={question} />
-      <Timer startSeconds={9} />
+      <Timer startSeconds={Times.Abdc.QuestionShowSeconds} />
     </>
   );
 };

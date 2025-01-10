@@ -5,6 +5,8 @@ import { useLocalSyncConsumer} from "@repo/ui/hooks"
 import { GameStatus } from "@repo/ui/services/types";
 import styles from "./JoinGame.module.scss";
 import { PageTemplate, Tile, Timer } from "@repo/ui/components";
+import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   starting?: boolean;
@@ -12,8 +14,14 @@ type Props = {
 
 const JoinGame = ({ starting = false }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
-
+  const { mutate } = useUpdateGameStatus();
   const { data, isLoading, refetch } = useGetGame(gameId);
+
+  const onGameStarted = () =>
+        mutate({
+          gameId: gameId!,
+          status: GameStatus.GameStarted,
+        })
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
@@ -49,7 +57,7 @@ const JoinGame = ({ starting = false }: Props) => {
       )}
       {starting ? (
         <div style={{ marginTop: "auto" }}>
-          <Timer startSeconds={10} />
+          <Timer startSeconds={Times.GameStartingSeconds} onTimeUp={onGameStarted} />
         </div>
       ) : null}
     </PageTemplate>

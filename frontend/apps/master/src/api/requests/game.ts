@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import instance from "../instance";
+import { GameStatus } from "@repo/ui";
 
 export type JoinGameRequest = { playerName: string; gameId: string };
 
@@ -45,3 +46,12 @@ export const getScores = async (gameId: string) =>
       `/game/${gameId}/mini-game/score`,
     )
   ).data;
+
+export type UpdateGameStatusRequest = { status: GameStatus, gameId:string };
+
+export const updateGameStatus = async ({ gameId, status }: UpdateGameStatusRequest) => (
+  await instance.post<never, never, Pick<UpdateGameStatusRequest, "status">>(
+    `/game/${gameId}/status`,
+    { status }
+  )
+);

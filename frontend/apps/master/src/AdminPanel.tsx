@@ -1,6 +1,7 @@
-import { useLocalSync } from "@repo/ui/hooks";
 import { GameStatus, GameStatusNames } from "@repo/ui/services/types";
 import { useParams } from "react-router";
+import { useUpdateGameStatus } from "./api/mutations/useUpdateGameStatus";
+import { useUpdateMiniGame } from "./api/mutations/useUpdateMiniGame";
 
 const AdminPanel = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -69,16 +70,15 @@ const SendMiniGameUpdateButton = ({
   action: string;
   gameId: string;
 }) => {
-  const { sendSync } = useLocalSync();
+  const { mutate } = useUpdateMiniGame();
 
   return (
     <button
       style={{ fontSize: "1rem", flexWrap: "wrap" }}
       onClick={() =>
-        sendSync("MiniGameUpdate", {
+        mutate({
           gameId: gameId!,
           action,
-          miniGameType: "AbcdWithCategories",
         })
       }
     >
@@ -94,13 +94,13 @@ const SendGameUpdateButton = ({
   status: GameStatus;
   gameId: string;
 }) => {
-  const { sendSync } = useLocalSync();
+  const { mutate } = useUpdateGameStatus();
 
   return (
     <button
       style={{ fontSize: "1rem", flexWrap: "wrap" }}
       onClick={() =>
-        sendSync("GameStatusUpdate", {
+        mutate({
           gameId: gameId!,
           status,
         })

@@ -1,6 +1,7 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
 import { PowerPlaysEnum, PowerPlaysNames } from "../types";
 import styles from "./Component.module.scss";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   appliedPowerPlays: {
@@ -22,7 +23,7 @@ const Component = ({ appliedPowerPlays }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={9} />
+      <Timer startSeconds={Times.Abdc.PowerPlayShowSeconds} />
     </>
   );
 };
