@@ -13,6 +13,7 @@ public static class Extensions
             return client.GetDatabase(databaseName);
         });
         services.AddSingleton<IDatabaseStorage, DatabaseStorage>();
+        services.AddSingleton<IFileStorage, FileStorage>();
         DatabaseStorage.RegisterClassMap();
     }
 }

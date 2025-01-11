@@ -12,6 +12,7 @@ public class GameEngineHostedService(
 
     private CancellationTokenSource? cancellationTokenSource;
     private Task? backgroundTask;
+    private List<Task> instanceTasks = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -38,7 +39,7 @@ public class GameEngineHostedService(
                 var gameId = Guid.Parse(status.GameId);
 
                 // Initialize game engine 
-                gameEngine.Run(gameId, token);
+                instanceTasks.Add(gameEngine.Run(gameId, token));
             }
         }, token);
 
@@ -55,11 +56,14 @@ public class GameEngineHostedService(
 
             try
             {
-                await backgroundTask;
+                await Task.WhenAll(new[] { backgroundTask }.Concat(instanceTasks).ToArray());
             }
             catch (OperationCanceledException)
             {
                 // Ignore the cancellation exception
+            } catch (Exception ex)
+            {
+                logger.LogError(ex, "Error stopping GameEngineHostedService");
             }
         }
     }

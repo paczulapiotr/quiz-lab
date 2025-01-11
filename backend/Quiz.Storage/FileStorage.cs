@@ -14,7 +14,7 @@ public class FileStorage: IFileStorage
         _bucket = new GridFSBucket(database);
     }
 
-    public async Task<string> UploadFileAsync(SimpleFileStream fileStream)
+    public async Task<string> UploadFileAsync(SimpleFileStream fileStream, CancellationToken cancellationToken = default)
     {
         var options = new GridFSUploadOptions
         {
@@ -24,15 +24,15 @@ public class FileStorage: IFileStorage
                 { "contentType", fileStream.ContentType }
             }
         };
-        var objectId = await _bucket.UploadFromStreamAsync(fileStream.FileName, fileStream.FileStream, options);
+        var objectId = await _bucket.UploadFromStreamAsync(fileStream.FileName, fileStream.FileStream, options, cancellationToken: cancellationToken);
         return objectId.ToString();
     }
 
-    public async Task<SimpleFileStream> GetFileAsync(string fileId)
+    public async Task<SimpleFileStream> GetFileAsync(string fileId, CancellationToken cancellationToken = default)
     {
         var objectId = new ObjectId(fileId);
         var filter = Builders<GridFSFileInfo>.Filter.Eq("_id", objectId);
-        var fileInfo = await _bucket.Find(filter).FirstOrDefaultAsync();
+        var fileInfo = await _bucket.Find(filter).FirstOrDefaultAsync(cancellationToken);
 
         if (fileInfo == null)
         {
@@ -43,9 +43,34 @@ public class FileStorage: IFileStorage
         var contentType = fileInfo.Metadata.GetValue("contentType").AsString;
 
         var stream = new MemoryStream();
-        await _bucket.DownloadToStreamAsync(objectId, stream);
+        await _bucket.DownloadToStreamAsync(objectId, stream, cancellationToken: cancellationToken);
         stream.Position = 0; // Reset stream position to the beginning
 
-        return new (fileName, contentType, stream);
+        return new (fileId, fileName, contentType, stream);
+    }
+
+    public async Task<IEnumerable<SimpleFile>> SearchFilesAsync(string? name = null, string? contentType = null, CancellationToken cancellationToken = default)
+    {
+        var filterBuilder = Builders<GridFSFileInfo>.Filter;
+        var filter = filterBuilder.Empty;
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            filter &= filterBuilder.Eq("metadata.filename", name);
+        }
+
+        if (!string.IsNullOrEmpty(contentType))
+        {
+            filter &= filterBuilder.Eq("metadata.contentType", contentType);
+        }
+
+        var cursor = await _bucket.FindAsync(filter, cancellationToken: cancellationToken);
+        var fileInfos = await cursor.ToListAsync(cancellationToken);
+
+        return fileInfos.Select(fileInfo 
+            => new SimpleFile(
+                fileInfo.Id.ToString(), 
+                fileInfo.Metadata.GetValue("filename").AsString, 
+                fileInfo.Metadata.GetValue("contentType").AsString));
     }
 }
