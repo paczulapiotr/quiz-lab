@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_shared_min_def_musics",
+  "info": {
+    "displayName": "MinDef.Music",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "rounds": {
+      "displayName": "MinDef.Music.Round",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-music-round",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_round_definitions",
+  "info": {
+    "displayName": "MinDef.Abcd.Round",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "categories": {
+      "displayName": "MinDef.Abcd.Round.Category",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-abcd-round-category",
+      "required": true,
+      "max": 4,
+      "min": 4
+    }
+  }
+}

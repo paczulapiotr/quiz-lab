@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_shared_min_def_music_rounds",
+  "info": {
+    "displayName": "MinDef.Music.Round",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "answers": {
+      "displayName": "MinDef.Music.Round.Answer",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-music-round-answer",
+      "required": true,
+      "min": 4,
+      "max": 4
+    },
+    "audio": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "audios"
+      ]
+    }
+  }
+}

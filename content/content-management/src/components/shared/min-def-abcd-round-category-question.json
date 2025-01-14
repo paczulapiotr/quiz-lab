@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_shared_min_def_abcd_round_category_questions",
+  "info": {
+    "displayName": "MinDef.Abcd.Round.Category.Question",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "answers": {
+      "displayName": "MinDef.Abcd.Round.Category.Question.Answer",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-abcd-round-category-question-answer",
+      "required": true,
+      "max": 4,
+      "min": 4
+    },
+    "text": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "audio": {
+      "allowedTypes": [
+        "files",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": false
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_mini_game_definitions",
+  "info": {
+    "displayName": "MiniGameDefinition"
+  },
+  "options": {},
+  "attributes": {
+    "Description": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "AbcdWithCategories",
+        "Music",
+        "Charades"
+      ],
+      "required": true
+    }
+  }
+}

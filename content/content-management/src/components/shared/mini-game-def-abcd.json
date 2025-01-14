@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_shared_mini_game_def_abcds",
+  "info": {
+    "displayName": "MinDef.Abcd",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "rounds": {
+      "displayName": "RoundDefinition",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.round-definition",
+      "required": true
+    }
+  }
+}

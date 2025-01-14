@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_min_def_music_round_answers",
+  "info": {
+    "displayName": "MinDef.Music.Round.Answer",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "isCorrect": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    }
+  }
+}
