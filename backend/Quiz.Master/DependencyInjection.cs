@@ -1,7 +1,6 @@
 using Quiz.Master.Game;
 using Quiz.Master.Game.Communication;
 using Quiz.Master.Game.MiniGames;
-using Quiz.Master.Persistance;
 using Quiz.Master.Persistance.Repositories;
 using Quiz.Master.Persistance.Repositories.Abstract;
 using Quiz.Common.CQRS;
@@ -9,6 +8,7 @@ using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.Game.MiniGames.AbcdWithCategories;
 using IAbcdWithCategoriesEventService = Quiz.Master.MiniGames.Handlers.AbcdWithCategories.IMiniGameEventService;
 using Quiz.Master.Services.Lights;
+using Quiz.Master.Services.ContentManagement;
 
 namespace Quiz.Master;
 
@@ -19,6 +19,8 @@ public static class DependencyInjection
         services.AddHttpClient();
         services.Configure<LightsConfig>(configuration.GetSection("Lights"));
         services.AddScoped<ILightsClient, LightsClient>();
+        services.Configure<ContentManagementConfig>(configuration.GetSection("ContentManagement"));
+        services.AddScoped<IContentManagementClient, ContentManagementClient>();
         services.AddScoped<IGameRepository, StorageGameRepository>();
         services.AddScoped<IMiniGameRepository, StorageMiniGameRepository>();
         services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();

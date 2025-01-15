@@ -11,4 +11,6 @@ public record MiniGameInstance<TState> : IEntity where TState : MiniGameStateDat
     public TState State { get; set; } = new(); // property for mini game state rounds information
 }
 
+public record MiniGameInstance : MiniGameInstance<MiniGameStateData>;
+
 public record MiniGameStateData {}

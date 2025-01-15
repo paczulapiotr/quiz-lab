@@ -10,7 +10,7 @@ public static class Migration
     {
         var database = serviceProvider.GetRequiredService<IMongoDatabase>();
         var gameDefinitionCollection = database.GetCollection<GameDefinition>("GameDefinitions");
-        var miniGameDefinitionCollection = database.GetCollection<MiniGameDefinition<MiniGameDefinitionData>>("MiniGameDefinitions");
+        var miniGameDefinitionCollection = database.GetCollection<MiniGameDefinition>("MiniGameDefinitions");
         var jsonFilePath = "./Migrations/GameDefinitionMigrations.json";
         var jsonData = File.ReadAllText(jsonFilePath);
 
@@ -38,7 +38,6 @@ public static class Migration
                         Id = document.Id,
                         CreatedAt = DateTime.UtcNow,
                         Name = document.Name,
-                        Description = document.Description,
                         MiniGames = document.MiniGames.Select(x => new SimpleMiniGameDefinition
                         {
                             MiniGameDefinitionId = x.Id,

@@ -121,4 +121,16 @@ public class DatabaseStorage : IDatabaseStorage
             .InsertOneAsync(miniGame,
                 cancellationToken: cancellationToken);
     }
+
+    public async Task InsertGameDefinitionAsync(GameDefinition gameDefinition, CancellationToken cancellationToken = default)
+    {
+        await GameDefinitions
+            .InsertOneAsync(gameDefinition, cancellationToken: cancellationToken);
+    }
+
+    public async Task InsertManyMiniGameDefinitionAsync(IEnumerable<MiniGameDefinition> gameDefinitions, CancellationToken cancellationToken = default)
+    {
+        await MiniGameDefinitions<MiniGameDefinitionData>()
+            .InsertManyAsync(gameDefinitions, cancellationToken: cancellationToken);
+    }
 }

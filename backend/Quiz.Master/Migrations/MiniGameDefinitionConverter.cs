@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
 
-public class MiniGameDefinitionConverter : JsonConverter<MiniGameDefinition<MiniGameDefinitionData>>
+public class MiniGameDefinitionConverter : JsonConverter<MiniGameDefinition>
 {
-    public override MiniGameDefinition<MiniGameDefinitionData> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override MiniGameDefinition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
         {
@@ -20,10 +20,9 @@ public class MiniGameDefinitionConverter : JsonConverter<MiniGameDefinition<Mini
                 _ => JsonSerializer.Deserialize<MiniGameDefinitionData>(definitionElement.GetRawText(), options),
             };
 
-            return new MiniGameDefinition<MiniGameDefinitionData>
+            return new MiniGameDefinition
             {
-                Id = root.GetProperty(nameof(MiniGameDefinition<MiniGameDefinitionData>.Id)).GetGuid(),
-                Description = root.GetProperty(nameof(MiniGameDefinition<MiniGameDefinitionData>.Description)).GetString() ?? string.Empty,
+                Id = root.GetProperty(nameof(MiniGameDefinition.Id)).GetGuid(),
                 Type = type,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null,
@@ -34,7 +33,7 @@ public class MiniGameDefinitionConverter : JsonConverter<MiniGameDefinition<Mini
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, MiniGameDefinition<MiniGameDefinitionData> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, MiniGameDefinition value, JsonSerializerOptions options)
     {
         JsonSerializer.Serialize(writer, (object)value, options);
     }

@@ -104,9 +104,9 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         await SetStatus(game, Status.MiniGameEnded, cancellationToken);
     }
 
-    private async Task<MiniGameInstance<MiniGameStateData>> CreateMiniGame(SimpleMiniGameDefinition definition, Guid gameId, CancellationToken cancellationToken)
+    private async Task<MiniGameInstance> CreateMiniGame(SimpleMiniGameDefinition definition, Guid gameId, CancellationToken cancellationToken)
     {
-        var miniGame = new MiniGameInstance<MiniGameStateData>
+        var miniGame = new MiniGameInstance
         {
             GameId = gameId,
             MiniGameDefinitionId = definition.MiniGameDefinitionId,

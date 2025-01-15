@@ -4,7 +4,6 @@ public record Game : IEntity
 {
     public Guid Id { get; set; }
     public Guid GameDefinitionId { get; set; }
-    public ICollection<SimpleMiniGame> MiniGames { get; set; } = new List<SimpleMiniGame>();
     public GameStatus Status { get; set; }
     public Guid? CurrentMiniGameId { get; set; }
     public uint GameSize { get; set; }
