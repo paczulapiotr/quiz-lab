@@ -25,7 +25,7 @@ public record ComponentSharedMiniGameDefAbcd : MiniGameDto
     public record Question
     {
         public required string Id { get; set; }
-        public Audio Audio { get; set; } = null!;
+        public Audio? Audio { get; set; } = null!;
         public required string Text { get; set; }
         public List<Answer> Answers { get; set; } = new();
     }
@@ -45,6 +45,7 @@ public record ComponentSharedMiniGameDefAbcd : MiniGameDto
                     {
                         Id = q.Id,
                         Text = q.Text,
+                        AudioUrl = q.Audio?.Url,
                         Answers = q.Answers.Select(a => new AbcdWithCategoriesDefinition.Question.Answer
                         {
                             Id = a.Id,

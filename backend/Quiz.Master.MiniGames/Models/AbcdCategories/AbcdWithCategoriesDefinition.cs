@@ -25,6 +25,7 @@ public record AbcdWithCategoriesDefinition : MiniGameDefinitionData
         public required string Id { get; set; }
         public string Text { get; set; } = string.Empty;
         public IEnumerable<Answer> Answers { get; set; } = new List<Answer>();
+        public string? AudioUrl { get; set; }
         public record Answer : AnswerBase { }
     }
 

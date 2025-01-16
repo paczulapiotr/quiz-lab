@@ -6,7 +6,7 @@ using Quiz.Storage;
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetQuestion;
 
 public record GetQuestionQuery(Guid GameId) : IQuery<GetQuestionResult>;
-public record GetQuestionResult(string? QuestionId = null, string? Question = null, IEnumerable<Answer>? Answers = null);
+public record GetQuestionResult(string? QuestionId = null, string? Question = null, string? AudioUrl = null,  IEnumerable<Answer>? Answers = null);
 public record Answer(string Id, string Text);
 
 public class GetQuestionHandler(IDatabaseStorage storage) : IQueryHandler<GetQuestionQuery, GetQuestionResult>
@@ -28,6 +28,6 @@ public class GetQuestionHandler(IDatabaseStorage storage) : IQueryHandler<GetQue
             ?.Categories?.FirstOrDefault(x => x.Id == state?.CurrentCategoryId)
             ?.Questions.FirstOrDefault(x => x.Id == state?.CurrentQuestionId);
 
-        return new GetQuestionResult(question?.Id, question?.Text, question?.Answers.Select(x => new Answer(x.Id, x.Text)));
+        return new GetQuestionResult(question?.Id, question?.Text, question?.AudioUrl, question?.Answers.Select(x => new Answer(x.Id, x.Text)));
     }
 }
