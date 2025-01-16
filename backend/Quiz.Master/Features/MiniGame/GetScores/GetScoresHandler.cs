@@ -21,7 +21,7 @@ public class GetScoresHandler(IDatabaseStorage storage) : IQueryHandler<GetScore
             throw new InvalidOperationException("Mini game not found");
         }
 
-        var currentMiniGame = await storage.FindMiniGameAsync<MiniGameStateData>(currentMiniGameId.Value, cancellationToken);
+        var currentMiniGame = await storage.FindMiniGameAsync(currentMiniGameId.Value, cancellationToken);
         var gameDefinition = await storage.FindGameDefinitionAsync(activeGame.GameDefinitionId, cancellationToken);
 
         var players = activeGame?.Players;

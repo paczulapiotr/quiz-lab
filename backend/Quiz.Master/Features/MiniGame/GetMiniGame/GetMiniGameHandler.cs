@@ -1,7 +1,6 @@
 
 using Quiz.Common.CQRS;
 using Quiz.Master.Core.Models;
-using Quiz.Master.MiniGames.Models.AbcdCategories;
 using Quiz.Storage;
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
@@ -15,8 +14,7 @@ public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMin
     public async ValueTask<GetMiniGameResult?> HandleAsync(GetMiniGameQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
-        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
-        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
 
         if (miniGame == null)
         {

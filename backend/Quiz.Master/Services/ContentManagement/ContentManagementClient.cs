@@ -53,6 +53,7 @@ public class ContentManagementClient : IContentManagementClient
                                     id,
                                     text,
                                     answers {
+                                        id,
                                         isCorrect,
                                         text
                                     }
@@ -107,6 +108,7 @@ public class ContentManagementClient : IContentManagementClient
 
         return new SimpleGameDefinition(def.Identifier, def.Name, def.Locale, def.MiniGames.Select(mg => new MiniGameDefinition {
              Type = mg.GameType,
+             CreatedAt = DateTime.UtcNow,
              Definition = mg.MapToDefinition(),
         }));
     }

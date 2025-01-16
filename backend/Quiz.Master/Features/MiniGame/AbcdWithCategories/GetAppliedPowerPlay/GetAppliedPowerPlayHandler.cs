@@ -16,16 +16,16 @@ public class GetAppliedPowerPlayHandler(IDatabaseStorage storage) : IQueryHandle
     public async ValueTask<GetAppliedPowerPlayResult?> HandleAsync(GetAppliedPowerPlayQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
-        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
-        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
-        var state = miniGame.State;
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
+        var state = miniGame.State.As<AbcdWithCategoriesState>();
+
         var players = game.Players;
 
         var playersToMap = string.IsNullOrWhiteSpace(request.DeviceId)
             ? players
             : players.Where(x => x.DeviceId == request.DeviceId).ToList();
 
-        var powerPlays = state.Rounds.LastOrDefault()?.PowerPlays;
+        var powerPlays = state?.Rounds.LastOrDefault()?.PowerPlays;
 
         var playersAppliedPower = new List<PlayersAppliedPower>();
         foreach (var player in playersToMap)

@@ -9,6 +9,7 @@ using Quiz.Master.Game.MiniGames.AbcdWithCategories;
 using IAbcdWithCategoriesEventService = Quiz.Master.MiniGames.Handlers.AbcdWithCategories.IMiniGameEventService;
 using Quiz.Master.Services.Lights;
 using Quiz.Master.Services.ContentManagement;
+using AbcdConfiguration = Quiz.Master.MiniGames.Models.AbcdCategories.Configuration;
 
 namespace Quiz.Master;
 
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.Configure<LightsConfig>(configuration.GetSection("Lights"));
         services.AddScoped<ILightsClient, LightsClient>();
         services.Configure<ContentManagementConfig>(configuration.GetSection("ContentManagement"));
+        services.Configure<AbcdConfiguration>(configuration.GetSection("Game:Abcd"));
         services.AddScoped<IContentManagementClient, ContentManagementClient>();
         services.AddScoped<IGameRepository, StorageGameRepository>();
         services.AddScoped<IMiniGameRepository, StorageMiniGameRepository>();
@@ -27,7 +29,7 @@ public static class DependencyInjection
         services.AddScoped<ICommunicationService, CommunicationService>();
 
         services.AddScoped<IAbcdWithCategoriesEventService, MiniGameEventService>();
-        services.AddScoped<AbcdWithCategoriesHandler>();
+        services.AddTransient<AbcdWithCategoriesHandler>();
 
         services.AddScoped<IGameEngine, GameEngine>();
         services.AddHandlers();

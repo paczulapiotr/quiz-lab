@@ -3,15 +3,15 @@ using Definition = Quiz.Master.MiniGames.Models.AbcdCategories.AbcdWithCategorie
 using State = Quiz.Master.MiniGames.Models.AbcdCategories.AbcdWithCategoriesState;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
 using Quiz.Master.Game.MiniGames;
-using Quiz.Master.Core.Models;
+using Microsoft.Extensions.Options;
 
 namespace Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 
-public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMiniGameRepository repository) : IMiniGameHandler
+public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMiniGameRepository repository, IOptions<Configuration> options) : IMiniGameHandler
 {
     private State _state = new State();
     private MiniGameInstance _miniGameInstance { get; set; } = null!;
-    private MiniGameDefinition<Definition> _definition { get; set; } = null!;
+    private Definition _definition { get; set; } = null!;
     private string _gameId => _miniGameInstance?.GameId.ToString() ?? string.Empty;
     private IEnumerable<Guid> _playerIds => _miniGameInstance.PlayerIds;
     private int _playersCount => _playerIds.Count();
@@ -27,13 +27,13 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         _miniGameInstance = game;
         _onPlayerScoreUpdate = onPlayerScoreUpdate;
         _onStateUpdate = onStateUpdate;
-        _definition = await repository.FindMiniGameDefinitionAsync<Definition>(game.DefinitionId, cancellationToken);
-
-        if (_definition is null)
+        var definition = (await repository.FindMiniGameDefinitionAsync(game.DefinitionId, cancellationToken)).Definition.As<Definition>();
+        if (definition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration");
         }
-        var firstRoundDefinition = _definition.Definition.Rounds.FirstOrDefault();
+        _definition = definition;
+        var firstRoundDefinition = _definition.Rounds.FirstOrDefault();
         if (firstRoundDefinition is null)
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
@@ -45,7 +45,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         await eventService.WaitForPowerPlayExplained(_gameId, cancellationToken);
 
         // For each question after first one
-        foreach (var roundDefinition in _definition.Definition.Rounds.Skip(1))
+        foreach (var roundDefinition in _definition.Rounds.Skip(1))
         {
             // Save PowerPlay selection for every player
             var roundState = new State.RoundState { RoundId = roundDefinition.Id };
@@ -72,7 +72,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
 
     private Definition.Round? GetRoundDefinition(string roundId)
     {
-        var roundDefinition = _definition.Definition.Rounds.FirstOrDefault(x => x.Id == roundId);
+        var roundDefinition = _definition.Rounds.FirstOrDefault(x => x.Id == roundId);
         return roundDefinition;
     }
 
@@ -103,7 +103,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(_definition.Definition.Config.TimeForAnswerSelectionMs).Token)
+            new CancellationTokenSource(options.Value.TimeForAnswerSelectionMs).Token)
             .Token;
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
@@ -171,13 +171,13 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
 
     private async Task AnswerQuestion(string roundId, CancellationToken cancellationToken)
     {
-        var config = _definition.Definition.Config;
+        var config = options.Value;
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token)
             .Token;
 
-        var questionDefinition = _definition.Definition.Rounds
+        var questionDefinition = _definition.Rounds
             .FirstOrDefault(x => _state.CurrentRoundId == x.Id)
             ?.Categories.FirstOrDefault(x => x.Id == _state.CurrentCategoryId)
             ?.Questions.FirstOrDefault(x => x.Id == _state.CurrentQuestionId);
@@ -250,7 +250,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         var gameId = _miniGameInstance.GameId.ToString();
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
-        var config = _definition.Definition.Config;
+        var config = options.Value;
         var selections = new Dictionary<string, List<Guid>>();
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,

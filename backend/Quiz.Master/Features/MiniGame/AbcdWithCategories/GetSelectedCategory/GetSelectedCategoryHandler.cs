@@ -1,7 +1,5 @@
 using Quiz.Common.CQRS;
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
-using Quiz.Master.Persistance;
 using Quiz.Storage;
 
 namespace Quiz.Master.Features.MiniGame.AbcdWithCategories.GetSelectedCategory;
@@ -22,15 +20,13 @@ public class GetSelectedCategoryHandler(IDatabaseStorage storage) : IQueryHandle
             throw new InvalidOperationException("Game has no current mini game");
         }   
 
-        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId.Value);
-        
-        if(miniGame.Type != MiniGameType.AbcdWithCategories) {
-            throw new InvalidOperationException("Mini game is not of type AbcdWithCategories");
-        }
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId.Value);
+        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync(miniGame.MiniGameDefinitionId);
 
-        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId);
+        var state = miniGame.State.As<AbcdWithCategoriesState>();
+        var definition = miniGameDefinition.Definition.As<AbcdWithCategoriesDefinition>();
 
-        var categories = miniGameDefinition.Definition.Rounds?.FirstOrDefault(x => x.Id == miniGame.State.CurrentRoundId)
+        var categories = definition?.Rounds?.FirstOrDefault(x => x.Id == state?.CurrentRoundId)
             ?.Categories ?? [];
 
         var players = game.Players;
@@ -38,8 +34,8 @@ public class GetSelectedCategoryHandler(IDatabaseStorage storage) : IQueryHandle
         var selectedCategories = categories.Select(c => new SelectedCategory(
             c.Id,
             c.Name,
-            c.Id == miniGame.State.CurrentCategoryId,
-            miniGame.State.Rounds?.FirstOrDefault(x => x.RoundId == miniGame.State.CurrentRoundId)
+            c.Id == state?.CurrentCategoryId,
+            state?.Rounds?.FirstOrDefault(x => x.RoundId == state?.CurrentRoundId)
                 ?.SelectedCategories.FirstOrDefault(x => x.CategoryId == c.Id)?.PlayerIds
                 .Select(playerId => new Player(playerId.ToString(), players?.FirstOrDefault(p => p.Id == playerId)?.Name ?? "")).ToArray() ?? []
         )).ToArray();

@@ -5,17 +5,13 @@ namespace Quiz.Master.Game.MiniGames;
 
 public interface IMiniGameRepository
 {
-    Task<MiniGameInstance<TState>> FindMiniGameAsync<TState>(Guid miniGameId, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new();
+    Task<MiniGameInstance> FindMiniGameAsync(Guid miniGameId, CancellationToken cancellationToken = default);
 
-    Task<MiniGameDefinition<TDefinition>> FindMiniGameDefinitionAsync<TDefinition>(Guid definitionId, CancellationToken cancellationToken = default)
-    where TDefinition : MiniGameDefinitionData, new();
+    Task<MiniGameDefinition> FindMiniGameDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default);
 
-    Task InsertMiniGameAsync<TState>(MiniGameInstance<TState> miniGame, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new();
+    Task InsertMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default);
 
-    Task UpdateMiniGameStateAsync<TState>(Guid miniGameId, TState stateData, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new();
+    Task UpdateMiniGameStateAsync(Guid miniGameId, MiniGameStateData stateData, CancellationToken cancellationToken = default);
 
     Task UpsertPlayerScoreAsync(Guid miniGameId, Guid playerId, int score, CancellationToken cancellationToken = default);
 }

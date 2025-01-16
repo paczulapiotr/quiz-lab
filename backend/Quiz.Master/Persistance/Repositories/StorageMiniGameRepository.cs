@@ -6,34 +6,32 @@ namespace Quiz.Master.Persistance.Repositories;
 
 public class StorageMiniGameRepository(IDatabaseStorage databaseStorage) : IMiniGameRepository
 {
-    public async Task<MiniGameInstance<TState>> FindMiniGameAsync<TState>(Guid miniGameId, CancellationToken cancellationToken = default) where TState : MiniGameStateData, new()
+    public async Task<MiniGameInstance> FindMiniGameAsync(Guid miniGameId, CancellationToken cancellationToken = default)
     {
-        return await databaseStorage.FindMiniGameAsync< TState>(miniGameId, cancellationToken);
+        return await databaseStorage.FindMiniGameAsync(miniGameId, cancellationToken);
     }
 
-    public async Task<MiniGameDefinition<TDefinition>> FindMiniGameDefinitionAsync<TDefinition>(Guid definitionId, CancellationToken cancellationToken = default) where TDefinition : MiniGameDefinitionData, new()
+    public async Task<MiniGameDefinition> FindMiniGameDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default)
     {
-        return await databaseStorage.FindMiniGameDefinitionAsync<TDefinition>(definitionId, cancellationToken);
+        return await databaseStorage.FindMiniGameDefinitionAsync(definitionId, cancellationToken);
     }
 
-    public async Task UpdateMiniGameStateAsync<TState>(Guid miniGameId, TState stateData, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new()
+    public async Task UpdateMiniGameStateAsync(Guid miniGameId, MiniGameStateData stateData, CancellationToken cancellationToken = default)
     {
-        var miniGame = await databaseStorage.FindMiniGameAsync<TState>(miniGameId, cancellationToken);
+        var miniGame = await databaseStorage.FindMiniGameAsync(miniGameId, cancellationToken);
         miniGame.State = stateData;
 
         await databaseStorage.UpdateMiniGameAsync(miniGame, cancellationToken);
     }
 
-    public async Task InsertMiniGameAsync<TState>(MiniGameInstance<TState> miniGame, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new()
+    public async Task InsertMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
         await databaseStorage.InsertMiniGameAsync(miniGame, cancellationToken);
     }
 
     public async Task UpsertPlayerScoreAsync(Guid miniGameId, Guid playerId, int score, CancellationToken cancellationToken = default)
     {
-        var miniGame = await databaseStorage.FindMiniGameAsync<MiniGameStateData>(miniGameId, cancellationToken);
+        var miniGame = await databaseStorage.FindMiniGameAsync(miniGameId, cancellationToken);
 
         if (miniGame == null)
         {

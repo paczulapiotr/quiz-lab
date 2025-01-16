@@ -8,7 +8,6 @@ using Quiz.Master;
 using Quiz.Storage;
 using Quiz.Master.Hubs;
 using Quiz.Master.Consumers;
-using Quiz.Master.Migrations;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
@@ -69,6 +68,5 @@ app.MapHub<SyncHub>("/sync").RequireCors("SignalR");
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
-Migration.Run(app.Services);
 app.Run();
 

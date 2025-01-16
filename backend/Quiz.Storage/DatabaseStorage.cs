@@ -19,20 +19,20 @@ public class DatabaseStorage : IDatabaseStorage
     {
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         BsonClassMap.RegisterClassMap(new GameClassMap());
-        BsonClassMap.RegisterClassMap(new MiniGameInstanceClassMap());
         BsonClassMap.RegisterClassMap(new GameDefinitionClassMap());
-        BsonClassMap.RegisterClassMap(new MiniGameDefinitionClassMap());
         BsonClassMap.RegisterClassMap(new MiniGameDefinitionDataClassMap());
         BsonClassMap.RegisterClassMap(new MiniGameStateDataClassMap());
+        BsonClassMap.RegisterClassMap(new MiniGameInstanceClassMap());
+        BsonClassMap.RegisterClassMap(new MiniGameDefinitionClassMap());
     }
 
 
     public IMongoCollection<Game> Games => _database.GetCollection<Game>("Games");
     public IMongoCollection<GameDefinition> GameDefinitions => _database.GetCollection<GameDefinition>("GameDefinitions");
-    public IMongoCollection<MiniGameInstance<TState>> MiniGameInstances<TState>() where TState: MiniGameStateData, new() 
-        => _database.GetCollection<MiniGameInstance<TState>>("MiniGameInstances");
-    public IMongoCollection<MiniGameDefinition<TDefinition>> MiniGameDefinitions<TDefinition>() where TDefinition : MiniGameDefinitionData, new()
-        => _database.GetCollection<MiniGameDefinition<TDefinition>>("MiniGameDefinitions");
+    public IMongoCollection<MiniGameInstance> MiniGameInstances
+        => _database.GetCollection<MiniGameInstance>("MiniGameInstances");
+    public IMongoCollection<MiniGameDefinition> MiniGameDefinitions
+        => _database.GetCollection<MiniGameDefinition>("MiniGameDefinitions");
 
     public async Task<Game> FindGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
@@ -51,19 +51,18 @@ public class DatabaseStorage : IDatabaseStorage
         await Games.InsertOneAsync(game, cancellationToken: cancellationToken);
     }
 
-    public async Task UpdateMiniGameAsync<TState>(MiniGameInstance<TState> miniGame, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new()
+    public async Task UpdateMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
-        await MiniGameInstances<TState>()
+        await MiniGameInstances
             .ReplaceOneAsync(
                 x => x.Id == miniGame.Id, 
                 miniGame, 
                 cancellationToken: cancellationToken);
     }
 
-    public async Task<MiniGameInstance<TState>> FindMiniGameAsync<TState>(Guid id, CancellationToken cancellationToken = default) where TState : MiniGameStateData, new()
+    public async Task<MiniGameInstance> FindMiniGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var result = await MiniGameInstances<TState>().FindAsync(x => x.Id == id, cancellationToken: cancellationToken);
+        var result = await MiniGameInstances.FindAsync(x => x.Id == id, cancellationToken: cancellationToken);
         return await result.FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -73,9 +72,9 @@ public class DatabaseStorage : IDatabaseStorage
         return await result.FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<MiniGameDefinition<TDefinition>> FindMiniGameDefinitionAsync<TDefinition>(Guid id, CancellationToken cancellationToken = default) where TDefinition : MiniGameDefinitionData, new()
+    public async Task<MiniGameDefinition> FindMiniGameDefinitionAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var result = await MiniGameDefinitions<TDefinition>().FindAsync(x => x.Id == id, cancellationToken: cancellationToken);
+        var result = await MiniGameDefinitions.FindAsync(x => x.Id == id, cancellationToken: cancellationToken);
         return await result.FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -90,7 +89,7 @@ public class DatabaseStorage : IDatabaseStorage
 
         var players = game.Players;
 
-        var miniGames = MiniGameInstances<MiniGameStateData>().Find(x=>x.GameId == gameId).ToList();
+        var miniGames = MiniGameInstances.Find(x=>x.GameId == gameId).ToList();
 
         var scores = new Dictionary<Guid, Dictionary<Guid, int>>();
         foreach (var miniGame in miniGames)
@@ -114,10 +113,9 @@ public class DatabaseStorage : IDatabaseStorage
         return scores.Select(x => (players.First(p => p.Id == x.Key), x.Value));
     }
 
-    public async Task InsertMiniGameAsync<TState>(MiniGameInstance<TState> miniGame, CancellationToken cancellationToken = default)
-    where TState : MiniGameStateData, new()
+    public async Task InsertMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default)
     {
-        await MiniGameInstances<TState>()
+        await MiniGameInstances
             .InsertOneAsync(miniGame,
                 cancellationToken: cancellationToken);
     }
@@ -130,7 +128,7 @@ public class DatabaseStorage : IDatabaseStorage
 
     public async Task InsertManyMiniGameDefinitionAsync(IEnumerable<MiniGameDefinition> gameDefinitions, CancellationToken cancellationToken = default)
     {
-        await MiniGameDefinitions<MiniGameDefinitionData>()
+        await MiniGameDefinitions
             .InsertManyAsync(gameDefinitions, cancellationToken: cancellationToken);
     }
 }

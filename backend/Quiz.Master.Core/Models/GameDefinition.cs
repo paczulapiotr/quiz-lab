@@ -8,6 +8,5 @@ public record GameDefinition : IEntity
     public string Locale { get; set; } = string.Empty;
     public IEnumerable<SimpleMiniGameDefinition> MiniGames { get; set; } = new List<SimpleMiniGameDefinition>();
     public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
 }
 

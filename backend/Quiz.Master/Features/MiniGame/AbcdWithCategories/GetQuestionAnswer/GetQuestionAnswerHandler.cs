@@ -1,8 +1,5 @@
 
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using Quiz.Common.CQRS;
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
 using Quiz.Storage;
 
@@ -19,21 +16,23 @@ public class GetQuestionAnswerHandler(IDatabaseStorage storage) : IQueryHandler<
     public async ValueTask<GetQuestionAnswerResult?> HandleAsync(GetQuestionAnswerQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
-        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
-        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
+        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync(miniGame.MiniGameDefinitionId, cancellationToken);
+
         if (miniGame == null)
         {
             throw new InvalidOperationException("Mini game not found");
         }
 
-        var definition = miniGameDefinition.Definition;
-        var state = miniGame.State;
-        var players = game.Players;
-        var question = definition.Rounds?.FirstOrDefault(x => x.Id == state.CurrentRoundId)
-            ?.Categories?.FirstOrDefault(x => x.Id == state.CurrentCategoryId)
-            ?.Questions.FirstOrDefault(x => x.Id == state.CurrentQuestionId);
+        var state = miniGame.State.As<AbcdWithCategoriesState>();
+        var definition = miniGameDefinition.Definition.As<AbcdWithCategoriesDefinition>();
 
-        var answers = state.Rounds?.FirstOrDefault(x => x.RoundId == state.CurrentRoundId)?.Answers ?? [];
+        var players = game.Players;
+        var question = definition?.Rounds?.FirstOrDefault(x => x.Id == state?.CurrentRoundId)
+            ?.Categories?.FirstOrDefault(x => x.Id == state?.CurrentCategoryId)
+            ?.Questions.FirstOrDefault(x => x.Id == state?.CurrentQuestionId);
+
+        var answers = state?.Rounds?.FirstOrDefault(x => x.RoundId == state.CurrentRoundId)?.Answers ?? [];
         var answerResults = question?.Answers.Select(x
             => new AnswerResult(
                 x.Id,

@@ -14,17 +14,19 @@ public class GetQuestionHandler(IDatabaseStorage storage) : IQueryHandler<GetQue
     public async ValueTask<GetQuestionResult?> HandleAsync(GetQuestionQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
-        var miniGame = await storage.FindMiniGameAsync<AbcdWithCategoriesState>(game.CurrentMiniGameId!.Value, cancellationToken);
-        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync<AbcdWithCategoriesDefinition>(miniGame.MiniGameDefinitionId, cancellationToken);
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
+        var miniGameDefinition = await storage.FindMiniGameDefinitionAsync(miniGame.MiniGameDefinitionId, cancellationToken);
+        var state = miniGame.State.As<AbcdWithCategoriesState>();
+        var definition = miniGameDefinition.Definition.As<AbcdWithCategoriesDefinition>();
 
         if (miniGame == null)
         {
             throw new InvalidOperationException("Mini game not found");
         }
 
-        var question = miniGameDefinition.Definition.Rounds?.FirstOrDefault(x => x.Id == miniGame.State.CurrentRoundId)
-            ?.Categories?.FirstOrDefault(x => x.Id == miniGame.State.CurrentCategoryId)
-            ?.Questions.FirstOrDefault(x => x.Id == miniGame.State.CurrentQuestionId);
+        var question = definition?.Rounds?.FirstOrDefault(x => x.Id == state?.CurrentRoundId)
+            ?.Categories?.FirstOrDefault(x => x.Id == state?.CurrentCategoryId)
+            ?.Questions.FirstOrDefault(x => x.Id == state?.CurrentQuestionId);
 
         return new GetQuestionResult(question?.Id, question?.Text, question?.Answers.Select(x => new Answer(x.Id, x.Text)));
     }
