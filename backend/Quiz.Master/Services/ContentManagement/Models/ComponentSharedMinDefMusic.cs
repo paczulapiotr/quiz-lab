@@ -6,7 +6,7 @@ public record ComponentSharedMinDefMusic : MiniGameDto
 {
     public List<Round> Rounds { get; set; } = new();
 
-    public override MiniGameType GameType => MiniGameType.Music;
+    public override MiniGameType GameType => MiniGameType.MusicGuess;
 
     public record Round
     {

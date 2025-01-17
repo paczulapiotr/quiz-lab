@@ -103,7 +103,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(options.Value.TimeForAnswerSelectionMs).Token)
+            new CancellationTokenSource(options.Value.TimeForPowerPlaySelectionMs).Token)
             .Token;
         var roundState = GetRoundState(roundId);
         var roundDefinition = GetRoundDefinition(roundId);
@@ -254,7 +254,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         var selections = new Dictionary<string, List<Guid>>();
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(config.TimeForAnswerSelectionMs).Token)
+            new CancellationTokenSource(config.TimeForCategorySelectionMs).Token)
             .Token;
             
         // <categoryId, deviceId[]>
