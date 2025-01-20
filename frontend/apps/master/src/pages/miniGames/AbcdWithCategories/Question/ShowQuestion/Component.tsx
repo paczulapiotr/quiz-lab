@@ -1,6 +1,7 @@
 import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
 import { HeaderTile, Timer } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
+import { AbcdActions } from "@repo/ui/minigames/actions";
 import { useParams } from "react-router";
 
 type Props = {
@@ -15,7 +16,7 @@ const Component = ({ question }: Props) => {
   const onTimeUp = () =>
     mutate({
       gameId: gameId!,
-      action: "QuestionShowStop",
+      action: AbcdActions.QuestionShowStop,
     });
 
   return (

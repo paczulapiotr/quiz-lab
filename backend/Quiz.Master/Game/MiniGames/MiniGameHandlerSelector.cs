@@ -1,5 +1,6 @@
 using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
+using Quiz.Master.MiniGames.Handlers.MusicGuess;
 
 namespace Quiz.Master.Game.MiniGames;
 
@@ -12,6 +13,8 @@ public class MiniGameHandlerSelector(IServiceScopeFactory scopeFactory) : IMiniG
         {
             case MiniGameType.AbcdWithCategories:
                 return scope.ServiceProvider.GetRequiredService<AbcdWithCategoriesHandler>();
+            case MiniGameType.MusicGuess:
+                return scope.ServiceProvider.GetRequiredService<MusicGuessHandler>();
             default:
                 throw new ArgumentOutOfRangeException(nameof(miniGame), miniGame, null);
         }

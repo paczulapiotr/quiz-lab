@@ -4,6 +4,7 @@ import { useGetQuestion } from "@/api/queries/minigames/abcd/useGetQuestion";
 import { useGetScore } from "@/api/queries/useGetScore";
 import { useGetAppliedPowerPlay } from "@/api/queries/minigames/abcd/useGetAppliedPowerPlay";
 import { useMemo } from "react";
+import { AbcdInteractions } from "@repo/ui/minigames/actions";
 
 type Props = {
   gameId: string;
@@ -16,7 +17,7 @@ const AnswerQuestion = ({ gameId }: Props) => {
   const appliedPowerPlays = useGetAppliedPowerPlay(gameId, true);
 
   const answer = (value: string) =>
-    sendAsync({ gameId, interactionType: "QuestionAnswer", value });
+    sendAsync({ gameId, interactionType: AbcdInteractions.QuestionAnswer, value });
 
   const powerPlays = useMemo(
     () =>

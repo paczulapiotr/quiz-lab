@@ -9,7 +9,7 @@ import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import PowerPlayExplain from "./PowerPlays/PowerPlayExplain";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-
+import { AbcdActions} from "@repo/ui/minigames/actions";
 type Props = {
   basePath: string;
 };
@@ -25,30 +25,30 @@ const AbcdWithCategories = ({ basePath }: Props) => {
         queueName={"MiniGameNotification"}
         createNavigationPath={(message) => {
           switch (message.action) {
-            case "PowerPlayExplainStart":
+            case AbcdActions.PowerPlayExplainStart:
               return "/powerplay_explain";
-            case "PowerPlayExplainStop":
+            case AbcdActions.PowerPlayExplainStop:
               return "/powerplay_explain";
-            case "PowerPlayStart":
+            case AbcdActions.PowerPlayStart:
               return "/powerplay_select";
-            case "PowerPlayApplyStart":
+            case AbcdActions.PowerPlayApplyStart:
               return "/powerplay_apply";
-            case "PowerPlayApplyStop":
+            case AbcdActions.PowerPlayApplyStop:
               return "/powerplay_apply";
-            case "CategorySelectStart":
+            case AbcdActions.CategorySelectStart:
               return "/category_select";
-            case "CategoryShowStart":
+            case AbcdActions.CategoryShowStart:
               return "/category_show";
-            case "CategoryShowStop":
+            case AbcdActions.CategoryShowStop:
               return "/category_show";
-            case "QuestionShowStart":
-            case "QuestionShowStop":
+            case AbcdActions.QuestionShowStart:
+            case AbcdActions.QuestionShowStop:
               return "/question_show";
-            case "QuestionAnswerStart":
+            case AbcdActions.QuestionAnswerStart:
               return "/question_answer";
-            case "QuestionAnswerShowStart":
+            case AbcdActions.QuestionAnswerShowStart:
               return "/question_answer_show";
-            case "QuestionAnswerShowStop":
+            case AbcdActions.QuestionAnswerShowStop:
               return "/question_answer_show";
             default:
               return "";

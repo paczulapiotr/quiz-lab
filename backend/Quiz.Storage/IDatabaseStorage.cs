@@ -15,4 +15,7 @@ public interface IDatabaseStorage
     Task InsertManyMiniGameDefinitionAsync(IEnumerable<MiniGameDefinition> gameDefinitions, CancellationToken cancellationToken = default);
     Task<MiniGameDefinition> FindMiniGameDefinitionAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<(Player player, Dictionary<Guid, int> scores)>> ListPlayerScores(Guid gameId, CancellationToken cancellationToken = default);
+    Task<(TState?, TDefinition?)> FindCurrentMiniGameStateAndDefinitionAsync<TState, TDefinition>(Guid gameId, CancellationToken cancellationToken = default)
+    where TState : MiniGameStateData, new()
+    where TDefinition : MiniGameDefinitionData, new();
 }

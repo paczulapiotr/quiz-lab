@@ -6,7 +6,7 @@ namespace Quiz.Master.MiniGames;
 public interface IMiniGameHandler
 {
     // <playerId, score>
-    Task<Dictionary<Guid, int>> Handle(
+    Task Handle(
         MiniGameInstance game,
         PlayerScoreUpdateDelegate onPlayerScoreUpdate,
         MiniGameStateUpdateDelegate onStateUpdate,

@@ -2,7 +2,7 @@ import { useGetCategories } from "@/api/queries/minigames/abcd/useGetCategories"
 import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
 import Component from "./Component";
 import { useGetScore } from "@/api/queries/useGetScore";
-
+import { AbcdInteractions} from "@repo/ui/minigames/actions"
 type Props = {
   gameId: string;
 };
@@ -14,7 +14,7 @@ const SelectCategory = ({ gameId }: Props) => {
   const onSelectHandle = async (categoryId: string) => {
     await sendInteraction({
       gameId: gameId!,
-      interactionType: "CategorySelection",
+      interactionType: AbcdInteractions.CategorySelection,
       value: categoryId,
     });
   };

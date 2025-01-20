@@ -3,6 +3,7 @@ import { PowerPlaysEnum, PowerPlaysNames } from "../types";
 import Component from "./Component";
 import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
 import { useGetPowerPlays } from "@/api/queries/minigames/abcd/useGetPowerPlays";
+import { AbcdInteractions} from "@repo/ui/minigames/actions"
 
 type Props = {
   gameId: string;
@@ -18,7 +19,7 @@ const SelectPowerPlay = ({ gameId }: Props) => {
   ) => {
     await sendInteraction({
       gameId: gameId!,
-      interactionType: "PowerPlaySelection",
+      interactionType: AbcdInteractions.PowerPlaySelection,
       data: {
         powerPlay: PowerPlaysNames[powerPlay],
         deviceId,

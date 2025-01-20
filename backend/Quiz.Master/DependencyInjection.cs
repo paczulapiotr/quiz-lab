@@ -5,11 +5,14 @@ using Quiz.Master.Persistance.Repositories;
 using Quiz.Master.Persistance.Repositories.Abstract;
 using Quiz.Common.CQRS;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
-using Quiz.Master.Game.MiniGames.AbcdWithCategories;
 using IAbcdWithCategoriesEventService = Quiz.Master.MiniGames.Handlers.AbcdWithCategories.IMiniGameEventService;
+using AbcdWithCategoriesEventService = Quiz.Master.Game.MiniGames.AbcdWithCategories.MiniGameEventService;
+using IMusicGuessEventService = Quiz.Master.MiniGames.Handlers.MusicGuess.IMiniGameEventService;
+using MiniGameEventService = Quiz.Master.Game.MiniGames.MusicGuess.MiniGameEventService;
 using Quiz.Master.Services.Lights;
 using Quiz.Master.Services.ContentManagement;
 using AbcdConfiguration = Quiz.Master.MiniGames.Models.AbcdCategories.Configuration;
+using Quiz.Master.MiniGames.Handlers.MusicGuess;
 
 namespace Quiz.Master;
 
@@ -28,8 +31,15 @@ public static class DependencyInjection
         services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
         services.AddScoped<ICommunicationService, CommunicationService>();
 
-        services.AddScoped<IAbcdWithCategoriesEventService, MiniGameEventService>();
+
+        // AbcdWithCategories
+        services.AddScoped<IAbcdWithCategoriesEventService, AbcdWithCategoriesEventService>();
         services.AddTransient<AbcdWithCategoriesHandler>();
+
+        // MusicGuess
+        services.AddScoped<IMusicGuessEventService, MiniGameEventService>();
+        services.AddTransient<MusicGuessHandler>();
+
 
         services.AddScoped<IGameEngine, GameEngine>();
         services.AddHandlers();

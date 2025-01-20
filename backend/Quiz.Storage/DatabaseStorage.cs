@@ -131,4 +131,17 @@ public class DatabaseStorage : IDatabaseStorage
         await MiniGameDefinitions
             .InsertManyAsync(gameDefinitions, cancellationToken: cancellationToken);
     }
+
+    public async Task<(TState?, TDefinition?)> FindCurrentMiniGameStateAndDefinitionAsync<TState, TDefinition>(Guid gameId, CancellationToken cancellationToken = default)
+        where TState : MiniGameStateData, new()
+        where TDefinition : MiniGameDefinitionData, new()
+    {
+        var game = await FindGameAsync(gameId, cancellationToken);
+        var miniGame = await FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
+        var miniGameDefinition = await FindMiniGameDefinitionAsync(miniGame.MiniGameDefinitionId, cancellationToken);
+        var definition = miniGameDefinition.Definition.As<TDefinition>();
+        var state = miniGame.State.As<TState>();
+
+        return (state, definition); 
+    }
 }

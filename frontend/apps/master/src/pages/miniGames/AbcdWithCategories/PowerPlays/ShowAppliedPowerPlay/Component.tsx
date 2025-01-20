@@ -4,6 +4,7 @@ import styles from "./Component.module.scss";
 import { useParams } from "react-router";
 import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
+import { AbcdActions } from "@repo/ui/minigames/actions";
 
 type Props = {
   players: {
@@ -24,7 +25,7 @@ const Component = ({ players }: Props) => {
   const onTimeUp = () =>
     mutate({
       gameId: gameId!,
-      action: "PowerPlayApplyStop",
+      action: AbcdActions.PowerPlayApplyStop,
     });
 
   return (

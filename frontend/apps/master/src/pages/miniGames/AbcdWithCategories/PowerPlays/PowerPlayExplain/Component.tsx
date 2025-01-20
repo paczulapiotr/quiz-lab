@@ -1,6 +1,7 @@
 import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
 import TutorialVideo from "@/pages/temp/TutorialVideo";
 import Times from "@repo/ui/config/times";
+import { AbcdActions } from "@repo/ui/minigames/actions";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 
@@ -13,7 +14,7 @@ const Component = () => {
       () =>
         mutate({
           gameId: gameId!,
-          action: "PowerPlayExplainStop",
+          action: AbcdActions.PowerPlayExplainStop,
         }),
       Times.TEMP.PowerPlayExplainSeconds * 1000,
     );
