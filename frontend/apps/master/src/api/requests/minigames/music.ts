@@ -1,24 +1,5 @@
 import instance from "@/api/instance";
 import { AxiosResponse } from "axios";
-import { PowerPlaysEnum } from "./types";
-
-export type GetAppliedPowerPlayResponse = {
-  players: {
-    playerId: string;
-    playerName: string;
-    powerPlays: {
-      playerId: string;
-      playerName: string;
-      powerPlay: PowerPlaysEnum;
-    }[];
-  }[];
-};
-export const getAppliedPowerPlay = async (gameId: string) =>
-  (
-    await instance.get<never, AxiosResponse<GetAppliedPowerPlayResponse>>(
-      `/game/${gameId}/mini-game/abcd/applied-power-play`,
-    )
-  ).data;
 
 export type GetCategoriesResponse = {
   categories: {
@@ -30,7 +11,7 @@ export type GetCategoriesResponse = {
 export const getCategories = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetCategoriesResponse>>(
-      `/game/${gameId}/mini-game/abcd/categories`,
+      `/game/${gameId}/mini-game/music/categories`,
     )
   ).data;
 
@@ -47,7 +28,7 @@ export type GetQuestionResponse = {
 export const getQuestion = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetQuestionResponse>>(
-      `/game/${gameId}/mini-game/abcd/question`,
+      `/game/${gameId}/mini-game/music/question`,
     )
   ).data;
 
@@ -73,7 +54,7 @@ export type GetQuestionAnswerResponse = {
 export const getQuestionAnswer = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetQuestionAnswerResponse>>(
-      `/game/${gameId}/mini-game/abcd/question-answer`,
+      `/game/${gameId}/mini-game/music/question-answer`,
     )
   ).data;
 
@@ -92,6 +73,6 @@ export type GetSelectedCategoryResponse = {
 export const getSelectedCategory = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetSelectedCategoryResponse>>(
-      `/game/${gameId}/mini-game/abcd/selected-category`,
+      `/game/${gameId}/mini-game/music/selected-category`,
     )
   ).data;
