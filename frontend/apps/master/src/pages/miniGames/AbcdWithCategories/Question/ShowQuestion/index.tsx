@@ -10,6 +10,7 @@ const ShowQuestion = ({ gameId }: Props) => {
 
   return (
     <Component
+      audioUrl={question.data?.audioUrl ?? ""}
       question={question.data?.question ?? ""}
       questionId={question.data?.questionId ?? ""}
     />

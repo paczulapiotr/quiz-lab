@@ -11,6 +11,7 @@ import { ScoreTile } from "./ScoreTile";
 import { FlyingObjects } from "./FlyingObjects";
 import { SimpleModal } from "./SimpleModal";
 import { EraserCanvas } from "./EraserCanvas";
+import AudioPlayer from "./AudioPlayer";
 
 export {
   EraserCanvas,
@@ -27,4 +28,5 @@ export {
   Timer,
   GameNavigator,
   GenericNavigator,
+  AudioPlayer
 };

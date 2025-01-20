@@ -1,26 +1,13 @@
-export const preloadAudio = (src: string): Promise<void> => {
+export const prefetchResource = (url:string) => {
   return new Promise((resolve, reject) => {
-    const audio = new Audio();
-    audio.src = src;
-    audio.oncanplaythrough = () => resolve();
-    audio.onerror = (err) => reject(err);
-  });
-};
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = url;
 
-export const preloadImage = (src: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.src = src;
-    img.onload = () => resolve();
-    img.onerror = (err) => reject(err);
-  });
-};
+    link.onload = () => resolve(null);
 
-export const preloadVideo = (src: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement("video");
-    video.src = src;
-    video.onloadeddata = () => resolve();
-    video.onerror = (err) => reject(err);
+    link.onerror = () => reject(new Error(`Failed to prefetch resource: ${url}`));
+
+    document.head.appendChild(link);
   });
 };
