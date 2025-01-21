@@ -23,7 +23,7 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         if(definition == null) {
             throw new InvalidOperationException("Mini game definition not found");
         }
-        await eventService.Initialize(miniGame.Id.ToString(), cancellationToken);
+        await eventService.Initialize(miniGame.GameId.ToString(), cancellationToken);
         foreach (var round in definition.Rounds) {
             var roundState = new State.RoundState { RoundId = round.Id };
             _state.Rounds.Add(roundState);
@@ -47,7 +47,9 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
 
         await eventService.WaitForCategoryPresented(gameId, cancellationToken);
 
-        foreach (var question in category.Questions) {
+        foreach (var question in category.Questions)
+        {
+            await SetCurrentQuestion(round, question, cancellationToken);
 
             await eventService.SendOnQuestionSelection(gameId, cancellationToken);
 
@@ -59,6 +61,16 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         }
     }
 
+    private async Task SetCurrentQuestion(Definition.Round round, Definition.Question question, CancellationToken cancellationToken)
+    {
+        _state.CurrentQuestionId = round.Categories
+            .FirstOrDefault(x => x.Id == _state.CurrentCategoryId)
+            ?.Questions
+            .FirstOrDefault(x => x.Id == question.Id)?.Id;
+            
+        await _onStateUpdate(_state, cancellationToken);
+    }
+
     private async Task<Definition.Category> SelectCategory(Definition.Round round, CancellationToken cancellationToken)
     {
         var gameId = _miniGame.GameId.ToString();
@@ -67,22 +79,24 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         var categories = await new CategorySelector(eventService, categoryIds)
             .Select(gameId, playerIds, options.Value.TimeForCategorySelectionMs, cancellationToken);
 
-        var selectedCategoryId = categories.Select(x => new { x.CategoryId, x.PlayerIds.Count })
-            .OrderByDescending(x => x.Count)
-            .GroupBy(x => x.Count)
+        var selectedCategory = categories
+            .OrderByDescending(x => x.PlayerIds.Count)
+            .GroupBy(x => x.PlayerIds.Count)
             .FirstOrDefault()
             ?.FirstOrDefault();
 
         var roundState = _state.Rounds.FirstOrDefault(x => x.RoundId == round.Id);
 
-        if (roundState != null && selectedCategoryId != null)
+        if (roundState != null && selectedCategory != null)
         {
-            roundState.CategoryId = selectedCategoryId.CategoryId;
+            _state.CurrentCategoryId = selectedCategory.CategoryId;
+            roundState.CategoryId = selectedCategory.CategoryId;
+            roundState.SelectedCategories = categories;
         }
         await _onStateUpdate(_state, cancellationToken);
 
         var categoryDefinitions = round.Categories;
-        return categoryDefinitions.FirstOrDefault(x => x.Id == selectedCategoryId?.CategoryId) ?? categoryDefinitions.First();
+        return categoryDefinitions.FirstOrDefault(x => x.Id == selectedCategory?.CategoryId) ?? categoryDefinitions.First();
     }
 
     private async Task AnswerQuestion(Definition.Question question, CancellationToken cancellationToken)

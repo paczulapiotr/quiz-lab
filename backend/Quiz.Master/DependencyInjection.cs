@@ -12,6 +12,7 @@ using MiniGameEventService = Quiz.Master.Game.MiniGames.MusicGuess.MiniGameEvent
 using Quiz.Master.Services.Lights;
 using Quiz.Master.Services.ContentManagement;
 using AbcdConfiguration = Quiz.Master.MiniGames.Models.AbcdCategories.Configuration;
+using MusicConfiguration = Quiz.Master.MiniGames.Models.MusicGuess.Configuration;
 using Quiz.Master.MiniGames.Handlers.MusicGuess;
 
 namespace Quiz.Master;
@@ -22,26 +23,27 @@ public static class DependencyInjection
     {
         services.AddHttpClient();
         services.Configure<LightsConfig>(configuration.GetSection("Lights"));
-        services.AddScoped<ILightsClient, LightsClient>();
+        services.AddTransient<ILightsClient, LightsClient>();
         services.Configure<ContentManagementConfig>(configuration.GetSection("ContentManagement"));
         services.Configure<AbcdConfiguration>(configuration.GetSection("Game:Abcd"));
-        services.AddScoped<IContentManagementClient, ContentManagementClient>();
-        services.AddScoped<IGameRepository, StorageGameRepository>();
-        services.AddScoped<IMiniGameRepository, StorageMiniGameRepository>();
-        services.AddScoped<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
-        services.AddScoped<ICommunicationService, CommunicationService>();
+        services.Configure<MusicConfiguration>(configuration.GetSection("Game:Music"));
+        services.AddTransient<IContentManagementClient, ContentManagementClient>();
+        services.AddTransient<IGameRepository, StorageGameRepository>();
+        services.AddTransient<IMiniGameRepository, StorageMiniGameRepository>();
+        services.AddTransient<IMiniGameHandlerSelector, MiniGameHandlerSelector>();
+        services.AddTransient<ICommunicationService, CommunicationService>();
 
 
         // AbcdWithCategories
-        services.AddScoped<IAbcdWithCategoriesEventService, AbcdWithCategoriesEventService>();
+        services.AddTransient<IAbcdWithCategoriesEventService, AbcdWithCategoriesEventService>();
         services.AddTransient<AbcdWithCategoriesHandler>();
 
         // MusicGuess
-        services.AddScoped<IMusicGuessEventService, MiniGameEventService>();
+        services.AddTransient<IMusicGuessEventService, MiniGameEventService>();
         services.AddTransient<MusicGuessHandler>();
 
 
-        services.AddScoped<IGameEngine, GameEngine>();
+        services.AddTransient<IGameEngine, GameEngine>();
         services.AddHandlers();
 
         return services;
@@ -72,7 +74,7 @@ public static class DependencyInjection
 
                     if (genericTypeDefinition == commandHandlerType || genericTypeDefinition == queryHandlerType)
                     {
-                        services.AddScoped(@interface, type);
+                        services.AddTransient(@interface, type);
                     }
                 }
             }

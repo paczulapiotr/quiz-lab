@@ -1,9 +1,10 @@
 import { AxiosResponse } from "axios";
 import instance from "../instance";
+import { MiniGameType } from "./minigames/types";
 
 export type GetCurrentMiniGameResponse = {
   miniGameId: string;
-  miniGameType: number;
+  miniGameType: MiniGameType;
 };
 
 export const getMiniGame = async (gameId: string) =>

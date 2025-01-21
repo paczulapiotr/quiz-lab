@@ -1,20 +1,32 @@
 import { PageTemplate } from "@repo/ui/components";
 import AbcdWithCategories from "../miniGames/AbcdWithCategories";
+import MusicGuess from "../miniGames/MusicGuess";
+import { useParams } from "react-router";
+import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
+import { MiniGameType } from "@/api/requests/minigames/types";
 
 type Props = {
-  miniGameType: "AbcdWithCategories";
   basePath: string;
 };
 
-const MiniGameStarted = ({ miniGameType, basePath }: Props) => {
-  switch (miniGameType) {
-    case "AbcdWithCategories":
-      return <AbcdWithCategories basePath={basePath} />;
-    default:
-      return (
-        <PageTemplate>Unknown mini game type: {miniGameType}</PageTemplate>
-      );
-  }
+const MiniGameStarted = ({ basePath }: Props) => {
+  const { gameId} = useParams<{ gameId: string }>();
+  const { data } = useGetMiniGame(gameId)
+
+  const renderMiniGame = () => {
+    switch (data?.miniGameType) {
+      case MiniGameType.AbcdWithCategories:
+        return <AbcdWithCategories basePath={basePath} />;
+      case MiniGameType.MusicGuess:
+        return <MusicGuess basePath={basePath} />;
+      default:
+        return (
+          <PageTemplate>Unknown mini game type: {data?.miniGameType}</PageTemplate>
+        );
+    }
+  };
+  
+  return renderMiniGame();
 };
 
 export default MiniGameStarted;

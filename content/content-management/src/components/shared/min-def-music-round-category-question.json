@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_shared_min_def_music_round_category_questions",
+  "info": {
+    "displayName": "MinDef.Music.Round.Category.Question",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": false
+    },
+    "answers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-music-round-category-question-answer",
+      "required": true,
+      "max": 4,
+      "min": 4
+    },
+    "audio": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "audios"
+      ]
+    }
+  }
+}

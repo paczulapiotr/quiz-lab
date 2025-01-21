@@ -1,13 +1,13 @@
 import { AxiosResponse } from "axios";
 import instance from "../instance";
-import { AbcdWithCategoriesState } from "./types/AbcdWithCategories";
 
 export type GetCurrentMiniGameResponse = {
   miniGameId: string;
+  miniGameType: number;
   playerName?: string;
   playerDeviceId?: string;
   score: number;
-} & AbcdWithCategoriesState;
+};
 
 export const getMiniGame = async (gameId: string) =>
   (

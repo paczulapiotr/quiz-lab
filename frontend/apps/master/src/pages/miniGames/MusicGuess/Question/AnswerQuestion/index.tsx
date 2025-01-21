@@ -11,7 +11,7 @@ const AnswerQuestion = ({ gameId }: Props) => {
   return (
     <Component
       answers={question.data?.answers ?? []}
-      question={question.data?.question ?? ""}
+      question={question.data?.question}
       questionAudio={question.data?.audioUrl}
     />
   );

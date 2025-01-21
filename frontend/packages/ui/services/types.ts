@@ -44,6 +44,7 @@ export interface SyncReceiveData {
   };
   GameStatusUpdate: {
     gameId: string;
+    value?: string;
     status: GameStatus;
   };
   MiniGameNotification: {

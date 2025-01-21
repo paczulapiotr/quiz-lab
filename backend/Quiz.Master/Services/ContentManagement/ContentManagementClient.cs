@@ -70,15 +70,23 @@ public class ContentManagementClient : IContentManagementClient
                         id,
                         rounds {
                             id,
-                            answers {
+                            categories {
                                 id,
-                                isCorrect,
-                                text
-                            },
-                            audio {
                                 name,
-                                url,
-                                ext
+                                musicQuestions: questions {
+                                    id,
+                                    text,
+                                    answers {
+                                        id,
+                                        isCorrect,
+                                        text
+                                    },
+                                    audio {
+                                        name,
+                                        url,
+                                        ext
+                                    }   
+                                }
                             }
                         }
                     }

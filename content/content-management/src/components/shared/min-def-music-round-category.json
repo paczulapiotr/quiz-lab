@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_min_def_music_round_categories",
+  "info": {
+    "displayName": "MinDef.Music.Round.Category",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "questions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-music-round-category-question",
+      "required": true,
+      "min": 1
+    }
+  }
+}

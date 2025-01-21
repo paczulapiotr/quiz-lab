@@ -7,10 +7,10 @@
   "options": {},
   "attributes": {
     "rounds": {
-      "displayName": "MinDef.Music.Round",
       "type": "component",
       "repeatable": true,
       "component": "shared.min-def-music-round",
+      "min": 1,
       "required": true
     }
   }

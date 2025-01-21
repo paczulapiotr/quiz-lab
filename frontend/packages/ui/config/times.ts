@@ -11,10 +11,10 @@ const Times = {
         AnswerShowSeconds: 5,
     },
     Music: {
-        CategoryShowSeconds: 5,
-        CategorySelectionSeconds: 10,
-        QestionAnswerSeconds: 10,
-        AnswerShowSeconds: 5,
+        CategoryShowSeconds: 15,
+        CategorySelectionSeconds: 30,
+        QestionAnswerSeconds: 30,
+        AnswerShowSeconds: 15,
     },
     TEMP: {
         MiniGameStartingSeconds: 5,

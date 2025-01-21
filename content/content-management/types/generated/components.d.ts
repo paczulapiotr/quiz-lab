@@ -76,7 +76,13 @@ export interface SharedMinDefMusic extends Struct.ComponentSchema {
   };
   attributes: {
     rounds: Schema.Attribute.Component<'shared.min-def-music-round', true> &
-      Schema.Attribute.Required;
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
   };
 }
 
@@ -87,8 +93,53 @@ export interface SharedMinDefMusicRound extends Struct.ComponentSchema {
     displayName: 'MinDef.Music.Round';
   };
   attributes: {
+    categories: Schema.Attribute.Component<
+      'shared.min-def-music-round-category',
+      true
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 2;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefMusicRoundCategory extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_music_round_categories';
+  info: {
+    description: '';
+    displayName: 'MinDef.Music.Round.Category';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    questions: Schema.Attribute.Component<
+      'shared.min-def-music-round-category-question',
+      true
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefMusicRoundCategoryQuestion
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_music_round_category_questions';
+  info: {
+    description: '';
+    displayName: 'MinDef.Music.Round.Category.Question';
+  };
+  attributes: {
     answers: Schema.Attribute.Component<
-      'shared.min-def-music-round-answer',
+      'shared.min-def-music-round-category-question-answer',
       true
     > &
       Schema.Attribute.Required &
@@ -100,14 +151,16 @@ export interface SharedMinDefMusicRound extends Struct.ComponentSchema {
         number
       >;
     audio: Schema.Attribute.Media<'audios'> & Schema.Attribute.Required;
+    text: Schema.Attribute.String;
   };
 }
 
-export interface SharedMinDefMusicRoundAnswer extends Struct.ComponentSchema {
-  collectionName: 'components_shared_min_def_music_round_answers';
+export interface SharedMinDefMusicRoundCategoryQuestionAnswer
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_music_round_category_question_answers';
   info: {
     description: '';
-    displayName: 'MinDef.Music.Round.Answer';
+    displayName: 'MinDef.Music.Round.Category.Question.Answer';
   };
   attributes: {
     isCorrect: Schema.Attribute.Boolean &
@@ -190,7 +243,9 @@ declare module '@strapi/strapi' {
       'shared.min-def-abcd-round-category-question-answer': SharedMinDefAbcdRoundCategoryQuestionAnswer;
       'shared.min-def-music': SharedMinDefMusic;
       'shared.min-def-music-round': SharedMinDefMusicRound;
-      'shared.min-def-music-round-answer': SharedMinDefMusicRoundAnswer;
+      'shared.min-def-music-round-category': SharedMinDefMusicRoundCategory;
+      'shared.min-def-music-round-category-question': SharedMinDefMusicRoundCategoryQuestion;
+      'shared.min-def-music-round-category-question-answer': SharedMinDefMusicRoundCategoryQuestionAnswer;
       'shared.mini-game-def-abcd': SharedMiniGameDefAbcd;
       'shared.mini-game-definition': SharedMiniGameDefinition;
       'shared.rich-text': SharedRichText;

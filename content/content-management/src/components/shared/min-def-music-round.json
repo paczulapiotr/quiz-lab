@@ -6,22 +6,13 @@
   },
   "options": {},
   "attributes": {
-    "answers": {
-      "displayName": "MinDef.Music.Round.Answer",
+    "categories": {
       "type": "component",
       "repeatable": true,
-      "component": "shared.min-def-music-round-answer",
+      "component": "shared.min-def-music-round-category",
       "required": true,
-      "min": 4,
-      "max": 4
-    },
-    "audio": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
-      "allowedTypes": [
-        "audios"
-      ]
+      "max": 4,
+      "min": 2
     }
   }
 }

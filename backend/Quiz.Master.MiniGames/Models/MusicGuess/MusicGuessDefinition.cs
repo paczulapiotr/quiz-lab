@@ -23,7 +23,7 @@ public record MusicGuessDefinition : MiniGameDefinitionData
     public record Question
     {
         public required string Id { get; set; }
-        public string Text { get; set; } = string.Empty;
+        public string? Text { get; set; }
         public IEnumerable<Answer> Answers { get; set; } = new List<Answer>();
         public string? AudioUrl { get; set; }
         public record Answer : AnswerBase { }

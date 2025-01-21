@@ -25,7 +25,7 @@ public class GetCategoriesEndpoint : ICarterModule
 
             return Results.Ok(result);
         })
-        .WithName("GetCategories")
+        .WithName("MusicGetCategories")
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get Categories")
         .WithDescription("Get Categories")

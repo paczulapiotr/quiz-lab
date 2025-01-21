@@ -38,19 +38,19 @@ public class MiniGameEventService(
     IPublisher publisher) : IMiniGameEventService
 {
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-    private bool _isSetup = false;
+    private string? _setupId;
     private static string Type => MiniGameType.AbcdWithCategories.ToString();
 
     public async Task Initialize(string gameId, CancellationToken cancellationToken)
     {
-        if(_isSetup) return;
+        if(_setupId == gameId) return;
 
         try
         {
             await _semaphore.WaitAsync(cancellationToken);
             await playerInteraction.RegisterAsync(gameId, cancellationToken);
             await miniGameUpdate.RegisterAsync(gameId, cancellationToken);
-            _isSetup = true;
+            _setupId = gameId;
         }
         catch (Exception e)
         {

@@ -56,7 +56,7 @@ public class GetQuestionAnswerEndpoint : ICarterModule
 
             return Results.Ok(result);
         })
-        .WithName("GetQuestionAnswer")
+        .WithName("MusicGetQuestionAnswer")
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get Question Answer")
         .WithDescription("Get Question Answer")

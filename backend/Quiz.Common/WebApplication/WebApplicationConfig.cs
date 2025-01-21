@@ -24,10 +24,10 @@ public class WebApplicationConfig
     where TQueryHandlerImplementation : class, TQueryHandlerInterface
     where TQuery : IQuery<TQueryResult>
     {
-        _services.AddScoped<TQueryHandlerInterface, TQueryHandlerImplementation>();
+        _services.AddTransient<TQueryHandlerInterface, TQueryHandlerImplementation>();
         if (typeof(IQueryHandler<TQuery, TQueryResult>) != typeof(TQueryHandlerInterface))
         {
-            _services.AddScoped<IQueryHandler<TQuery, TQueryResult>, TQueryHandlerImplementation>();
+            _services.AddTransient<IQueryHandler<TQuery, TQueryResult>, TQueryHandlerImplementation>();
         }
         return this;
     }
@@ -40,7 +40,7 @@ public class WebApplicationConfig
     where TQueryHandlerImplementation : class, IQueryHandler<TQuery, TQueryResult>
     where TQuery : IQuery<TQueryResult>
     {
-        _services.AddScoped<IQueryHandler<TQuery, TQueryResult>, TQueryHandlerImplementation>();
+        _services.AddTransient<IQueryHandler<TQuery, TQueryResult>, TQueryHandlerImplementation>();
         return this;
     }
 
@@ -53,10 +53,10 @@ public class WebApplicationConfig
     where TCommandHandlerImplementation : class, TCommandHandlerInterface
     where TCommand : ICommand
     {
-        _services.AddScoped<TCommandHandlerInterface, TCommandHandlerImplementation>();
+        _services.AddTransient<TCommandHandlerInterface, TCommandHandlerImplementation>();
         if (typeof(ICommandHandler<TCommand>) != typeof(TCommandHandlerInterface))
         {
-            _services.AddScoped<ICommandHandler<TCommand>, TCommandHandlerImplementation>();
+            _services.AddTransient<ICommandHandler<TCommand>, TCommandHandlerImplementation>();
         }
         return this;
     }
@@ -68,7 +68,7 @@ public class WebApplicationConfig
     where TCommandHandlerImplementation : class, ICommandHandler<TCommand>
     where TCommand : ICommand
     {
-        _services.AddScoped<ICommandHandler<TCommand>, TCommandHandlerImplementation>();
+        _services.AddTransient<ICommandHandler<TCommand>, TCommandHandlerImplementation>();
         return this;
     }
 }

@@ -18,11 +18,12 @@ const Component = ({ selections }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
   
-  const onTimeUp = () =>
+  const onTimeUp = () => {
     mutate({
       gameId: gameId!,
       action: MusicGuessActions.CategoryShowStop,
     });
+  }
 
   return (
     <>

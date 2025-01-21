@@ -19,7 +19,6 @@ const Routes = () => {
         [GameStatus.MiniGameStarted]: (
           <MiniGameStarted
             basePath="minigame_play"
-            miniGameType="AbcdWithCategories"
           />
         ),
         [GameStatus.MiniGameEnding]: <MiniGameEnding />,

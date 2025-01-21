@@ -14,7 +14,6 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
     private Definition _definition { get; set; } = null!;
     private string _gameId => _miniGameInstance?.GameId.ToString() ?? string.Empty;
     private IEnumerable<Guid> _playerIds => _miniGameInstance.PlayerIds;
-    private int _playersCount => _playerIds.Count();
     private PlayerScoreUpdateDelegate _onPlayerScoreUpdate { get; set; } = null!;
     private MiniGameStateUpdateDelegate _onStateUpdate { get; set; } = null!;
 

@@ -17,9 +17,6 @@ public class GameEngineHostedService(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("GameEngineHostedService is starting.");
-        using var scope = serviceScopeFactory.CreateScope();
-        var gameEngine = scope.ServiceProvider.GetRequiredService<IGameEngine>();
-
         cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         var token = cancellationTokenSource.Token;
 
@@ -28,18 +25,26 @@ public class GameEngineHostedService(
             await gameStatusConsumer.RegisterAsync(routingKey: "new", cancellationToken: token);
             while (!token.IsCancellationRequested)
             {
-                token.ThrowIfCancellationRequested();
-                // Listen for game start rabbitmq message
-                var status = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: token);
-                if (status?.Status != GameStatus.GameStarted)
+                try
                 {
-                    continue;
+                    // Listen for game start rabbitmq message
+                    var status = await gameStatusConsumer.ConsumeFirstAsync(cancellationToken: token);
+                    if (status?.Status != GameStatus.GameStarted)
+                    {
+                        continue;
+                    }
+
+                    var gameId = Guid.Parse(status.GameId);
+
+                    // Initialize game engine 
+                    using var scope = serviceScopeFactory.CreateScope();
+                    var gameEngine = scope.ServiceProvider.GetRequiredService<IGameEngine>();
+                    instanceTasks.Add(gameEngine.Run(gameId, token));
                 }
-
-                var gameId = Guid.Parse(status.GameId);
-
-                // Initialize game engine 
-                instanceTasks.Add(gameEngine.Run(gameId, token));
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error in GameEngineHostedService");
+                }
             }
         }, token);
 
@@ -61,7 +66,8 @@ public class GameEngineHostedService(
             catch (OperationCanceledException)
             {
                 // Ignore the cancellation exception
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError(ex, "Error stopping GameEngineHostedService");
             }

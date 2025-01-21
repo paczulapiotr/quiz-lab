@@ -37,9 +37,9 @@ public class GetSelectedCategoryEndpoint : ICarterModule
                     .Select(playerId => new Player(playerId.ToString(), players?.FirstOrDefault(p => p.Id == playerId)?.Name ?? "")).ToArray() ?? []
             )).ToArray();
 
-            return Results.Ok(null);
+            return Results.Ok(new GetSelectedCategoryResult(selectedCategories));
         })
-        .WithName("GetSelectedCategory")
+        .WithName("MusicGetSelectedCategory")
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get Selected Category")
         .WithDescription("Get Selected Category")

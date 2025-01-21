@@ -28,3 +28,9 @@ export const MusicGuessActions = {
     QuestionAnswerShowStop: "Music.QuestionAnswerShowStop",
     QuestionAnswerStart: "Music.QuestionAnswerStart"
 }
+
+
+export const MusicGuessInteractions = {
+  CategorySelection: "Music.CategorySelection",
+  QuestionAnswer: "Music.QuestionAnswer",
+};
