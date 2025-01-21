@@ -1,6 +1,9 @@
-import { ScoreTile, HeaderTile, Tile, Timer } from "@repo/ui/components";
+import { HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
+import { useParams } from "react-router";
+import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
+import { MusicGuessActions } from "@repo/ui/minigames/actions";
 
 type Props = {
   selections: {
@@ -9,13 +12,20 @@ type Props = {
     id: string;
     players: { id: string; name: string }[];
   }[];
-  score: number;
 };
 
-const Component = ({ selections, score }: Props) => {
+const Component = ({ selections }: Props) => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const { mutate } = useUpdateMiniGame();
+  
+  const onTimeUp = () =>
+    mutate({
+      gameId: gameId!,
+      action: MusicGuessActions.CategoryShowStop,
+    });
+
   return (
     <>
-      <ScoreTile score={score} />
       <HeaderTile title="Wybrana kategoria" />
       <div className={styles.grid}>
         {selections.map((x) => (
@@ -26,7 +36,7 @@ const Component = ({ selections, score }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={Times.Abdc.CategoryShowSeconds} />
+      <Timer startSeconds={Times.Music.CategoryShowSeconds} onTimeUp={onTimeUp} />
     </>
   );
 };

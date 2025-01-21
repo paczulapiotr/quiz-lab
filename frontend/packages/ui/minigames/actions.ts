@@ -21,5 +21,10 @@ export const AbcdInteractions = {
 }
 
 export const MusicGuessActions = {
-
+    CategoryShowStart: "Music.CategoryShowStart",
+    CategoryShowStop: "Music.CategoryShowStop",
+    CategorySelectStart: "Music.CategorySelectStart",
+    QuestionAnswerShowStart: "Music.QuestionAnswerShowStart",
+    QuestionAnswerShowStop: "Music.QuestionAnswerShowStop",
+    QuestionAnswerStart: "Music.QuestionAnswerStart"
 }

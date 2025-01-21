@@ -32,7 +32,7 @@ const SelectCategory = ({ categories, onSelect, score }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={Times.Abdc.CategorSelectionSeconds} />
+      <Timer startSeconds={Times.Abdc.CategorySelectionSeconds} />
     </>
   );
 };

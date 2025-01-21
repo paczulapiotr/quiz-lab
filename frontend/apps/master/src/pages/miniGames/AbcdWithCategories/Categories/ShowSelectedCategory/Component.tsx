@@ -36,7 +36,7 @@ const Component = ({ selections }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={Times.Abdc.CategorShowSeconds} onTimeUp={onTimeUp} />
+      <Timer startSeconds={Times.Abdc.CategoryShowSeconds} onTimeUp={onTimeUp} />
     </>
   );
 };

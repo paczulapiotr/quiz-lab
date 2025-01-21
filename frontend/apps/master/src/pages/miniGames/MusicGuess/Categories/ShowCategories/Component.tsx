@@ -15,7 +15,7 @@ const Component = ({ categories }: Props) => {
           <Tile text={c.text} key={c.id} />
         ))}
       </div>
-      <Timer startSeconds={Times.Abdc.CategorySelectionSeconds} />
+      <Timer startSeconds={Times.Music.CategorySelectionSeconds} />
     </>
   );
 };
