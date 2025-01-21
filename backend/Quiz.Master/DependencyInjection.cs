@@ -53,6 +53,7 @@ public static class DependencyInjection
     {
         var commandHandlerType = typeof(ICommandHandler<>);
         var queryHandlerType = typeof(IQueryHandler<,>);
+        var requestHandlerType = typeof(IRequestHandler<,>);
 
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -61,7 +62,7 @@ public static class DependencyInjection
             var types = assembly.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i =>
                     i.IsGenericType &&
-                    (i.GetGenericTypeDefinition() == commandHandlerType || i.GetGenericTypeDefinition() == queryHandlerType)))
+                    (i.GetGenericTypeDefinition() == commandHandlerType || i.GetGenericTypeDefinition() == queryHandlerType || i.GetGenericTypeDefinition() == requestHandlerType)))
                 .ToList();
 
             foreach (var type in types)
@@ -72,7 +73,7 @@ public static class DependencyInjection
                 {
                     var genericTypeDefinition = @interface.GetGenericTypeDefinition();
 
-                    if (genericTypeDefinition == commandHandlerType || genericTypeDefinition == queryHandlerType)
+                    if (genericTypeDefinition == commandHandlerType || genericTypeDefinition == queryHandlerType || genericTypeDefinition == requestHandlerType)
                     {
                         services.AddTransient(@interface, type);
                     }

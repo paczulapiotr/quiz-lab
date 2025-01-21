@@ -7,29 +7,36 @@ using Quiz.Storage;
 
 namespace Quiz.Master.Features.Game.JoinGame;
 
-public record JoinGameCommand(Guid GameId, string PlayerName) : ICommand;
+public record JoinGameResult(bool Ok, string? ErrorCode = null);
+public record JoinGameRequest(Guid GameId, string PlayerName) : IRequest<JoinGameResult>;
 
-public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHttpContextAccessor httpContextAccessor) : ICommandHandler<JoinGameCommand>
+public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHttpContextAccessor httpContextAccessor) : IRequestHandler<JoinGameRequest, JoinGameResult>
 {
-    public async ValueTask<NoResult?> HandleAsync(JoinGameCommand request, CancellationToken cancellationToken = default)
+    public async ValueTask<JoinGameResult?> HandleAsync(JoinGameRequest request, CancellationToken cancellationToken = default)
     {
         var deviceId = httpContextAccessor.GetDeviceId();
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
 
         if (game is null)
         {
-            throw new InvalidOperationException("Game not found");
+            return new JoinGameResult(false, "GameNotFound");
         }
 
         if (game.IsStarted)
         {
-            throw new InvalidOperationException("Game already started");
+            return new JoinGameResult(false, "GameStarted");
         }
 
         if (game.Players.Any(x => x.DeviceId == deviceId))
         {
-            throw new InvalidOperationException("Player already joined");
+            return new JoinGameResult(false, "AlreadyJoined");
         }
+
+        if (game.Players.Any(x => x.Name == request.PlayerName))
+        {
+            return new JoinGameResult(false, "NameAlreadyTaken");
+        }
+
 
         game.Players.Add(new Core.Models.Player
         {
@@ -49,6 +56,6 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarting), cancellationToken: cancellationToken);
         }
 
-        return await ValueTask.FromResult(NoResult.Instance);
+        return new JoinGameResult(true);
     }
 }

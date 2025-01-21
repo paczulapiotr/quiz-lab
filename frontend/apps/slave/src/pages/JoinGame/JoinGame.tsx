@@ -7,6 +7,7 @@ import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { GameStatus } from "@repo/ui";
 import { PageTemplate, TileButton, Tile, Timer } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
+import { Keyboard } from "@/components/Keyboard";
 
 
 type Props = {
@@ -20,7 +21,16 @@ const JoinGame = ({ starting = false }: Props) => {
   const { mutateAsync } = useJoinGameMutation();
   const { data, isLoading, refetch } = useGetGame(gameId);
   const joined = data?.yourDeviceId != null;
-  const joinGame = async () => mutateAsync({ playerName, gameId: gameId! });
+
+  const joinGame = async () => {
+    const resp = await mutateAsync({ playerName, gameId: gameId! });
+    const { ok, errorCode } = resp;
+    if (!ok) {
+      if (errorCode === "NameAlreadyTaken") {
+        alert("Nazwa jest już zajęta");
+      }
+    }
+  }
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
@@ -84,7 +94,12 @@ const JoinGame = ({ starting = false }: Props) => {
         <div style={{ marginTop: "auto" }}>
           <Timer startSeconds={Times.GameStartingSeconds} />
         </div>
-      ) : null}
+      )
+        :
+        <div style={{ marginTop: "auto" }}>
+          <Keyboard onChange={e => setPlayerName(e)} onKeyPress={console.log} />
+        </div>}
+
     </PageTemplate>
   );
 };

@@ -2,12 +2,13 @@ import { AxiosResponse } from "axios";
 import instance from "../instance";
 
 export type JoinGameRequest = { playerName: string; gameId: string };
+export type JoinGameResponse = { ok: boolean, errorCode?: string };
 
 export const joinGame = async (playerName: string, gameId: string) =>
-  await instance.post<never, never, JoinGameRequest>("/game/join", {
+  (await instance.post<never, AxiosResponse<JoinGameResponse>, JoinGameRequest>("/game/join", {
     playerName,
     gameId,
-  });
+  })).data;
 
 export type GetCurrentGameResponse = {
   gameId: string;
