@@ -7,6 +7,7 @@ where TSelectionState : class, new()
     public async Task<TSelectionState> Select(
         string gameId,
         IEnumerable<string> PlayerIds,
+        TSelectionState initialState,
         int selectionTimeMs,
         CancellationToken cancellationToken)
 
@@ -15,7 +16,7 @@ where TSelectionState : class, new()
             cancellationToken,
             new CancellationTokenSource(selectionTimeMs).Token)
             .Token;
-        var selections = new TSelectionState();
+        var selections = initialState;
         var awaitingPlayerIds = PlayerIds.ToList();
 
         while (!timeToken.IsCancellationRequested && awaitingPlayerIds.Any())

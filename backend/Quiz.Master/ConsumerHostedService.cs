@@ -14,14 +14,12 @@ public class ConsumerHostedService(
         await Task.WhenAll(consumers.Select(c => c.ConsumeAsync(cancellationToken)));
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         foreach (var consumer in consumers)
         {
-            consumer.Dispose();
+            await consumer.DisposeAsync();
         }
-
-        return Task.CompletedTask;
     }
 }
 

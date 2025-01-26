@@ -28,7 +28,8 @@ public class AnswerSelector(IMiniGameEventService eventService, IEnumerable<stri
             });
 
         var correctAnswerCount = 0;
-        foreach(var ans in state.OrderByDescending(x => x.Timestamp)) {
+        var answers = state.OrderBy(x => x.Timestamp).ToList();
+        foreach (var ans in answers) {
             if(ans.IsCorrect) {
                 ans.Points = Math.Max(maxPoints - (correctAnswerCount * pointsDecrement), minPoints);
                 correctAnswerCount++;

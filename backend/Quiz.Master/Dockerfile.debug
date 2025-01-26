@@ -10,20 +10,11 @@ RUN curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /vsdbg
 FROM mcr.microsoft.com/dotnet/sdk:9.0-noble AS publish
 ARG BUILD_CONFIGURATION=Debug
 
-# Restore
 WORKDIR /src
-COPY ./Quiz.Master/Quiz.Master.csproj ./Quiz.Master/Quiz.Master.csproj
-COPY ./Quiz.Common/Quiz.Common.csproj ./Quiz.Common/Quiz.Common.csproj
-COPY ./Quiz.Common.Broker/Quiz.Common.Broker.csproj ./Quiz.Common.Broker/Quiz.Common.Broker.csproj
-COPY ./Quiz.Common.Messages/Quiz.Common.Messages.csproj ./Quiz.Common.Messages/Quiz.Common.Messages.csproj
-RUN dotnet restore ./Quiz.Master/Quiz.Master.csproj
 COPY . .
-
+# Restore
+RUN dotnet restore ./Quiz.Master/Quiz.Master.csproj
 # Publish
-COPY ./Quiz.Master/ ./Quiz.Master/
-COPY ./Quiz.Common/ ./Quiz.Common/
-COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
-COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
 RUN dotnet publish "./Quiz.Master" -c $BUILD_CONFIGURATION \
 -p:PublishSingleFile=false -o /src/publish
 

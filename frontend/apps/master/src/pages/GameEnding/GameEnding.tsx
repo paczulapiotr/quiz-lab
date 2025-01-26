@@ -3,10 +3,36 @@ import { useGetScore } from "@/api/queries/useGetScore";
 import { useParams } from "react-router";
 import styles from "./GameEnding.module.scss";
 import { HeaderTile, Tile} from "@repo/ui/components"
+import { useEffect } from "react";
+import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import { GameStatus } from "@repo/ui";
 
-const GameEnding = () => {
+type Props = {
+  ended?: boolean;
+}
+
+const GameEnding = ({ended}:Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { data } = useGetScore(gameId);
+  const { mutate } = useUpdateGameStatus();
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | undefined;
+    if (!ended) {
+      timeout = setTimeout(() => {
+        mutate({
+          gameId: gameId!,
+          status: GameStatus.GameEnded,
+        })
+      }, 10_000);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    };
+  }, [ended, gameId, mutate]);
 
   return (
     <>

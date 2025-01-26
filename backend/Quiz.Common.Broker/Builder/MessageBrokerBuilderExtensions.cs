@@ -44,8 +44,11 @@ public static class MessageBrokerBuilderExtensions
     }
     public static void AddMessageBroker(this IServiceCollection services, string connectionString, Action<QueueConfig> configure)
     {
-        services.AddSingleton(new ConnectionFactory() { Uri = new Uri(connectionString) });
-        services.AddSingleton(sp =>
+        services.AddSingleton(new ConnectionFactory() { 
+            Uri = new Uri(connectionString), 
+            ClientProvidedName = DeviceIdHelper.DeviceUniqueId 
+        });
+        services.AddSingleton<IConnection>(sp =>
         {
             var factory = sp.GetRequiredService<ConnectionFactory>();
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();

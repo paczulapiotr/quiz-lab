@@ -34,13 +34,15 @@ IMiniGameRepository miniGameRepository) : IGameEngine
 
     private async Task<Core.Models.Game> StartGame(Guid id, CancellationToken cancellationToken)
     {
-        var game = await gameRepository.FindAsync(id, cancellationToken);
-        var gameIdString = id.ToString()!;
+        var gameId = id.ToString()!;
+        await communicationService.SendGameCreatedMessage(gameId, cancellationToken);
+        await communicationService.ReceiveGameStartedMessage(gameId, cancellationToken);
 
+        var game = await gameRepository.FindAsync(id, cancellationToken);
         game.StartedAt = DateTime.UtcNow;
         await SetStatus(game, Status.RulesExplaining, cancellationToken);
-        await communicationService.SendRulesExplainMessage(gameIdString, cancellationToken);
-        await communicationService.ReceiveRulesExplainedMessage(gameIdString, cancellationToken);
+        await communicationService.SendRulesExplainMessage(gameId, cancellationToken);
+        await communicationService.ReceiveRulesExplainedMessage(gameId, cancellationToken);
         await SetStatus(game, Status.RulesExplained, cancellationToken);
 
         return game!;

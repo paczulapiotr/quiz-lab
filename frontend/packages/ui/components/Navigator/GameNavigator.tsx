@@ -14,6 +14,7 @@ type Props = {
     [GameStatus.MiniGameStarted]?: JSX.Element;
     [GameStatus.MiniGameEnding]?: JSX.Element;
     [GameStatus.GameEnding]?: JSX.Element;
+    [GameStatus.GameEnded]?: JSX.Element;
   };
 };
 
@@ -35,7 +36,9 @@ const GameNavigator = ({ pages, basePath }: Props) => {
         case GameStatus.MiniGameEnding:
           return `${message.gameId}/minigame_finish/`;
         case GameStatus.GameEnding:
-          return `${message.gameId}/end/`;
+          return `${message.gameId}/ending/`;
+        case GameStatus.GameEnded:
+          return `${message.gameId}/ended/`;
         default:
           return null;
       }
@@ -50,7 +53,8 @@ const GameNavigator = ({ pages, basePath }: Props) => {
       ":gameId/minigame/*": pages[GameStatus.MiniGameStarting],
       ":gameId/minigame_play/*": pages[GameStatus.MiniGameStarted],
       ":gameId/minigame_finish/*": pages[GameStatus.MiniGameEnding],
-      ":gameId/end/*": pages[GameStatus.GameEnding],
+      ":gameId/ending/*": pages[GameStatus.GameEnding],
+      ":gameId/ended/*": pages[GameStatus.GameEnding],
     }),
     [pages]
   );

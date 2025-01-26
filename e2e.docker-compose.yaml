@@ -5,10 +5,21 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  quiz-mongodb:
+    image: mongo:8.0.4
+    container_name: quiz-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,6 +37,8 @@ services:
       - ASPNETCORE_URLS=http://+:8080;
       - Cors=http://localhost:6030,http://localhost:5888
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Mongo__ConnectionString=mongodb://quiz-mongodb:27017
+      - ContentManagement__BaseUrl=http://host.docker.internal:1337/graphql
     depends_on:
       - quiz-rabbitmq
 
@@ -162,4 +175,5 @@ services:
       - ui-000
 
 volumes:
-  rabbitmq_data:
+  mongodb_data:
+

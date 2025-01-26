@@ -8,6 +8,9 @@ namespace Quiz.Common.Broker.Consumer;
 public abstract class ConsumerBase<TMessage> : OneTimeConsumer<TMessage>, IConsumer<TMessage>
 where TMessage : class, IMessage
 {
+    private IChannel _channel = null!;
+    private string _consumeTag = null!;
+
     public ConsumerBase(
         IConnection connection,
         IQueueConsumerDefinition<TMessage> queueDefinition,
@@ -18,11 +21,30 @@ where TMessage : class, IMessage
 
     public async Task ConsumeAsync(CancellationToken cancellationToken = default)
     {
-        await InitChannel(cancellationToken);
+        _channel = await CreateChannelAsync();
 
-        var consumer = await CreateAsyncConsumer(ProcessMessageAsync, cancellationToken: cancellationToken);
+        var consumer = await CreateAsyncConsumer(_channel, ProcessMessageAsync, cancellationToken: cancellationToken);
 
-        await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+        _consumeTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_channel != null)
+        {
+            await CancelConsumptionAsync();
+            _channel?.Dispose();
+            _channel = null!;
+        }
+    }
+
+    private async ValueTask CancelConsumptionAsync()
+    {
+        if (!string.IsNullOrEmpty(_consumeTag))
+        {
+            await _channel.BasicCancelAsync(_consumeTag);
+            _consumeTag = null!;
+        }
     }
 
     protected abstract Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken = default);

@@ -14,11 +14,17 @@ public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMin
     public async ValueTask<GetMiniGameResult?> HandleAsync(GetMiniGameQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
-        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId!.Value, cancellationToken);
+
+        if(game.CurrentMiniGameId is null)
+        {
+            return null;
+        }
+
+        var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId.Value, cancellationToken);
 
         if (miniGame == null)
         {
-            throw new InvalidOperationException("Mini game not found");
+            return null;
         }
 
         var currentMiniGame = game?.CurrentMiniGameId;

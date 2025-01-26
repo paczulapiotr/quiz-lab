@@ -65,4 +65,14 @@ public class CommunicationService(
     {
         await gameStatusConsumer.RegisterAsync(gameId, cancellationToken);
     }
+
+    public async Task SendGameCreatedMessage(string gameId, CancellationToken cancellationToken = default)
+    {
+        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameCreated), gameId, cancellationToken);
+    }
+
+    public async Task ReceiveGameStartedMessage(string gameId, CancellationToken cancellationToken = default)
+    {
+        await ReceiveStatusMessage(gameId, GameStatus.GameStarted, cancellationToken: cancellationToken);
+    }
 }

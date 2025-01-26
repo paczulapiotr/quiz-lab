@@ -2,7 +2,9 @@ namespace Quiz.Master.Game.Communication;
 
 public interface ICommunicationService
 {
-    public Task Initialize(string gameId, CancellationToken cancellationToken = default);
+    Task Initialize(string gameId, CancellationToken cancellationToken = default);
+    Task SendGameCreatedMessage(string gameId, CancellationToken cancellationToken = default);
+    Task ReceiveGameStartedMessage(string gameId, CancellationToken cancellationToken = default);
     Task SendRulesExplainMessage(string gameId, CancellationToken cancellationToken = default);
     Task ReceiveRulesExplainedMessage(string gameId, CancellationToken cancellationToken = default);
     Task SendMiniGameStartingMessage(string gameId, CancellationToken cancellationToken = default);

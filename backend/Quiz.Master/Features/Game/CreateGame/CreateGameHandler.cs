@@ -40,7 +40,7 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
         await storage.InsertGameAsync(game, cancellationToken);
 
         var gameId = game.Id.ToString();
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, Common.Messages.Game.GameStatus.GameCreated), cancellationToken: cancellationToken);
+        await publisher.PublishAsync(new NewGameCreation(gameId), cancellationToken: cancellationToken);
 
         return NoResult.Instance;
     }

@@ -15,10 +15,8 @@ public class UpdateGameStatusEndpoint : ICarterModule
             IPublisher publisher) =>
         {
             await publisher.PublishAsync(
-                new GameStatusUpdate(gameId, request.Status), 
-                request.Status == GameStatus.GameStarted 
-                    ? "new" 
-                    : gameId);
+                new GameStatusUpdate(gameId, request.Status),
+                gameId);
 
             return Results.NoContent();
         })

@@ -23,6 +23,7 @@ const Routes = () => {
         ),
         [GameStatus.MiniGameEnding]: <MiniGameEnding />,
         [GameStatus.GameEnding]: <GameEnding />,
+        [GameStatus.GameEnded]: <GameEnding />,
       }}
     />
   );

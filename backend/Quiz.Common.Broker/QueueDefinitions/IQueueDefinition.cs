@@ -22,7 +22,7 @@ public interface IQueuePublisherDefinition<TMessage> : IQueuePublisherDefinition
 public interface IQueueConsumerDefinition : IQueueExchange
 {
     public string QueueName { get; }
-    Task RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default);
+    Task<(string exchange, string queue)> RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default);
 }
 
 public interface IQueueConsumerDefinition<TMessage> : IQueueConsumerDefinition where TMessage : IMessage { }

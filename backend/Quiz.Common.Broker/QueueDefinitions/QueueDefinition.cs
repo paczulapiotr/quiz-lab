@@ -69,7 +69,7 @@ public abstract class QueueDefinition<TMessage>
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
     }
 
-    public async Task RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default)
+    public async Task<(string exchange, string queue)> RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default)
     {
         var exchange = ExchangeType switch
         {
@@ -84,6 +84,8 @@ public abstract class QueueDefinition<TMessage>
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
         await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: _queueDefaultArguments, cancellationToken: cancellationToken);
         await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: MapRoutingKey(routingKey), arguments: null, cancellationToken: cancellationToken);
+
+        return (ExchangeName, QueueName);
     }
 
     public QueueDefinition<TMessage> ToConsumer(string queueName = "")

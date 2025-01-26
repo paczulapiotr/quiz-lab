@@ -13,20 +13,11 @@ RUN apt update \
  && apt install -y build-essential \
  && rm -rf /var/lib/apt/lists/*
 
-# Restore
-WORKDIR /src
-COPY ./Quiz.Slave/Quiz.Slave.csproj ./Quiz.Slave/Quiz.Slave.csproj
-COPY ./Quiz.Common/Quiz.Common.csproj ./Quiz.Common/Quiz.Common.csproj
-COPY ./Quiz.Common.Broker/Quiz.Common.Broker.csproj ./Quiz.Common.Broker/Quiz.Common.Broker.csproj
-COPY ./Quiz.Common.Messages/Quiz.Common.Messages.csproj ./Quiz.Common.Messages/Quiz.Common.Messages.csproj
+ WORKDIR /src
+ COPY . .
+ # Restore
 RUN dotnet restore ./Quiz.Slave/Quiz.Slave.csproj
-COPY . .
-
 # Publish
-COPY ./Quiz.Slave/ ./Quiz.Slave/
-COPY ./Quiz.Common/ ./Quiz.Common/
-COPY ./Quiz.Common.Broker/ ./Quiz.Common.Broker/
-COPY ./Quiz.Common.Messages/ ./Quiz.Common.Messages/
 RUN dotnet publish "./Quiz.Slave" -c $BUILD_CONFIGURATION \
 -p:PublishSingleFile=false -o /src/publish
 

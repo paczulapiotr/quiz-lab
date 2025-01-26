@@ -35,6 +35,8 @@ builder.Services
             opts.AddPublisher(new MiniGameUpdateDefinition());
             opts.AddPublisher(new MiniGameNotificationDefinition());
             opts.AddPublisher(new PlayerInteractionDefinition());
+            opts.AddPublisher(new NewGameCreationDefinition());
+            opts.AddOneTimeConsumer(new NewGameCreationDefinition().ToConsumer(deviceId));
             opts.AddOneTimeConsumer(new GameStatusUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
             opts.AddOneTimeConsumer(new MiniGameUpdateSingleDefinition().ToConsumer(deviceId + "-single"));
             opts.AddOneTimeConsumer(new PlayerInteractionDefinition().ToConsumer(deviceId + "-single"));
