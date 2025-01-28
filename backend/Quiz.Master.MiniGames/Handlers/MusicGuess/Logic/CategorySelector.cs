@@ -15,8 +15,12 @@ public class CategorySelector(IMiniGameEventService eventService, IEnumerable<st
         return (category?.PlayerId.ToString(), category);
     }
 
-    protected override List<State.SelectedCategory> UpdateSelectionState(IMiniGameEventService.CategorySelection selection, List<State.SelectedCategory> state)
+    protected override List<State.SelectedCategory>? UpdateSelectionState(IMiniGameEventService.CategorySelection selection, List<State.SelectedCategory>? state)
     {
+        if(state is null) {
+            state = new List<State.SelectedCategory>();
+        }
+        
         var stateCat = state.FirstOrDefault(x => x.CategoryId == selection.CategoryId);
         if (stateCat == null)
         {

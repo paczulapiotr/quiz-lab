@@ -8,7 +8,7 @@ where TSelectionState : class
     
     public async Task<TSelectionState?> Select(
         string gameId,
-        TSelectionState? initialState,
+        TSelectionState? initialState = null,
         Options? options = null,
         CancellationToken cancellationToken = default)
 

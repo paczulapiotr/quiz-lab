@@ -10,8 +10,13 @@ public class PowerPlaySelector(IMiniGameEventService eventService) : CommonSelec
         return (result?.PlayerId.ToString(), result);
     }
 
-    protected override PowerPlaysDictionary UpdateSelectionState(IMiniGameEventService.PowerPlaySelection selection, PowerPlaysDictionary state)
+    protected override PowerPlaysDictionary? UpdateSelectionState(IMiniGameEventService.PowerPlaySelection selection, PowerPlaysDictionary? state)
     {
+        if (state is null)
+        {
+            state = new PowerPlaysDictionary();
+        }
+        
         if (state.ContainsKey(selection.PlayerId))
         {
             state[selection.TargetPlayerId].Add(new(selection.PlayerId, selection.PowerPlay));
