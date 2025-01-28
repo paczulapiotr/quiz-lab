@@ -20,6 +20,8 @@ public class MiniGameDtoConverter : JsonConverter<MiniGameDto>
                         return JsonSerializer.Deserialize<ComponentSharedMiniGameDefAbcd>(root.GetRawText(), options)!;
                     case "ComponentSharedMinDefMusic":
                         return JsonSerializer.Deserialize<ComponentSharedMinDefMusic>(root.GetRawText(), options)!;
+                    case "ComponentSharedMinDefLetters":
+                        return JsonSerializer.Deserialize<ComponentSharedMinDefLetters>(root.GetRawText(), options)!;
                     default:
                         throw new JsonException($"Unknown mini-game type: {typeName}");
                 }
