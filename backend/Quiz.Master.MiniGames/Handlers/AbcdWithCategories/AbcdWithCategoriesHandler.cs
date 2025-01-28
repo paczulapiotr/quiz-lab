@@ -82,11 +82,11 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         var playerIds = _playerIds.Select(x => x.ToString()).ToArray();
         var config = options.Value;
         var powerPlays = await new PowerPlaySelector(eventService)
-            .Select(_gameId, playerIds, new(), config.TimeForPowerPlaySelectionMs, cancellationToken);
+            .Select(_gameId, new(), new(config.TimeForPowerPlaySelectionMs, playerIds), cancellationToken);
 
         if (roundState is not null)
         {
-            roundState.PowerPlays = powerPlays;
+            roundState.PowerPlays = powerPlays ?? new();
         }
 
         await _onStateUpdate(_state, cancellationToken);
@@ -137,7 +137,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
             config.MaxPointsForAnswer, 
             config.MinPointsForAnswer, 
             config.PointsDecrement)
-            .Select(_gameId, playerIds, new(), config.TimeForAnswerSelectionMs, cancellationToken);
+            .Select(_gameId, new(), new(config.TimeForAnswerSelectionMs, playerIds), cancellationToken) ?? [];
 
         foreach (var ans in answers)
         {
@@ -162,9 +162,9 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         var playerIds = _playerIds.Select(x => x.ToString()).ToArray();
         var initialState = categoryIds.Select(x => new State.SelectedCategory { CategoryId = x, PlayerIds = [] }).ToList();
         var categories = await new CategorySelector(eventService, categoryIds)
-            .Select(gameId, playerIds, initialState, config.TimeForCategorySelectionMs, cancellationToken);
+            .Select(gameId, initialState, new(config.TimeForCategorySelectionMs, playerIds), cancellationToken);
 
-        var selectedCategory = categories.Select(x => new { x.CategoryId, x.PlayerIds.Count })
+        var selectedCategory = categories?.Select(x => new { x.CategoryId, x.PlayerIds.Count })
             .OrderByDescending(x => x.Count)
             .GroupBy(x => x.Count)
             .FirstOrDefault()

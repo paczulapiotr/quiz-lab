@@ -2,28 +2,29 @@ namespace Quiz.Master.MiniGames.Handlers;
 
 public abstract class CommonSelection<TSelection, TSelectionState>
 where TSelection : class
-where TSelectionState : class, new()
+where TSelectionState : class
 {
-    public async Task<TSelectionState> Select(
+    public record Options(int SelectionTimeMs, IEnumerable<string> PlayerIds);
+    
+    public async Task<TSelectionState?> Select(
         string gameId,
-        IEnumerable<string> PlayerIds,
-        TSelectionState initialState,
-        int selectionTimeMs,
-        CancellationToken cancellationToken)
+        TSelectionState? initialState,
+        Options? options = null,
+        CancellationToken cancellationToken = default)
 
     {
         var timeToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(selectionTimeMs).Token)
+            options is null ? default : new CancellationTokenSource(options.SelectionTimeMs).Token)
             .Token;
         var selections = initialState;
-        var awaitingPlayerIds = PlayerIds.ToList();
+        var awaitingPlayerIds = options?.PlayerIds?.ToList();
 
-        while (!timeToken.IsCancellationRequested && awaitingPlayerIds.Any())
+        while (!timeToken.IsCancellationRequested && (awaitingPlayerIds is null || awaitingPlayerIds.Any()))
         {
             var (playerId, selection) = await SelectOne(gameId, timeToken);
             if(playerId is not null) {
-                awaitingPlayerIds.Remove(playerId);
+                awaitingPlayerIds?.Remove(playerId);
             }
 
             if (selection is null || timeToken.IsCancellationRequested)
@@ -39,5 +40,5 @@ where TSelectionState : class, new()
 
     protected abstract Task<(string? playerId, TSelection?)> SelectOne(string gameId, CancellationToken cancellationToken);
 
-    protected abstract TSelectionState UpdateSelectionState(TSelection selection, TSelectionState state);
+    protected abstract TSelectionState? UpdateSelectionState(TSelection selection, TSelectionState? state);
 }

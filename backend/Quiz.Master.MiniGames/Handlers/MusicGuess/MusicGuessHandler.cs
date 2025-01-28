@@ -78,9 +78,9 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         var categoryIds = round.Categories.Select(x => x.Id).ToArray();
         var initialState = categoryIds.Select(x => new State.SelectedCategory { CategoryId = x, PlayerIds = [] }).ToList();
         var categories = await new CategorySelector(eventService, categoryIds)
-            .Select(gameId, playerIds, initialState, options.Value.TimeForCategorySelectionMs, cancellationToken);
+            .Select(gameId, initialState, new(options.Value.TimeForCategorySelectionMs, playerIds), cancellationToken);
 
-        var selectedCategory = categories
+        var selectedCategory = categories?
             .OrderByDescending(x => x.PlayerIds.Count)
             .GroupBy(x => x.PlayerIds.Count)
             .FirstOrDefault()
@@ -92,7 +92,7 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         {
             _state.CurrentCategoryId = selectedCategory.CategoryId;
             roundState.CategoryId = selectedCategory.CategoryId;
-            roundState.SelectedCategories = categories;
+            roundState.SelectedCategories = categories ?? [];
         }
         await _onStateUpdate(_state, cancellationToken);
 
@@ -115,7 +115,7 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
             config.MinPointsForAnswer,
             config.PointsDecrement);
 
-        var answers = await selector.Select(gameId, playerIds, new(), config.TimeForAnswerSelectionMs, cancellationToken);
+        var answers = await selector.Select(gameId, new(), new(config.TimeForAnswerSelectionMs, playerIds), cancellationToken) ?? [];
 
         foreach (var ans in answers)
         {
