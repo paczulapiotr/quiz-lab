@@ -1,7 +1,7 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
 import { useParams } from "react-router";
-import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
+import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
 import { AbcdActions } from "@repo/ui/minigames/actions";
 

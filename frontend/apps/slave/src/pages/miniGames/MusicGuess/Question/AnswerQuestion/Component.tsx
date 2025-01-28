@@ -5,7 +5,7 @@ import styles from "./Component.module.scss";
 
 type Props = {
   question?: string;
-  answers: { id: string; text: string }[];
+  answers: { id: string; text?: string }[];
   onAnswer: (answerId: string) => void;
   score: number;
 };
@@ -32,7 +32,7 @@ const Component = ({
         {answers.map((x) => (
           <TileButton
             key={x.id}
-            text={x.text}
+            text={x.text ?? ""}
             onClick={() => answerHandle(x.id)}
             selected={selected === x.id}
           />

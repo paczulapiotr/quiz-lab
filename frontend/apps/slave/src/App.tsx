@@ -5,6 +5,7 @@ import "./App.scss";
 import GameRoutes from "./Routes";
 import FrontScreen from "./pages/FrontScreen";
 import { LocalSyncServiceProvider } from "@repo/ui/contexts";
+import { PlayersProvider } from "@repo/ui/contexts/PlayersContext";
 
 function App() {
   const queryClient = new QueryClient({
@@ -22,6 +23,7 @@ function App() {
       <LocalSyncServiceProvider
         wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
       >
+        <PlayersProvider>
         <BrowserRouter>
           <Routes>
             <Route index element={<Welcome />} />
@@ -29,6 +31,7 @@ function App() {
             <Route path="*" element={<GameRoutes />} />
           </Routes>
         </BrowserRouter>
+        </PlayersProvider>
       </LocalSyncServiceProvider>
     </QueryClientProvider>
   );

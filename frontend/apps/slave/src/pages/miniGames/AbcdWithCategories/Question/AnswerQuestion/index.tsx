@@ -1,38 +1,34 @@
-import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
+import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import Component from "./Component";
-import { useGetQuestion } from "@/api/queries/minigames/abcd/useGetQuestion";
-import { useGetScore } from "@/api/queries/useGetScore";
-import { useGetAppliedPowerPlay } from "@/api/queries/minigames/abcd/useGetAppliedPowerPlay";
-import { useMemo } from "react";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { AbcdInteractions } from "@repo/ui/minigames/actions";
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
+import { PowerPlaysEnum } from "../../PowerPlays/types";
+import { AbcdDefinition, AbcdState } from "@repo/ui/api/queries/minigames/abcd";
 
 type Props = {
   gameId: string;
 };
 
 const AnswerQuestion = ({ gameId }: Props) => {
-  const question = useGetQuestion(gameId, true);
+  const {data} = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
   const { data: score } = useGetScore(gameId);
   const { mutateAsync: sendAsync } = useSendPlayerInteraction();
-  const appliedPowerPlays = useGetAppliedPowerPlay(gameId, true);
 
   const answer = (value: string) =>
     sendAsync({ gameId, interactionType: AbcdInteractions.QuestionAnswer, value });
 
-  const powerPlays = useMemo(
-    () =>
-      appliedPowerPlays.data?.players[0]?.powerPlays.map((x) => x.powerPlay) ??
-      [],
-    [appliedPowerPlays.data?.players],
-  );
+  const question = data?.definition?.rounds.find((round) => round.id === data?.state?.currentRoundId)?.categories
+    .find((category) => category.id === data?.state?.currentCategoryId)?.questions
+    .find((question) => question.id === data?.state?.currentQuestionId);
 
   return (
     <Component
       score={score?.miniGameScore ?? 0}
-      answers={question.data?.answers ?? []}
-      question={question.data?.question ?? ""}
+      answers={question?.answers ?? []}
+      question={question?.text ?? ""}
       onAnswer={answer}
-      powerPlays={powerPlays}
+      powerPlays={[PowerPlaysEnum.Bombs, PowerPlaysEnum.Freeze, PowerPlaysEnum.Letters, PowerPlaysEnum.Slime]}
     />
   );
 };

@@ -1,14 +1,14 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
 import styles from "./Component.module.scss";
 import { useParams } from "react-router";
-import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
+import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
 import { MusicGuessActions } from "@repo/ui/minigames/actions";
 
 type Props = {
   answers: {
     id: string;
-    text: string;
+    text?: string;
     isCorrect: boolean;
   }[];
   players: {

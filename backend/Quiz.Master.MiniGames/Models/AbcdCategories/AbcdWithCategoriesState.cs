@@ -1,8 +1,6 @@
-using Quiz.Master.Core.Models;
-
 namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
-public record AbcdWithCategoriesState : MiniGameStateData
+public record AbcdWithCategoriesState : BaseState
 {
     public string? CurrentRoundId { get; set; } = string.Empty;
     public string? CurrentCategoryId { get; set; } = string.Empty;

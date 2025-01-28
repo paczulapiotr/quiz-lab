@@ -1,4 +1,3 @@
-
 namespace Quiz.Master.Core.Models;
 
 public record MiniGameInstance : IEntity

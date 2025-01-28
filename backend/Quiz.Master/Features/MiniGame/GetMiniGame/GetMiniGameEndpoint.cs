@@ -12,9 +12,14 @@ public class GetMiniGameEndpoint : ICarterModule
         app.MapGet("/api/game/{gameId}/mini-game", async ([FromRoute] Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetMiniGameQuery, GetMiniGameResult> commandHandler) =>
         {
             var deviceId = httpContextAccessor.GetDeviceId();
-            var Game = await commandHandler.HandleAsync(new GetMiniGameQuery(gameId, deviceId));
+            var game = await commandHandler.HandleAsync(new GetMiniGameQuery(gameId, deviceId));
 
-            return Results.Ok(Game);
+            var gameSerialized = System.Text.Json.JsonSerializer.Serialize(game);
+            Console.WriteLine(game?.State?.GetType());
+            var stateSerialized = System.Text.Json.JsonSerializer.Serialize(game?.State);
+            var defSerialized = System.Text.Json.JsonSerializer.Serialize(game?.Definition);
+
+            return Results.Ok(game);
         })
         .WithName("GetMiniGame")
         .ProducesProblem(StatusCodes.Status400BadRequest)

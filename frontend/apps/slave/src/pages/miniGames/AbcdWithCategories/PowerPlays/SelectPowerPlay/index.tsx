@@ -1,9 +1,9 @@
-import { useGetScore } from "@/api/queries/useGetScore";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { PowerPlaysEnum, PowerPlaysNames } from "../types";
 import Component from "./Component";
-import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
-import { useGetPowerPlays } from "@/api/queries/minigames/abcd/useGetPowerPlays";
+import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import { AbcdInteractions} from "@repo/ui/minigames/actions"
+import { usePlayers } from "@repo/ui/contexts/PlayersContext";
 
 type Props = {
   gameId: string;
@@ -11,8 +11,9 @@ type Props = {
 
 const SelectPowerPlay = ({ gameId }: Props) => {
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
-  const powerPlays = useGetPowerPlays(gameId, true);
   const { data: score } = useGetScore(gameId);
+  const { players } = usePlayers();
+  
   const sendSelectPowerPlay = async (
     powerPlay: PowerPlaysEnum,
     deviceId: string,
@@ -31,7 +32,7 @@ const SelectPowerPlay = ({ gameId }: Props) => {
     <Component
       score={score?.miniGameScore ?? 0}
       onSelect={sendSelectPowerPlay}
-      players={powerPlays.data?.players ?? []}
+      players={players}
     />
   );
 };

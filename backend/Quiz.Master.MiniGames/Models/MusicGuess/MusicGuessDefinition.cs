@@ -1,9 +1,8 @@
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.Abstract;
 
 namespace Quiz.Master.MiniGames.Models.MusicGuess;
 
-public record MusicGuessDefinition : MiniGameDefinitionData
+public record MusicGuessDefinition : BaseDefinition
 {
     public List<Round> Rounds { get; set; } = new List<Round>();
 

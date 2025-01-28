@@ -1,7 +1,7 @@
 import { GameStatus, GameStatusNames } from "@repo/ui/services/types";
 import { useParams } from "react-router";
-import { useUpdateGameStatus } from "./api/mutations/useUpdateGameStatus";
-import { useUpdateMiniGame } from "./api/mutations/useUpdateMiniGame";
+import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
+import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import { AbcdActions } from "@repo/ui/minigames/actions";
 
 const AdminPanel = () => {

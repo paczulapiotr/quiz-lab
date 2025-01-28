@@ -4,12 +4,14 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { LocalSyncServiceProvider} from "@repo/ui/contexts";
 import GameRoutes from "./Routes";
+import { PlayersProvider } from "@repo/ui/contexts/PlayersContext";
 
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: Infinity,
+        retry: false,
+        staleTime: 0,
         cacheTime: 0,
       },
     },
@@ -17,9 +19,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalSyncServiceProvider
-        wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
-      >
+      <PlayersProvider>
+        <LocalSyncServiceProvider
+          wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
+          >
         <BrowserRouter>
           <Routes>
             <Route index element={<Welcome />} />
@@ -27,7 +30,8 @@ function App() {
           </Routes>
         </BrowserRouter>
       </LocalSyncServiceProvider>
-    </QueryClientProvider>
+    </PlayersProvider>
+  </QueryClientProvider>
   );
 }
 

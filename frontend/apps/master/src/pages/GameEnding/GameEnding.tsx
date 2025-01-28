@@ -1,10 +1,10 @@
 import AdminPanel from "@/AdminPanel";
-import { useGetScore } from "@/api/queries/useGetScore";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { useParams } from "react-router";
 import styles from "./GameEnding.module.scss";
 import { HeaderTile, Tile} from "@repo/ui/components"
 import { useEffect } from "react";
-import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import { useUpdateGameStatus } from "@repo/ui//api/mutations/useUpdateGameStatus";
 import { GameStatus } from "@repo/ui";
 
 type Props = {

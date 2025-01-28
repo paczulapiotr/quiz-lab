@@ -1,16 +1,22 @@
-import { useGetCategories } from "@/api/queries/minigames/music/useGetCategories";
-import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
+import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import Component from "./Component";
-import { useGetScore } from "@/api/queries/useGetScore";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { MusicGuessInteractions} from "@repo/ui/minigames/actions"
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
+import { MusicGuessDefinition, MusicGuessState } from "@repo/ui/api/queries/minigames/musicGuess";
+
 type Props = {
   gameId: string;
 };
 
 const SelectCategory = ({ gameId }: Props) => {
-  const { data } = useGetCategories(gameId, true);
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
   const { data: score } = useGetScore(gameId);
+  const { data} = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(gameId);
+
+  const categories = data?.definition?.rounds
+    .find((round) => round.id === data?.state?.currentRoundId)?.categories ?? [];
+
   const onSelectHandle = async (categoryId: string) => {
     await sendInteraction({
       gameId: gameId!,
@@ -21,7 +27,7 @@ const SelectCategory = ({ gameId }: Props) => {
 
   return (
     <Component
-      categories={data?.categories ?? []}
+      categories={categories}
       onSelect={onSelectHandle}
       score={score?.miniGameScore ?? 0}
     />

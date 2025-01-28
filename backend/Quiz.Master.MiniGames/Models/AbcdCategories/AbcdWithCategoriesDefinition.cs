@@ -1,9 +1,8 @@
-using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.Abstract;
 
 namespace Quiz.Master.MiniGames.Models.AbcdCategories;
 
-public record AbcdWithCategoriesDefinition : MiniGameDefinitionData
+public record AbcdWithCategoriesDefinition : BaseDefinition
 {
     public List<Round> Rounds { get; set; } = new List<Round>();
 

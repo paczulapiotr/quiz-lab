@@ -1,4 +1,4 @@
-import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
+import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import TutorialVideo from "@/pages/temp/TutorialVideo";
 import Times from "@repo/ui/config/times";
 import { AbcdActions } from "@repo/ui/minigames/actions";

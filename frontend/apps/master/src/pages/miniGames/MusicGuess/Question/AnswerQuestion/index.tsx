@@ -1,18 +1,25 @@
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
+import { MusicGuessState, MusicGuessDefinition } from "@repo/ui/api/queries/minigames/musicGuess";
 import Component from "./Component";
-import { useGetQuestion } from "@/api/queries/minigames/music/useGetQuestion";
 
 type Props = {
   gameId: string;
 };
 
 const AnswerQuestion = ({ gameId }: Props) => {
-  const question = useGetQuestion(gameId, true);
+  const {data} = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(gameId);
+  const def = data?.definition;
+  const state = data?.state
+  const question = def?.rounds
+    .find((r) => r.id === state?.currentRoundId)?.categories
+    .find((c) => c.id === state?.currentCategoryId)?.questions
+    .find((q) => q.id === state?.currentQuestionId);
 
   return (
     <Component
-      answers={question.data?.answers ?? []}
-      question={question.data?.question}
-      questionAudio={question.data?.audioUrl}
+      answers={question?.answers ?? []}
+      question={question?.text}
+      questionAudio={question?.audioUrl}
     />
   );
 };

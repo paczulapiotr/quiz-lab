@@ -8,7 +8,7 @@ type Props = {
   answerId?: string;
   answers: {
     id: string;
-    text: string;
+    text?: string;
     isCorrect: boolean;
   }[];
 };

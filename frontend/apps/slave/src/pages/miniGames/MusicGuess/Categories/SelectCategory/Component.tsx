@@ -4,7 +4,7 @@ import { useState } from "react";
 import Times from "@repo/ui/config/times";
 
 type Props = {
-  categories: { text: string; id: string }[];
+  categories: { name: string; id: string }[];
   onSelect: (categoryId: string) => void;
   score: number;
 };
@@ -25,7 +25,7 @@ const SelectCategory = ({ categories, onSelect, score }: Props) => {
       <div className={styles.grid}>
         {categories.map((c) => (
           <TileButton
-            text={c.text}
+            text={c.name}
             onClick={() => onSelectHandle(c.id)}
             key={c.id}
             selected={selected === c.id}

@@ -2,8 +2,8 @@ import { PageTemplate } from "@repo/ui/components";
 import AbcdWithCategories from "../miniGames/AbcdWithCategories";
 import MusicGuess from "../miniGames/MusicGuess";
 import { useParams } from "react-router";
-import { useGetMiniGame } from "@/api/queries/useGetMiniGame";
-import { MiniGameType } from "@/api/requests/minigames/types";
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
+import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
 
 type Props = {
   basePath: string;

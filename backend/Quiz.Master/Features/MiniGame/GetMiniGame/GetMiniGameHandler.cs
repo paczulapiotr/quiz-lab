@@ -1,11 +1,20 @@
 
 using Quiz.Common.CQRS;
 using Quiz.Master.Core.Models;
+using Quiz.Master.MiniGames.Models;
 using Quiz.Storage;
 
 namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 
-public record GetMiniGameResult(Guid MiniGameId, MiniGameType MiniGameType, string? PlayerName, string? PlayerDeviceId, int Score, object? State = null);
+public record GetMiniGameResult(
+    Guid MiniGameId, 
+    MiniGameType MiniGameType, 
+    string? PlayerName, 
+    string? PlayerId, 
+    string? PlayerDeviceId, 
+    int Score, 
+    BaseState? State = null, 
+    BaseDefinition? Definition = null);
 public record GetMiniGameQuery(Guid GameId, string PlayerDeviceId) : IQuery<GetMiniGameResult>;
 
 public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMiniGameQuery, GetMiniGameResult>
@@ -21,7 +30,8 @@ public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMin
         }
 
         var miniGame = await storage.FindMiniGameAsync(game.CurrentMiniGameId.Value, cancellationToken);
-
+        var definition = await storage.FindMiniGameDefinitionAsync(miniGame.MiniGameDefinitionId, cancellationToken);
+        
         if (miniGame == null)
         {
             return null;
@@ -37,8 +47,10 @@ public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMin
                 miniGame.Id,
                 miniGame.Type,
                 player?.Name,
+                player?.Id.ToString(),
                 player?.DeviceId,
                 score,
-                miniGame.State);
+                miniGame.State.As<BaseState>(),
+                definition.Definition.As<BaseDefinition>());
     }
 }

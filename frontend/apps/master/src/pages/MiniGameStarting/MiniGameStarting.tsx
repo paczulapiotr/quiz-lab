@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import { useEffect } from "react";
 import { PageTemplate } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui/services/types";
-import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import Times from "@repo/ui/config/times";
 
 const MiniGameStarting = () => {

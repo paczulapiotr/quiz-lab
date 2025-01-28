@@ -1,5 +1,5 @@
-import { fileUrl } from "@/api/files";
-import { useUpdateMiniGame } from "@/api/mutations/useUpdateMiniGame";
+import { fileUrl } from "@repo/ui/api/files";
+import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import { AudioPlayer, HeaderTile, Timer } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
 import { AbcdActions } from "@repo/ui/minigames/actions";

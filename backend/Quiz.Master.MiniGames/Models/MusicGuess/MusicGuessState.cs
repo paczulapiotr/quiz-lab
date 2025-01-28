@@ -1,8 +1,6 @@
-using Quiz.Master.Core.Models;
-
 namespace Quiz.Master.MiniGames.Models.MusicGuess;
 
-public record MusicGuessState : MiniGameStateData
+public record MusicGuessState : BaseState
 {
     public string? CurrentRoundId { get; set; } = string.Empty;
     public string? CurrentCategoryId { get; set; } = string.Empty;

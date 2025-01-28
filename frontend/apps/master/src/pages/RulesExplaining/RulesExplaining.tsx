@@ -3,7 +3,7 @@ import { GameStatus } from "@repo/ui/services/types";
 import TutorialVideo from "../temp/TutorialVideo";
 import { useEffect } from "react";
 import { useParams } from "react-router";
-import { useUpdateGameStatus } from "@/api/mutations/useUpdateGameStatus";
+import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import Times from "@repo/ui/config/times";
 
 const RulesExplaining = () => {

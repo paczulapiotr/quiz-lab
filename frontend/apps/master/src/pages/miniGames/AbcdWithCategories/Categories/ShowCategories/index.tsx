@@ -1,4 +1,5 @@
-import { useGetCategories } from "@/api/queries/minigames/abcd/useGetCategories";
+import { AbcdState, AbcdDefinition } from "@repo/ui/api/queries/minigames/abcd";
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import Component from "./Component";
 
 type Props = {
@@ -6,9 +7,11 @@ type Props = {
 };
 
 const ShowCategories = ({ gameId }: Props) => {
-  const { data } = useGetCategories(gameId, true);
+  const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
+  const categories = data?.definition?.rounds.find(x => x.id === data.state?.currentRoundId)
+    ?.categories.map(x => ({ text: x.name, id: x.id })) ?? [];
 
-  return <Component categories={data?.categories ?? []} />;
+  return <Component categories={categories} />;
 };
 
 export default ShowCategories;

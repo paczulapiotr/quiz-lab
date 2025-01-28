@@ -5,7 +5,8 @@ using Quiz.Storage;
 
 namespace Quiz.Master.Features.Game.GetGame;
 
-public record GetGameResult(string GameId, uint GameSize, IEnumerable<string> PlayerNames, bool IsStarted = false, bool IsFinished = false, string? YourPlayerName = null, string? YourDeviceId = null);
+public record GetGameResult(string GameId, uint GameSize, IEnumerable<GamePlayer> Players, bool IsStarted = false, bool IsFinished = false, string? YourPlayerName = null, string? YourDeviceId = null);
+public record GamePlayer(string Id, string DeviceId, string Name);
 public record GetGameQuery(Guid GameId) : IQuery<GetGameResult>;
 
 public class GetGameHandler(IDatabaseStorage storage, IHttpContextAccessor httpContextAccessor) : IQueryHandler<GetGameQuery, GetGameResult>
@@ -26,7 +27,7 @@ public class GetGameHandler(IDatabaseStorage storage, IHttpContextAccessor httpC
             : new GetGameResult(
                 game.Id.ToString(),
                 game.GameSize,
-                game.Players.OrderByDescending(x => x.CreatedAt).Select(x => x.Name),
+                game.Players.OrderBy(x => x.CreatedAt).Select(x => new GamePlayer(x.Id.ToString(), x.DeviceId, x.Name)),
                 game.IsStarted,
                 game.IsFinished,
                 player?.Name,

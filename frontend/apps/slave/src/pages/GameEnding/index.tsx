@@ -1,4 +1,4 @@
-import { useGetScore } from "@/api/queries/useGetScore";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { CenteredInstruction, PageTemplate, ScoreTile } from "@repo/ui/components";
 
 import { useParams } from "react-router";

@@ -1,18 +1,22 @@
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import Component from "./Component";
-import { useGetQuestion } from "@/api/queries/minigames/abcd/useGetQuestion";
+import { AbcdDefinition, AbcdState } from "@repo/ui/api/queries/minigames/abcd";
 
 type Props = {
   gameId: string;
 };
 
 const ShowQuestion = ({ gameId }: Props) => {
-  const question = useGetQuestion(gameId!, true);
+  const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
+  const question = data?.definition?.rounds.find((round) => round.id === data?.state?.currentRoundId)?.categories
+    .find((category) => category.id === data?.state?.currentCategoryId)?.questions
+    .find((question) => question.id === data?.state?.currentQuestionId);
 
   return (
     <Component
-      audioUrl={question.data?.audioUrl ?? ""}
-      question={question.data?.question ?? ""}
-      questionId={question.data?.questionId ?? ""}
+      audioUrl={question?.audioUrl}
+      question={question?.text ?? ""}
+      questionId={question?.id ?? ""}
     />
   );
 };

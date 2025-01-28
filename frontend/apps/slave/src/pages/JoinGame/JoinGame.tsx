@@ -1,5 +1,5 @@
-import { useJoinGameMutation } from "@/api/mutations/useJoinGameMutation";
-import { useGetGame } from "@/api/queries/useGetGame";
+import { useJoinGameMutation } from "@repo/ui/api/mutations/useJoinGameMutation";
+import { useGetGame } from "@repo/ui/api/queries/useGetGame";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import styles from "./JoinGame.module.scss";
@@ -48,9 +48,9 @@ const JoinGame = ({ starting = false }: Props) => {
     ),
   );
 
-  const playerNames = [
-    ...(data?.playerNames ?? []),
-    ...(data ? Array(data.gameSize - data.playerNames.length).fill(null) : []),
+  const playerNames : {id:string, name:string}[] = [
+    ...(data?.players ?? []),
+    ...(data ? Array(data.gameSize - data.players.length).fill(null) : []),
   ];
 
   return (
@@ -85,7 +85,7 @@ const JoinGame = ({ starting = false }: Props) => {
             player == null ? (
               <Tile text="..." key={index} className={styles.emptySpot} />
             ) : (
-              <Tile blue key={`${player}_${index}`} text={`${player}`} />
+              <Tile blue key={`${player?.id}_${index}`} text={player.name} />
             ),
           )}
         </div>

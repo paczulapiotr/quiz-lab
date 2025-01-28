@@ -1,17 +1,25 @@
-import { useSendPlayerInteraction } from "@/api/mutations/useSendPlayerInteraction";
+import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import Component from "./Component";
-import { useGetQuestion } from "@/api/queries/minigames/music/useGetQuestion";
-import { useGetScore } from "@/api/queries/useGetScore";
+import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { MusicGuessInteractions } from "@repo/ui/minigames/actions";
+import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
+import { MusicGuessState, MusicGuessDefinition } from "@repo/ui/api/queries/minigames/musicGuess";
 
 type Props = {
   gameId: string;
 };
 
 const AnswerQuestion = ({ gameId }: Props) => {
-  const question = useGetQuestion(gameId, true);
+  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(gameId);
   const { data: score } = useGetScore(gameId);
   const { mutateAsync: sendAsync } = useSendPlayerInteraction();
+
+  const state = data?.state;
+  const def = data?.definition;
+  const question = def?.rounds
+    .find((r) => r.id === state?.currentRoundId)?.categories
+    .find((c) => c.id === state?.currentCategoryId)?.questions
+    .find((q) => q.id === state?.currentQuestionId);
 
   const answer = (value: string) =>
     sendAsync({ gameId, interactionType: MusicGuessInteractions.QuestionAnswer, value });
@@ -19,8 +27,8 @@ const AnswerQuestion = ({ gameId }: Props) => {
   return (
     <Component
       score={score?.miniGameScore ?? 0}
-      answers={question.data?.answers ?? []}
-      question={question.data?.question}
+      answers={question?.answers ?? []}
+      question={question?.text}
       onAnswer={answer}
     />
   );
