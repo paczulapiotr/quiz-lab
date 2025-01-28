@@ -10,8 +10,13 @@ public class AnswerSelector(IMiniGameEventService eventService, string correctAn
         return (result?.PlayerId.ToString(), result);
     }
 
-    protected override List<State.RoundAnswer> UpdateSelectionState(IMiniGameEventService.AnswerSelection selection, List<State.RoundAnswer> state)
+    protected override List<State.RoundAnswer>? UpdateSelectionState(IMiniGameEventService.AnswerSelection selection, List<State.RoundAnswer>? state)
     {
+        if (state is null)
+        {
+            state = new List<State.RoundAnswer>();
+        }
+        
         state.Add(new State.RoundAnswer
         {
             PlayerId = selection.PlayerId,
