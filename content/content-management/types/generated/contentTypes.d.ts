@@ -456,7 +456,11 @@ export interface ApiGameDefinitionGameDefinition
       'api::game-definition.game-definition'
     >;
     miniGames: Schema.Attribute.DynamicZone<
-      ['shared.mini-game-def-abcd', 'shared.min-def-music']
+      [
+        'shared.mini-game-def-abcd',
+        'shared.min-def-music',
+        'shared.min-def-letters',
+      ]
     > &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{

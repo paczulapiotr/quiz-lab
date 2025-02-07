@@ -28,7 +28,7 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
     // Calculate the percentage of time passed
     const timeElapsed = startSeconds * 1000 - timeRemaining;
     setPercentage((timeElapsed / (startSeconds * 1000)) * 100);
-  },[onTimeUp, startSeconds])
+  }, [onTimeUp, startSeconds]);
 
   useEffect(() => {
     updateTimer(); // Invoke immediately to set initial state
@@ -53,10 +53,10 @@ const Timer: React.FC<Props> = ({ startSeconds, onTimeUp }) => {
     <div className={styles.timer}>
       <div className={styles["progress-bar"]}>
         <div
-          style={{ width: `${percentage}%`}}
+          style={{ width: `${percentage}%` }}
           className={classNames(
             styles["progress-fill"],
-            styles[getProgressColor()]
+            styles[getProgressColor()],
           )}
         />
       </div>

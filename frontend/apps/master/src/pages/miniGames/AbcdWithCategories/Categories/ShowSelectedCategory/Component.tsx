@@ -17,7 +17,7 @@ type Props = {
 const Component = ({ selections }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
-  
+
   const onTimeUp = () =>
     mutate({
       gameId: gameId!,
@@ -36,7 +36,10 @@ const Component = ({ selections }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={Times.Abdc.CategoryShowSeconds} onTimeUp={onTimeUp} />
+      <Timer
+        startSeconds={Times.Abdc.CategoryShowSeconds}
+        onTimeUp={onTimeUp}
+      />
     </>
   );
 };

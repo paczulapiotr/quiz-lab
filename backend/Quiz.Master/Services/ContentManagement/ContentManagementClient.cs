@@ -89,6 +89,13 @@ public class ContentManagementClient : IContentManagementClient
                                 }
                             }
                         }
+                    },
+                    ... on ComponentSharedMinDefLetters {
+                      id,
+                      rounds {
+                        id,
+                        phrase,
+                      }
                     }
                     }
                 } 

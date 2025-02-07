@@ -51,8 +51,14 @@ const AdminPanel = () => {
           action={AbcdActions.PowerPlayApplyStop}
           gameId={gameId!}
         />
-        <SendMiniGameUpdateButton action={AbcdActions.CategoryShowStop} gameId={gameId!} />
-        <SendMiniGameUpdateButton action={AbcdActions.QuestionShowStop} gameId={gameId!} />
+        <SendMiniGameUpdateButton
+          action={AbcdActions.CategoryShowStop}
+          gameId={gameId!}
+        />
+        <SendMiniGameUpdateButton
+          action={AbcdActions.QuestionShowStop}
+          gameId={gameId!}
+        />
         <SendMiniGameUpdateButton
           action={AbcdActions.QuestionAnswerShowStop}
           gameId={gameId!}

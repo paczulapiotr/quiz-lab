@@ -7,7 +7,7 @@ public record ComponentSharedMinDefLetters : MiniGameDto
 {
     public List<Round> Rounds { get; set; } = new();
 
-    public override MiniGameType GameType => MiniGameType.PhrasesAndLetters;
+    public override MiniGameType GameType => MiniGameType.LettersAndPhrases;
 
     public record Round
     {

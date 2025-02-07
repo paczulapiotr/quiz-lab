@@ -1,4 +1,3 @@
-
 import ShowAppliedPowerPlay from "./PowerPlays/ShowAppliedPowerPlay";
 import SelectCategory from "./Categories/SelectCategory";
 import ShowCategory from "./Categories/ShowCategory";
@@ -7,7 +6,11 @@ import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import SelectPowerPlay from "./PowerPlays/SelectPowerPlay";
 import { useParams } from "react-router";
-import { PageTemplate, GenericNavigator, CenteredInstruction } from "@repo/ui/components";
+import {
+  PageTemplate,
+  GenericNavigator,
+  CenteredInstruction,
+} from "@repo/ui/components";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { AbcdActions } from "@repo/ui/minigames/actions";
 

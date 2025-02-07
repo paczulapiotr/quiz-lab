@@ -43,7 +43,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
           return null;
       }
     },
-    []
+    [],
   );
   const routes = useMemo<Record<string, JSX.Element | undefined>>(
     () => ({
@@ -56,7 +56,7 @@ const GameNavigator = ({ pages, basePath }: Props) => {
       ":gameId/ending/*": pages[GameStatus.GameEnding],
       ":gameId/ended/*": pages[GameStatus.GameEnding],
     }),
-    [pages]
+    [pages],
   );
 
   return (

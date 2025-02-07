@@ -17,9 +17,7 @@ const Routes = () => {
         [GameStatus.RulesExplaining]: <RulesExplaining />,
         [GameStatus.MiniGameStarting]: <MiniGameStarting />,
         [GameStatus.MiniGameStarted]: (
-          <MiniGameStarted
-            basePath="minigame_play"
-          />
+          <MiniGameStarted basePath="minigame_play" />
         ),
         [GameStatus.MiniGameEnding]: <MiniGameEnding />,
         [GameStatus.GameEnding]: <GameEnding />,

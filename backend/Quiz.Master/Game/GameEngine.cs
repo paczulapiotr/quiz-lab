@@ -17,7 +17,7 @@ ICommunicationService communicationService,
 IMiniGameHandlerSelector miniGameHandlerSelector,
 IGameRepository gameRepository,
 IMiniGameRepository miniGameRepository) : IGameEngine
-{
+{   
     public async Task Run(Guid Id, CancellationToken cancellationToken = default)
     {
         await communicationService.Initialize(Id.ToString(), cancellationToken);
@@ -37,9 +37,9 @@ IMiniGameRepository miniGameRepository) : IGameEngine
         var gameId = id.ToString()!;
         await communicationService.SendGameCreatedMessage(gameId, cancellationToken);
         await communicationService.ReceiveGameStartedMessage(gameId, cancellationToken);
-
         var game = await gameRepository.FindAsync(id, cancellationToken);
         game.StartedAt = DateTime.UtcNow;
+
         await SetStatus(game, Status.RulesExplaining, cancellationToken);
         await communicationService.SendRulesExplainMessage(gameId, cancellationToken);
         await communicationService.ReceiveRulesExplainedMessage(gameId, cancellationToken);

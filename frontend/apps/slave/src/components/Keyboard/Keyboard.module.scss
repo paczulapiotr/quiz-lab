@@ -1,9 +1,9 @@
 @use "/src/variables" as vars;
 
 .theme {
-    background-color: vars.$pastell-blue-dark;
+  background-color: vars.$pastell-blue-dark;
 
-    :global(.hg-button) {
-        padding: 1.5rem;
-    }
+  :global(.hg-button) {
+    padding: 1.5rem;
+  }
 }

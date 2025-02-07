@@ -9,7 +9,7 @@ import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import PowerPlayExplain from "./PowerPlays/PowerPlayExplain";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { AbcdActions} from "@repo/ui/minigames/actions";
+import { AbcdActions } from "@repo/ui/minigames/actions";
 type Props = {
   basePath: string;
 };

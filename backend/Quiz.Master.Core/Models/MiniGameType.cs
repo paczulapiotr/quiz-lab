@@ -5,5 +5,5 @@ public enum MiniGameType
 {
     AbcdWithCategories = 1,
     MusicGuess,
-    PhrasesAndLetters,
+    LettersAndPhrases,
 }

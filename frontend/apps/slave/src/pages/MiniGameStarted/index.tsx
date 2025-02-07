@@ -4,28 +4,34 @@ import MusicGuess from "../miniGames/MusicGuess";
 import { useParams } from "react-router";
 import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
+import LettersAndPhrases from "../miniGames/LettersAndPhrases";
 
 type Props = {
   basePath: string;
 };
 
 const MiniGameStarted = ({ basePath }: Props) => {
-  const { gameId} = useParams<{ gameId: string }>();
-  const { data } = useGetMiniGame(gameId)
+  const { gameId } = useParams<{ gameId: string }>();
+  const { data } = useGetMiniGame(gameId);
+  const type = data?.miniGameType ?? MiniGameType.LettersAndPhrases;
 
   const renderMiniGame = () => {
-    switch (data?.miniGameType) {
+    switch (type) {
       case MiniGameType.AbcdWithCategories:
         return <AbcdWithCategories basePath={basePath} />;
       case MiniGameType.MusicGuess:
         return <MusicGuess basePath={basePath} />;
+      case MiniGameType.LettersAndPhrases:
+        return <LettersAndPhrases basePath={basePath} />;
       default:
         return (
-          <PageTemplate>Unknown mini game type: {data?.miniGameType}</PageTemplate>
+          <PageTemplate>
+            Unknown mini game type: {data?.miniGameType}
+          </PageTemplate>
         );
     }
   };
-  
+
   return renderMiniGame();
 };
 

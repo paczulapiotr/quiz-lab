@@ -3,13 +3,12 @@
  * @type {import("prettier").Config}
  */
 const config = {
-    trailingComma: "all",
-    tabWidth: 2,
-    semi: true,
-    singleQuote: false,
-    printWidth: 80,
-    bracketSpacing: true,
- };
- 
- export default config;
- 
+  trailingComma: "all",
+  tabWidth: 2,
+  semi: true,
+  singleQuote: false,
+  printWidth: 80,
+  bracketSpacing: true,
+};
+
+module.exports = config;

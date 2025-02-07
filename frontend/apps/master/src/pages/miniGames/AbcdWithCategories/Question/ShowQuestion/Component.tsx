@@ -11,7 +11,7 @@ type Props = {
   question: string;
 };
 
-const Component = ({ question,audioUrl }: Props) => {
+const Component = ({ question, audioUrl }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
 
@@ -25,7 +25,10 @@ const Component = ({ question,audioUrl }: Props) => {
     <>
       {audioUrl ? <AudioPlayer play src={fileUrl(audioUrl)} /> : null}
       <HeaderTile title={question} />
-      <Timer startSeconds={Times.Abdc.QuestionShowSeconds} onTimeUp={onTimeUp} />
+      <Timer
+        startSeconds={Times.Abdc.QuestionShowSeconds}
+        onTimeUp={onTimeUp}
+      />
     </>
   );
 };

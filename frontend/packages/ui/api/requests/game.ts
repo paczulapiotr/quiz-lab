@@ -5,7 +5,7 @@ import { GameStatus } from "@repo/ui";
 export type GetCurrentGameResponse = {
   gameId: string;
   gameSize: number;
-  players: { id: string, name: string, deviceId: string }[];
+  players: { id: string; name: string; deviceId: string }[];
   yourName?: string;
   yourDeviceId?: string;
   isStarted: boolean;
@@ -39,20 +39,28 @@ export const getScores = async (gameId: string) =>
     )
   ).data;
 
-export type UpdateGameStatusRequest = { status: GameStatus, gameId:string };
+export type UpdateGameStatusRequest = { status: GameStatus; gameId: string };
 
-export const updateGameStatus = async ({ gameId, status }: UpdateGameStatusRequest) => (
+export const updateGameStatus = async ({
+  gameId,
+  status,
+}: UpdateGameStatusRequest) =>
   await instance.post<never, never, Pick<UpdateGameStatusRequest, "status">>(
     `/game/${gameId}/status`,
-    { status }
-  )
-);
+    { status },
+  );
 
 export type JoinGameRequest = { playerName: string; gameId: string };
-export type JoinGameResponse = { ok: boolean, errorCode?: string };
+export type JoinGameResponse = { ok: boolean; errorCode?: string };
 
 export const joinGame = async (playerName: string, gameId: string) =>
-  (await instance.post<never, AxiosResponse<JoinGameResponse>, JoinGameRequest>("/game/join", {
-    playerName,
-    gameId,
-  })).data;
+  (
+    await instance.post<
+      never,
+      AxiosResponse<JoinGameResponse>,
+      JoinGameRequest
+    >("/game/join", {
+      playerName,
+      gameId,
+    })
+  ).data;

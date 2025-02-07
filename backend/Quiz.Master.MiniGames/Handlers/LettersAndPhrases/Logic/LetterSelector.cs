@@ -1,4 +1,4 @@
-namespace Quiz.Master.MiniGames.Handlers.PhrasesAndLetters.Logic;
+namespace Quiz.Master.MiniGames.Handlers.LettersAndPhrases.Logic;
 
 public class LetterSelector(IMiniGameEventService eventService) : CommonSelection<IMiniGameEventService.AnswerSelection, IMiniGameEventService.AnswerSelection>
 {

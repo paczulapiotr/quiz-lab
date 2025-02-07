@@ -9,7 +9,6 @@ public record LettersAndPhrasesDefinition : BaseDefinition
         public required string Id { get; set; }
         public required string Phrase { get; set; }
     }
-
 }
 
 

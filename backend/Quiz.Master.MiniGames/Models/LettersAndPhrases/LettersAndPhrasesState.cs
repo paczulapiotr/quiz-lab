@@ -15,7 +15,7 @@ public record LettersAndPhrasesState : BaseState
     public record RoundAnswer
     {
         public required Guid PlayerId { get; set; }
-        public required char Letter { get; set; }
+        public required char? Letter { get; set; }
         public bool IsCorrect { get; set; }
         public DateTime? Timestamp { get; set; }
         public int Points { get; set; }

@@ -1,4 +1,4 @@
-namespace Quiz.Master.MiniGames.Handlers.PhrasesAndLetters;
+namespace Quiz.Master.MiniGames.Handlers.LettersAndPhrases;
 
 public interface IMiniGameEventService
 {

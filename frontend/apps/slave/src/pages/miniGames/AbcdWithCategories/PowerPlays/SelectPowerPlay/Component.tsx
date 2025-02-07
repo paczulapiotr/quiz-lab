@@ -1,8 +1,13 @@
-
 import styles from "./Component.module.scss";
 import { PowerPlaysEnum } from "../types";
 import { useState } from "react";
-import { ScoreTile, HeaderTile, TileButton, CenteredInstruction, Timer } from "@repo/ui/components";
+import {
+  ScoreTile,
+  HeaderTile,
+  TileButton,
+  CenteredInstruction,
+  Timer,
+} from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
 
 type Props = {

@@ -11,9 +11,14 @@ const ShowQuestion = ({ gameId }: Props) => {
   const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
   const { data: score } = useGetScore(gameId!);
 
-  const question = data?.definition?.rounds.find((round) => round.id === data?.state?.currentRoundId)?.categories
-    .find((category) => category.id === data?.state?.currentCategoryId)?.questions
-    .find((question) => question.id === data?.state?.currentQuestionId);
+  const question = data?.definition?.rounds
+    .find((round) => round.id === data?.state?.currentRoundId)
+    ?.categories.find(
+      (category) => category.id === data?.state?.currentCategoryId,
+    )
+    ?.questions.find(
+      (question) => question.id === data?.state?.currentQuestionId,
+    );
 
   return (
     <Component

@@ -3,9 +3,9 @@ using Quiz.Master.Game.MiniGames;
 using State = Quiz.Master.MiniGames.Models.LettersAndPhrases.LettersAndPhrasesState;
 using Definition = Quiz.Master.MiniGames.Models.LettersAndPhrases.LettersAndPhrasesDefinition;
 using Configuration = Quiz.Master.MiniGames.Models.LettersAndPhrases.Configuration;
-using Quiz.Master.MiniGames.Handlers.PhrasesAndLetters.Logic;
+using Quiz.Master.MiniGames.Handlers.LettersAndPhrases.Logic;
 
-namespace Quiz.Master.MiniGames.Handlers.PhrasesAndLetters;
+namespace Quiz.Master.MiniGames.Handlers.LettersAndPhrases;
 
 public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniGameRepository repository, IOptions<Configuration> options) : IMiniGameHandler
 {
@@ -52,7 +52,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
         await eventService.SendOnQuestionShow(gameId, cancellationToken);
         await eventService.WaitForQuestionShown(gameId, cancellationToken);
 
-
+ 
         while (GetAvailableLetters(round, roundState).Count() > 0)
         {
             var playerId = playerIds[playerRoundCounter % playerIds.Length];
@@ -67,9 +67,13 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
             var isCorrect = availableLetters?.Contains(letter?.Letter ?? '-') ?? false;
             var points = isCorrect ? options.Value.PointsForAnswer : 0;
 
+            char? selectedLetter = letter?.Letter != null && char.IsLetter(letter.Letter) 
+                ? char.ToLower(letter.Letter) 
+                : null;
+
             roundState?.Answers.Add(new State.RoundAnswer
             {
-                Letter = letter?.Letter ?? '-',
+                Letter = selectedLetter,
                 PlayerId = playerId,
                 Timestamp = letter?.Timestamp,
                 IsCorrect = isCorrect,
@@ -94,8 +98,10 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
 
     private static IEnumerable<char> GetAvailableLetters(Definition.Round round, State.RoundState? roundState)
     {
-        var phraseLetters = round.Phrase.Replace(" ", "").ToCharArray().Distinct() ?? [];
-        var selectedLetters = roundState?.Answers.Select(x => x.Letter).Distinct() ?? [];
+        var phraseLetters = round.Phrase.Replace(" ", "").ToLower().ToCharArray().Distinct() ?? [];
+        var selectedLetters = roundState?.Answers
+            .Where(x=>x.Letter != null)
+            .Select(x => x.Letter!.Value).Distinct() ?? [];
 
         var availableLetters = phraseLetters.Except(selectedLetters);
         return availableLetters ?? [];

@@ -5,7 +5,7 @@ import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { MusicGuessActions} from "@repo/ui/minigames/actions";
+import { MusicGuessActions } from "@repo/ui/minigames/actions";
 type Props = {
   basePath: string;
 };

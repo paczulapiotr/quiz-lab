@@ -28,5 +28,5 @@ export {
   Timer,
   GameNavigator,
   GenericNavigator,
-  AudioPlayer
+  AudioPlayer,
 };

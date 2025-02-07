@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid";
 
 export const useLocalSyncConsumer = <T extends SyncReceiveDefinitionNames>(
   name: T,
-  callback: SyncReceiveCallback<T>
+  callback: SyncReceiveCallback<T>,
 ) => {
   const key = useMemo(() => uuid(), []);
   const { onSync, offSync } = useLocalSyncService();
