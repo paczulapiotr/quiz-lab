@@ -37,7 +37,7 @@ const EraserCanvas: React.FC<EraserCanvasProps> = ({
   const lastPos = useRef<{ x: number; y: number } | null>(null);
   const cleared = useRef(false);
   const erasingQueue = useRef<{ x: number; y: number; timestamp: number }[]>(
-    []
+    [],
   );
   const workerRef = useRef<Worker | null>(null);
 
@@ -49,7 +49,7 @@ const EraserCanvas: React.FC<EraserCanvasProps> = ({
           0,
           0,
           canvasRef.current!.width,
-          canvasRef.current!.height
+          canvasRef.current!.height,
         );
         const totalPixels = imageData.width * imageData.height;
         workerRef.current?.postMessage({
@@ -59,7 +59,7 @@ const EraserCanvas: React.FC<EraserCanvasProps> = ({
         });
       }
     }, 500),
-    [onCleared, clearPercentage]
+    [onCleared, clearPercentage],
   );
 
   useEffect(() => {
@@ -128,7 +128,7 @@ const EraserCanvas: React.FC<EraserCanvasProps> = ({
             return true;
           }
           return false;
-        }
+        },
       );
       requestAnimationFrame(spreadErasingEffect);
     };

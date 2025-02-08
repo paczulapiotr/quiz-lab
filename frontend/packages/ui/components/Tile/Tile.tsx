@@ -28,7 +28,7 @@ const Tile = ({
           [styles.success]: success,
           [styles.failure]: failure,
         },
-        className
+        className,
       )}
     >
       <p>{text}</p>

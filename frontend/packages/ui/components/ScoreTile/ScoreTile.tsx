@@ -1,3 +1,4 @@
+import { memo } from "react";
 import StartSvg from "../../assets/icons/star.svg";
 import styles from "./ScoreTile.module.scss";
 
@@ -14,4 +15,4 @@ const ScoreTile = ({ score = 0 }: Props) => {
   );
 };
 
-export default ScoreTile;
+export default memo(ScoreTile);

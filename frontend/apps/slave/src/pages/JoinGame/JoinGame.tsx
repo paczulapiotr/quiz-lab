@@ -9,7 +9,6 @@ import { PageTemplate, TileButton, Tile, Timer } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
 import { Keyboard } from "@/components/Keyboard";
 
-
 type Props = {
   starting?: boolean;
 };
@@ -30,7 +29,7 @@ const JoinGame = ({ starting = false }: Props) => {
         alert("Nazwa jest już zajęta");
       }
     }
-  }
+  };
 
   useLocalSyncConsumer(
     "GameStatusUpdate",
@@ -48,7 +47,7 @@ const JoinGame = ({ starting = false }: Props) => {
     ),
   );
 
-  const playerNames : {id:string, name:string}[] = [
+  const playerNames: { id: string; name: string }[] = [
     ...(data?.players ?? []),
     ...(data ? Array(data.gameSize - data.players.length).fill(null) : []),
   ];
@@ -94,12 +93,11 @@ const JoinGame = ({ starting = false }: Props) => {
         <div style={{ marginTop: "auto" }}>
           <Timer startSeconds={Times.GameStartingSeconds} />
         </div>
-      )
-        :
+      ) : (
         <div style={{ marginTop: "auto" }}>
-          <Keyboard onChange={e => setPlayerName(e)} onKeyPress={console.log} />
-        </div>}
-
+          <Keyboard value={playerName} onChange={(e) => setPlayerName(e)} />
+        </div>
+      )}
     </PageTemplate>
   );
 };

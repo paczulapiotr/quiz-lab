@@ -9,7 +9,9 @@ import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import PowerPlayExplain from "./PowerPlays/PowerPlayExplain";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { AbcdActions} from "@repo/ui/minigames/actions";
+import { AbcdActions } from "@repo/ui/minigames/actions";
+import { useCallback } from "react";
+
 type Props = {
   basePath: string;
 };
@@ -23,7 +25,7 @@ const AbcdWithCategories = ({ basePath }: Props) => {
         disableAnimation
         basePath={basePath}
         queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
+        createNavigationPath={useCallback((message) => {
           switch (message.action) {
             case AbcdActions.PowerPlayExplainStart:
               return "/powerplay_explain";
@@ -53,7 +55,7 @@ const AbcdWithCategories = ({ basePath }: Props) => {
             default:
               return "";
           }
-        }}
+        },[])}
         routes={{
           "/powerplay_explain": <PowerPlayExplain />,
           "/powerplay_select": <SelectPowerPlay />,

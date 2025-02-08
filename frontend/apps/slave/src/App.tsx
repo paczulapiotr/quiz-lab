@@ -12,8 +12,9 @@ function App() {
     defaultOptions: {
       queries: {
         retry: false,
-        staleTime: 0,
         cacheTime: 0,
+        staleTime: Infinity,
+        refetchOnMount: "always",
       },
     },
   });
@@ -24,13 +25,13 @@ function App() {
         wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
       >
         <PlayersProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route index element={<Welcome />} />
-            <Route path="front" element={<FrontScreen />} />
-            <Route path="*" element={<GameRoutes />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Routes>
+              <Route index element={<Welcome />} />
+              <Route path="front" element={<FrontScreen />} />
+              <Route path="*" element={<GameRoutes />} />
+            </Routes>
+          </BrowserRouter>
         </PlayersProvider>
       </LocalSyncServiceProvider>
     </QueryClientProvider>

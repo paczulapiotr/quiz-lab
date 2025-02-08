@@ -68,6 +68,35 @@ export interface SharedMinDefAbcdRoundCategoryQuestionAnswer
   };
 }
 
+export interface SharedMinDefLetters extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_letters';
+  info: {
+    description: '';
+    displayName: 'MinDef.Letters';
+  };
+  attributes: {
+    rounds: Schema.Attribute.Component<'shared.min-def-letters-round', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefLettersRound extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_letters_rounds';
+  info: {
+    description: '';
+    displayName: 'MinDef.Letters.Round';
+  };
+  attributes: {
+    phrase: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedMinDefMusic extends Struct.ComponentSchema {
   collectionName: 'components_shared_min_def_musics';
   info: {
@@ -241,6 +270,8 @@ declare module '@strapi/strapi' {
       'shared.min-def-abcd-round-category': SharedMinDefAbcdRoundCategory;
       'shared.min-def-abcd-round-category-question': SharedMinDefAbcdRoundCategoryQuestion;
       'shared.min-def-abcd-round-category-question-answer': SharedMinDefAbcdRoundCategoryQuestionAnswer;
+      'shared.min-def-letters': SharedMinDefLetters;
+      'shared.min-def-letters-round': SharedMinDefLettersRound;
       'shared.min-def-music': SharedMinDefMusic;
       'shared.min-def-music-round': SharedMinDefMusicRound;
       'shared.min-def-music-round-category': SharedMinDefMusicRoundCategory;

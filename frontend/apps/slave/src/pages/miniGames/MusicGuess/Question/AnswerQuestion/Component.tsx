@@ -10,12 +10,7 @@ type Props = {
   score: number;
 };
 
-const Component = ({
-  answers,
-  onAnswer,
-  question,
-  score,
-}: Props) => {
+const Component = ({ answers, onAnswer, question, score }: Props) => {
   const [selected, setSelected] = useState<string>();
 
   const answerHandle = (ansId: string) => {

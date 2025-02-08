@@ -23,7 +23,7 @@ type Props = {
 const Component = ({ answers, players }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
-  
+
   const onTimeUp = () =>
     mutate({
       gameId: gameId!,

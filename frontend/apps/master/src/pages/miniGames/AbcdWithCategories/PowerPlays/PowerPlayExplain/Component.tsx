@@ -8,7 +8,7 @@ import { useParams } from "react-router";
 const Component = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
-  
+
   useEffect(() => {
     const timeout = setTimeout(
       () =>

@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_min_def_letters_rounds",
+  "info": {
+    "displayName": "MinDef.Letters.Round",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "phrase": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -10,16 +10,23 @@ type Props = {
 const ShowSelectedCategory = ({ gameId }: Props) => {
   const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
   const { players } = usePlayers();
-  const selectedCategories = data?.state?.rounds.find((round) => round.roundId === data?.state?.currentRoundId)?.selectedCategories
-  const categoryDefs = data?.definition?.rounds.find((round) => round.id === data?.state?.currentRoundId)
-    ?.categories
-  
-  const categories = categoryDefs?.map(c => ({
-    isSelected: c.id === data?.state?.currentCategoryId,
-    text: c.name,
-    id: c.id,
-    players: selectedCategories?.find(sc => sc.categoryId === c.id)?.playerIds.map(pid => players.find(p => p.id === pid)!) ?? []
-  })) ?? [];
+  const selectedCategories = data?.state?.rounds.find(
+    (round) => round.roundId === data?.state?.currentRoundId,
+  )?.selectedCategories;
+  const categoryDefs = data?.definition?.rounds.find(
+    (round) => round.id === data?.state?.currentRoundId,
+  )?.categories;
+
+  const categories =
+    categoryDefs?.map((c) => ({
+      isSelected: c.id === data?.state?.currentCategoryId,
+      text: c.name,
+      id: c.id,
+      players:
+        selectedCategories
+          ?.find((sc) => sc.categoryId === c.id)
+          ?.playerIds.map((pid) => players.find((p) => p.id === pid)!) ?? [],
+    })) ?? [];
 
   return <Component selections={categories} />;
 };

@@ -2,7 +2,10 @@ import { AxiosResponse } from "axios";
 import instance from "../instance";
 import { MiniGameType } from "./minigames/types";
 
-export type GetCurrentMiniGameResponse<TState extends StateBase, TDefinition extends DefinitionBase>  = {
+export type GetCurrentMiniGameResponse<
+  TState extends StateBase,
+  TDefinition extends DefinitionBase,
+> = {
   miniGameId: string;
   miniGameType: MiniGameType;
   playerName?: string;
@@ -16,7 +19,12 @@ export type GetCurrentMiniGameResponse<TState extends StateBase, TDefinition ext
 export type StateBase = object;
 export type DefinitionBase = object;
 
-export const getMiniGame = async <S extends StateBase, D extends DefinitionBase>(gameId: string) =>
+export const getMiniGame = async <
+  S extends StateBase,
+  D extends DefinitionBase,
+>(
+  gameId: string,
+) =>
   (
     await instance.get<never, AxiosResponse<GetCurrentMiniGameResponse<S, D>>>(
       `/game/${gameId}/mini-game`,
@@ -28,14 +36,16 @@ export type UpdateMiniGameRequest = {
   gameId: string;
 };
 
-export const updateMiniGame = async (
-  { gameId, action }: UpdateMiniGameRequest) => (
+export const updateMiniGame = async ({
+  gameId,
+  action,
+}: UpdateMiniGameRequest) =>
   await instance.post<never, never, Pick<UpdateMiniGameRequest, "action">>(
     `/game/${gameId}/mini-game/update`,
     {
-      action
+      action,
     },
-  ));
+  );
 
 export type SendPlayerInteractionRequest = {
   gameId: string;

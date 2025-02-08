@@ -33,7 +33,8 @@
       "type": "dynamiczone",
       "components": [
         "shared.mini-game-def-abcd",
-        "shared.min-def-music"
+        "shared.min-def-music",
+        "shared.min-def-letters"
       ],
       "required": true,
       "min": 1

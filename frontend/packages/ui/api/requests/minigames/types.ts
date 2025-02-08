@@ -12,9 +12,8 @@ export const PowerPlaysNames = {
   [PowerPlaysEnum.Letters]: "Letters",
 };
 
-
-export enum MiniGameType
-{
-    AbcdWithCategories = 1,
-    MusicGuess,
+export enum MiniGameType {
+  AbcdWithCategories = 1,
+  MusicGuess,
+  LettersAndPhrases,
 }

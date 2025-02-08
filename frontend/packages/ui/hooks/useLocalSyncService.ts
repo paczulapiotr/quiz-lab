@@ -5,7 +5,7 @@ export const useLocalSyncService = () => {
   const context = useContext(LocalSyncServiceContext);
   if (context === undefined) {
     throw new Error(
-      "useLocalSyncService must be used within a LocalSyncServiceProvider"
+      "useLocalSyncService must be used within a LocalSyncServiceProvider",
     );
   }
   return context;

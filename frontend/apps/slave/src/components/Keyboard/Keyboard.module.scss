@@ -1,9 +1,18 @@
 @use "/src/variables" as vars;
 
 .theme {
-    background-color: vars.$pastell-blue-dark;
+  background-color: transparent !important;
 
-    :global(.hg-button) {
-        padding: 1.5rem;
+  :global(.hg-button) {
+    padding: 1.5rem 0 !important;
+    margin: 0.2rem;
+    font-size: 1.5rem !important;
+
+    &:disabled {
+      background-color: vars.$white;
+      &:hover {
+        background-color: vars.$white;
+      }
     }
+  }
 }

@@ -21,12 +21,20 @@ const PageTemplate = ({
   return (
     <m.main
       className={classNames(styles.page, className)}
-      initial={{ opacity: 0, x: "100%", backgroundColor: "rgba(70,120,255,1)" }}
-      animate={{ opacity: 1, x: "0%", backgroundColor: "rgba(70,120,255,0)" }}
+      initial={{
+        opacity: 0,
+        // x: "100%",
+        backgroundColor: "rgba(70,120,255,1)",
+      }}
+      animate={{
+        opacity: 1,
+        // x: "0%",
+        backgroundColor: "rgba(70,120,255,0)",
+      }}
       transition={{ duration: 0.75, ease: "easeOut" }}
       exit={{
         opacity: 0,
-        x: "-100%",
+        // x: "-100%",
         transition: { duration: 0.75, ease: "easeOut" },
       }}
     >

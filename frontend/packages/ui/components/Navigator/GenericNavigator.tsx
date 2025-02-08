@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useLocalSyncConsumer } from "../../hooks";
 import { SyncReceiveDefinitionNames } from "../../services/types";
 import { cleanupSlash } from "../../utility";
@@ -26,11 +27,14 @@ const GenericNavigator = <TMessage,>({
     ? location.pathname.split(pathSection)[0] + pathSection
     : location.pathname;
 
-  useLocalSyncConsumer(queueName, (message) => {
+  useLocalSyncConsumer(queueName, useCallback((message) => {
     const path = createNavigationPath(message as TMessage);
     if (path == null) return;
-    navigate(cleanupSlash(`${locationBasePath}${path}`));
-  });
+    const newPath = cleanupSlash(`${locationBasePath}${path}`);
+    if (newPath !== location.pathname) {
+      navigate(newPath);
+    }
+  },[createNavigationPath, location.pathname, locationBasePath, navigate]));
 
   const children = (
     <Routes location={location} key={location.pathname}>

@@ -34,7 +34,7 @@ const TileButton = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [slimeWiped, setSlimeWiped] = useState(slimeStacks <= 0);
   const [freezeClick, setFreezeClick] = useState(
-    calcMaxFreezeClicks(freezeStacks)
+    calcMaxFreezeClicks(freezeStacks),
   );
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const TileButton = ({
             [styles.success]: success,
             [styles.failure]: failure,
           },
-          className
+          className,
         )}
       >
         <span>{text}</span>

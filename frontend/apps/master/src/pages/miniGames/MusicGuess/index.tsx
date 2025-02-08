@@ -5,7 +5,8 @@ import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { MusicGuessActions} from "@repo/ui/minigames/actions";
+import { MusicGuessActions } from "@repo/ui/minigames/actions";
+import { useCallback } from "react";
 type Props = {
   basePath: string;
 };
@@ -19,7 +20,7 @@ const MusicGuess = ({ basePath }: Props) => {
         disableAnimation
         basePath={basePath}
         queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
+        createNavigationPath={useCallback((message) => {
           switch (message.action) {
             case MusicGuessActions.CategorySelectStart:
               return "/category_select";
@@ -36,7 +37,7 @@ const MusicGuess = ({ basePath }: Props) => {
             default:
               return "";
           }
-        }}
+        },[])}
         routes={{
           "/category_select": <ShowCategories gameId={gameId!} />,
           "/category_show": <ShowSelectedCategory gameId={gameId!} />,

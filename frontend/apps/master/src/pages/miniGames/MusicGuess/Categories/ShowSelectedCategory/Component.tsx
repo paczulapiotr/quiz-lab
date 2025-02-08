@@ -17,13 +17,13 @@ type Props = {
 const Component = ({ selections }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateMiniGame();
-  
+
   const onTimeUp = () => {
     mutate({
       gameId: gameId!,
       action: MusicGuessActions.CategoryShowStop,
     });
-  }
+  };
 
   return (
     <>
@@ -37,7 +37,10 @@ const Component = ({ selections }: Props) => {
           />
         ))}
       </div>
-      <Timer startSeconds={Times.Music.CategoryShowSeconds} onTimeUp={onTimeUp} />
+      <Timer
+        startSeconds={Times.Music.CategoryShowSeconds}
+        onTimeUp={onTimeUp}
+      />
     </>
   );
 };

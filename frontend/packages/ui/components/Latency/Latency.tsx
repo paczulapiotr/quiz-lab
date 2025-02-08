@@ -25,7 +25,7 @@ const Latency = () => {
     useCallback(async () => {
       const newLatency = Date.now() - timestamp.current;
       setLatency(newLatency);
-    }, [])
+    }, []),
   );
 
   return (
