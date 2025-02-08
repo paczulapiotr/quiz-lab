@@ -4,17 +4,19 @@ import { memo } from "react";
 
 type Props = {
   className?: string;
-  letters: string[];
+  letters: (string | null)[];
 };
 
 const IncorrectLetters = ({ letters, className }: Props) => {
   return (
     <div className={classNames(className, styles.letters)}>
-      {letters.map((letter) => (
-        <div className={styles.letter} key={letter}>
-          {letter.toUpperCase()}
-        </div>
-      ))}
+      {letters
+        .filter((x) => x != null)
+        .map((letter) => (
+          <div className={styles.letter} key={letter}>
+            {letter!.toUpperCase()}
+          </div>
+        ))}
     </div>
   );
 };

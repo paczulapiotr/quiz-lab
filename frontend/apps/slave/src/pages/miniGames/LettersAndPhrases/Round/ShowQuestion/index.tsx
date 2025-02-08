@@ -1,5 +1,5 @@
 import Component from "./Component";
-import { useLetters } from "../useLetters";
+import { useLetters } from "@repo/ui/hooks/miniGames/LettersAndPhrases/useLetters";
 import { useParams } from "react-router";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 

@@ -5,6 +5,8 @@ import { LettersAndPhrasesActions } from "@repo/ui/minigames/actions";
 import Round from "./Round";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import { useParams } from "react-router";
+import Times from "@repo/ui/config/times";
+import { useCallback } from "react";
 
 type Props = {
   basePath: string;
@@ -33,7 +35,7 @@ const LettersAndPhrases = ({ basePath }: Props) => {
         disableAnimation
         basePath={basePath}
         queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
+        createNavigationPath={useCallback((message) => {
           switch (message.action) {
             case LettersAndPhrasesActions.QuestionShow:
               return "/question_show";
@@ -50,16 +52,19 @@ const LettersAndPhrases = ({ basePath }: Props) => {
             default:
               return "";
           }
-        }}
+        },[])}
         routes={{
           "/question_show": (
-            <Round onTimeUp={onQuestionShown} startSeconds={5} />
+            <Round
+              onTimeUp={onQuestionShown}
+              startSeconds={Times.Letters.ShowPhraseSeconds}
+            />
           ),
           "/question_shown": <Round />,
-          "/answer_start": <Round />,
+          "/answer_start": <Round startSeconds={Times.Letters.AnswerSeconds}/>,
           "/answered": <Round />,
           "/phrase_solved_presentation": (
-            <Round onTimeUp={onSolved} startSeconds={5} />
+            <Round onTimeUp={onSolved} startSeconds={Times.Letters.ShowResolvedPhraseSeconds} />
           ),
           "/phrase_solved_presented": <Round />,
         }}

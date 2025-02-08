@@ -4,6 +4,7 @@ import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
 import { IncorrectLetters } from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
 import styles from './Component.module.scss'
 import { memo } from "react";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   onSelect: (letter: string) => void;
@@ -12,6 +13,7 @@ type Props = {
   incorrectLetters: string[];
   score: number;
   yourTurn?: boolean;
+  timerKey?: React.Key;
 };
 
 const Component = ({
@@ -21,6 +23,7 @@ const Component = ({
   usedLetters,
   yourTurn,
   incorrectLetters,
+  timerKey,
 }: Props) => {
 
   return (
@@ -34,7 +37,7 @@ const Component = ({
         />
       </div>
       {yourTurn ? (
-        <>
+        <div className={styles.keyboard}>
           <Keyboard
             onKeyPress={onSelect}
             disableBackspace
@@ -43,8 +46,8 @@ const Component = ({
             defaultUpperCase
             disabledLetters={usedLetters}
           />
-          <Timer startSeconds={30} />
-        </>
+          <Timer startSeconds={Times.Letters.AnswerSeconds} key={timerKey} />
+        </div>
       ) : null}
     </>
   );

@@ -1,5 +1,6 @@
-import { ScoreTile } from "@repo/ui/components";
+import { ScoreTile, Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   phrase: string[];
@@ -13,6 +14,7 @@ const Component = ({ score, phrase }: Props) => {
       <div style={{ marginBottom: "auto" }}>
         <Phrase phrase={phrase} usedLetters={[]} />
       </div>
+      <Timer startSeconds={Times.Letters.ShowPhraseSeconds} />
     </>
   );
 };

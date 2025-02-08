@@ -1,3 +1,5 @@
+@use "/src/variables" as vars;
+
 .phrase {
     display: flex;
     flex: 1;
@@ -6,5 +8,30 @@
     .incorrect {
         align-items: flex-end;
         flex: 1;
+    }
+}
+
+.keyboard {
+    :global(.hg-button) {
+        
+        &:active,
+        &:focus {
+            animation: highlight 1s forwards;
+        }
+
+        @keyframes highlight {
+            0% {
+                outline: 0.2rem solid vars.$pastell-blue;
+                transform: scale(1);
+            }
+            50% {
+                outline: 0.4rem solid vars.$pastell-blue;
+                transform: scale(1.1);
+            }
+            100% {
+                outline: none;
+                transform: scale(1);
+            }
+        }
     }
 }

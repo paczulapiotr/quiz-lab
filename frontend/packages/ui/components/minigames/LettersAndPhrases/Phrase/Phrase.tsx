@@ -23,7 +23,7 @@ const Phrase = ({ usedLetters, phrase, className, solved }: Props) => {
                   [styles.guessed]: guessed,
                 })}
               >
-                {guessed ? x.toUpperCase() : ""}
+                {x.toUpperCase()}
               </div>
             );
           })}

@@ -16,6 +16,11 @@ const Times = {
     QestionAnswerSeconds: 30,
     AnswerShowSeconds: 15,
   },
+  Letters: {
+    AnswerSeconds: 30,
+    ShowPhraseSeconds: 5,
+    ShowResolvedPhraseSeconds: 5,
+  },
   TEMP: {
     MiniGameStartingSeconds: 5,
     RulesExplainSeconds: 5,

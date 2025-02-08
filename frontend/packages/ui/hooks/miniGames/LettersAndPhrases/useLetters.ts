@@ -6,9 +6,10 @@ import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { SyncReceiveCallback } from "@repo/ui/services/types";
 import uniq from "lodash/uniq";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
+  const [timestamp, setTimestamp] = useState(Date.now());
   const { data, refetch } = useGetMiniGame<LettersState, LettersDefinition>(
     gameId,
   );
@@ -22,6 +23,7 @@ export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
         message?.action != null &&
         refreshOnActions?.includes(message.action)
       ) {
+        setTimestamp(Date.now());
         refetch();
       }
     },
@@ -46,12 +48,6 @@ export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
     );
     const yourTurn = data?.state?.currentGuessingPlayerId === data?.playerId;
 
-    return { phrase, usedLetters, incorrectLetters, yourTurn };
-  }, [
-    data?.definition?.rounds,
-    data?.playerId,
-    data?.state?.currentGuessingPlayerId,
-    data?.state?.currentRoundId,
-    data?.state?.rounds,
-  ]);
+    return { phrase, usedLetters, incorrectLetters, yourTurn, timestamp };
+  }, [data?.definition?.rounds, data?.playerId, data?.state?.currentGuessingPlayerId, data?.state?.currentRoundId, data?.state?.rounds, timestamp]);
 };

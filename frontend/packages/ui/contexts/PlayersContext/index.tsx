@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { getGame } from "@repo/ui/api/requests/game";
+import { useParams } from "react-router";
 interface Player {
   id: string;
   name: string;
@@ -11,7 +18,7 @@ interface PlayersContextProps {
 }
 
 const PlayersContext = createContext<PlayersContextProps | undefined>(
-  undefined,
+  undefined
 );
 
 export const PlayersProvider: React.FC<{ children: ReactNode }> = ({
@@ -27,9 +34,22 @@ export const PlayersProvider: React.FC<{ children: ReactNode }> = ({
 };
 
 export const usePlayers = (): PlayersContextProps => {
+  const { gameId } = useParams<{ gameId: string }>();
   const context = useContext(PlayersContext);
   if (!context) {
     throw new Error("usePlayers must be used within a PlayersProvider");
   }
+
+  const players = context.players;
+  const setPlayers = context.setPlayers;
+
+  useEffect(() => {
+    if (gameId && players.length === 0) {
+      getGame(gameId).then((game) => {
+        setPlayers(game.players);
+      });
+    }
+  }, [gameId, players.length, setPlayers]);
+
   return context;
 };

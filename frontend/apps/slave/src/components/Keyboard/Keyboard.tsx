@@ -8,7 +8,7 @@ type Props = {
   value?: string;
   onKeyPress?: (key: string) => void;
   onChange?: (input: string) => void;
-  disabledLetters?: string[];
+  disabledLetters?: (string | null)[];
   defaultUpperCase?: boolean;
 } & KeyboardOptions;
 
@@ -20,15 +20,17 @@ const Keyboard = ({
   disabledLetters,
   ...keyboardOpts
 }: Props) => {
-  const ref = useRef<{ setInput: (v: string) => void, input: { default: string } }>();
+  const ref = useRef<{
+    setInput: (v: string) => void;
+    input: { default: string };
+  }>();
   const [layout, setLayout] = useState(defaultUpperCase ? "shift" : "default");
 
   useEffect(() => {
-    if(ref.current?.input.default !== value ) {
+    if (ref.current?.input.default !== value) {
       ref.current?.setInput(value ?? "");
     }
-  },[value])
-
+  }, [value]);
 
   const onChangeHandler = (input: string) => {
     onChange && onChange(input);
@@ -41,14 +43,18 @@ const Keyboard = ({
       setLayout(layout === "default" ? "shift" : "default");
     }
   };
-  
-  const btnAttributes = useMemo(() => 
-    disabledLetters?.map((l) => ({
-      buttons: `${l} ${l.toUpperCase()}`,
-      attribute: "disabled",
-      value: "true",
-    })) ?? [], [disabledLetters]
-  )
+
+  const btnAttributes = useMemo(
+    () =>
+      disabledLetters
+        ?.filter((x) => x != null)
+        .map((l) => ({
+          buttons: `${l} ${l.toUpperCase()}`,
+          attribute: "disabled",
+          value: "true",
+        })) ?? [],
+    [disabledLetters],
+  );
 
   return (
     <SimpleKeyboard
