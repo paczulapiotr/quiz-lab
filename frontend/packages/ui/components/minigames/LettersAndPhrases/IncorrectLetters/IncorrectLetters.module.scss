@@ -1,0 +1,25 @@
+@use "/src/variables" as vars;
+
+ .letters {
+
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 1rem;
+    min-height: 5rem;
+
+
+    .letter {
+        border: 0.3rem solid vars.$pastell-red;
+        border-radius: 0.5rem;
+        background-color: vars.$white;
+        font-size: 2rem;
+        width: 2rem;
+        height: 4rem;
+        line-height: 4rem;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: 400;
+    }
+}

@@ -1,0 +1,10 @@
+.phrase {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    .incorrect {
+        align-items: flex-end;
+        flex: 1;
+    }
+}

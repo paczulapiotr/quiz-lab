@@ -7,6 +7,9 @@ import {
 } from "@repo/ui/minigames/actions";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
+import { useCallback } from "react";
+
+const RefreshOnActions = [LettersAndPhrasesActions.AnswerStart, LettersAndPhrasesActions.Answered];
 
 const Answer = () => {
   const { mutateAsync } = useSendPlayerInteraction();
@@ -14,15 +17,20 @@ const Answer = () => {
   const { data: score } = useGetScore(gameId);
   const { incorrectLetters, phrase, usedLetters, yourTurn } = useLetters(
     gameId,
-    [LettersAndPhrasesActions.AnswerStart, LettersAndPhrasesActions.Answered],
+    RefreshOnActions,
   );
-  const handleSelect = async (selected: string) => {
+
+  const handleSelect = useCallback(async (selected: string) => {
+    const letter = selected.toLowerCase();
+    if (usedLetters.includes(letter)) return;
+    
     await mutateAsync({
       gameId: gameId!,
-      value: selected,
+      value: letter,
       interactionType: LettersAndPhrasesInteractions.Answer,
     });
-  };
+  }, [gameId, mutateAsync, usedLetters]);
+
   return (
     <Component
       score={score?.miniGameScore ?? 0}

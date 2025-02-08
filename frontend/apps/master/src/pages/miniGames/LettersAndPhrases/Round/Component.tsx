@@ -1,5 +1,6 @@
 import { Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
+import { IncorrectLetters} from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
 
 type Props = {
   phrase: string[];
@@ -18,12 +19,10 @@ const Round = ({
 }: Props) => {
   return (
     <>
-      <div style={{ marginBottom: "auto" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
         <Phrase phrase={phrase} usedLetters={usedLetters} />
-        <p
-          style={{ color: "red" }}
-        >{`Incorrect: ${incorrectLetters.join(", ")}`}</p>
       </div>
+      <IncorrectLetters letters={incorrectLetters}/>
       {startSeconds && onTimeUp ? (
         <Timer startSeconds={startSeconds} onTimeUp={onTimeUp} />
       ) : null}

@@ -4,24 +4,31 @@ import {
 } from "@repo/ui/api/queries/minigames/letters";
 import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
+import { SyncReceiveCallback } from "@repo/ui/services/types";
 import uniq from "lodash/uniq";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
   const { data, refetch } = useGetMiniGame<LettersState, LettersDefinition>(
     gameId,
   );
 
-  useLocalSyncConsumer("MiniGameNotification", (message) => {
-    if (
-      (refreshOnActions ?? []).length > 0 &&
-      message?.gameId === gameId &&
-      message?.action != null &&
-      refreshOnActions?.includes(message.action)
-    ) {
-      refetch();
-    }
-  });
+  const onGameNotification: SyncReceiveCallback<"MiniGameNotification"> =
+  useCallback(
+    (message) => {
+      if (
+        (refreshOnActions ?? []).length > 0 &&
+        message?.gameId === gameId &&
+        message?.action != null &&
+        refreshOnActions?.includes(message.action)
+      ) {
+        refetch();
+      }
+    },
+    [gameId, refetch, refreshOnActions],
+  );
+
+  useLocalSyncConsumer("MiniGameNotification", onGameNotification);
 
   return useMemo(() => {
     const round = data?.definition?.rounds.find(

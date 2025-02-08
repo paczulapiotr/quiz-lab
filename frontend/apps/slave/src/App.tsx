@@ -12,8 +12,9 @@ function App() {
     defaultOptions: {
       queries: {
         retry: false,
-        staleTime: 0,
         cacheTime: 0,
+        staleTime: Infinity,
+        refetchOnMount: "always",
       },
     },
   });

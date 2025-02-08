@@ -12,23 +12,21 @@ public class GameEngineHostedService(
 
     private CancellationTokenSource? cancellationTokenSource;
     private Task? backgroundTask;
-    private List<Task> instanceTasks = new();
+    private List<(Task task, CancellationTokenSource tokenSource)> instanceTasks = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("GameEngineHostedService is starting.");
-        cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var token = cancellationTokenSource.Token;
-
         backgroundTask = Task.Run(async () =>
         {
-            await newGameConsumer.RegisterAsync(cancellationToken: token);
+            await newGameConsumer.RegisterAsync(cancellationToken: cancellationToken);
 
-            var informer = Task.Run(async () => {
-                while (!token.IsCancellationRequested)
+            var informer = Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Delay(1000, token);
-                    if(!newGameConsumer.IsConnected)
+                    await Task.Delay(1000, cancellationToken);
+                    if (!newGameConsumer.IsConnected)
                     {
                         logger.LogInformation("GameEngineHostedService - status - disconnected");
                     }
@@ -37,24 +35,26 @@ public class GameEngineHostedService(
             });
 
 
-            while (!token.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
                     // Listen for game start rabbitmq message
                     var message = await newGameConsumer.ConsumeFirstAsync();
-                    if(message == null)
+                    if (message == null)
                     {
                         continue;
                     }
-                    
+
                     var gameId = Guid.Parse(message.GameId);
 
                     // Initialize game engine 
                     using var scope = serviceScopeFactory.CreateScope();
                     var gameEngine = scope.ServiceProvider.GetRequiredService<IGameEngine>();
-                    instanceTasks.Add(gameEngine.Run(gameId, CreateGameCancellationToken(token)));
-                    instanceTasks.RemoveAll(x=>x.IsCompleted);
+                    var (token, source) = CreateToken(cancellationToken);
+                    var gameTask = gameEngine.Run(gameId, token);
+
+                    ManageGameTask(gameTask, source);
                 }
                 catch (Exception ex)
                 {
@@ -63,9 +63,23 @@ public class GameEngineHostedService(
             }
 
             logger.LogInformation("GameEngineHostedService background task is stopping.");
-        }, token);
+        }, cancellationToken);
 
         await Task.CompletedTask;
+    }
+
+    private void ManageGameTask(Task gameTask, CancellationTokenSource source)
+    {
+        instanceTasks.ForEach(x =>
+        {
+            if (!x.tokenSource.IsCancellationRequested)
+            {
+                x.tokenSource.Cancel();
+            }
+        });
+        instanceTasks.RemoveAll(x => x.task.IsCanceled || x.task.IsCompleted || x.task.IsFaulted);
+        instanceTasks.Add((gameTask, source));
+        logger.LogInformation("GameEngineHostedService - currently running {0} games", instanceTasks.Count);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -78,7 +92,7 @@ public class GameEngineHostedService(
 
             try
             {
-                await Task.WhenAll(new[] { backgroundTask }.Concat(instanceTasks).ToArray());
+                await Task.WhenAll([backgroundTask, .. instanceTasks.Select(x => x.task)]);
             }
             catch (OperationCanceledException)
             {
@@ -91,11 +105,13 @@ public class GameEngineHostedService(
         }
     }
 
-    private CancellationToken CreateGameCancellationToken(CancellationToken token) {
-        var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
-        tokenSource.CancelAfter(TimeSpan.FromHours(2));
+    private (CancellationToken token, CancellationTokenSource source) CreateToken(CancellationToken cancellationToken)
+    {
+        var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cancellationTokenSource.CancelAfter(TimeSpan.FromHours(2));
+        var token = cancellationTokenSource.Token;
 
-        return tokenSource.Token;
+        return (token, cancellationTokenSource);
     }
 }
 

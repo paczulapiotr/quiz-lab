@@ -5,6 +5,7 @@ import { LettersAndPhrasesActions } from "@repo/ui/minigames/actions";
 import Answer from "./Round/Answer";
 import ShowQuestion from "./Round/ShowQuestion";
 import ShowSolution from "./Round/ShowSolution";
+import { useCallback } from "react";
 
 type Props = {
   basePath: string;
@@ -17,7 +18,7 @@ const LettersAndPhrases = ({ basePath }: Props) => {
         disableAnimation
         basePath={basePath}
         queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
+        createNavigationPath={useCallback((message) => {
           switch (message.action) {
             case LettersAndPhrasesActions.QuestionShow:
             case LettersAndPhrasesActions.QuestionShown:
@@ -31,7 +32,7 @@ const LettersAndPhrases = ({ basePath }: Props) => {
             default:
               return "";
           }
-        }}
+        },[])}
         routes={{
           "/question_show": <ShowQuestion />,
           "/answer": <Answer />,

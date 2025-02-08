@@ -1,6 +1,9 @@
 import { Keyboard } from "@/components/Keyboard";
 import { ScoreTile, Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
+import { IncorrectLetters } from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
+import styles from './Component.module.scss'
+import { memo } from "react";
 
 type Props = {
   onSelect: (letter: string) => void;
@@ -19,18 +22,27 @@ const Component = ({
   yourTurn,
   incorrectLetters,
 }: Props) => {
+
   return (
     <>
       <ScoreTile score={score} />
-      <div style={{ marginBottom: "auto" }}>
+      <div className={styles.phrase}>
         <Phrase phrase={phrase} usedLetters={usedLetters} />
-        <p
-          style={{ color: "red" }}
-        >{`Incorrect: ${incorrectLetters.join(", ")}`}</p>
+        <IncorrectLetters
+          letters={incorrectLetters}
+          className={styles.incorrect}
+        />
       </div>
       {yourTurn ? (
         <>
-          <Keyboard onKeyPress={onSelect} />
+          <Keyboard
+            onKeyPress={onSelect}
+            disableBackspace
+            disableShift
+            disableSpaceBar
+            defaultUpperCase
+            disabledLetters={usedLetters}
+          />
           <Timer startSeconds={30} />
         </>
       ) : null}
@@ -38,4 +50,4 @@ const Component = ({
   );
 };
 
-export default Component;
+export default memo(Component);
