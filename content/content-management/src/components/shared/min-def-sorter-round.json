@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_min_def_sorter_rounds",
+  "info": {
+    "displayName": "MinDef.Sorter.Round",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "leftCategory": {
+      "displayName": "MinDef.Sorter.Round.Category",
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.min-def-sorter-round-category",
+      "required": true
+    },
+    "rightCategory": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.min-def-sorter-round-category",
+      "required": true
+    }
+  }
+}

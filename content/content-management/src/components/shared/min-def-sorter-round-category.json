@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_shared_min_def_sorter_round_categories",
+  "info": {
+    "displayName": "MinDef.Sorter.Round.Category",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "items": {
+      "displayName": "MinDef.Sorter.Round.Category.Item",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-sorter-round-category-item",
+      "required": true,
+      "min": 1
+    }
+  }
+}

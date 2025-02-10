@@ -460,6 +460,7 @@ export interface ApiGameDefinitionGameDefinition
         'shared.mini-game-def-abcd',
         'shared.min-def-music',
         'shared.min-def-letters',
+        'shared.min-def-sorter',
       ]
     > &
       Schema.Attribute.Required &

@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_shared_min_def_sorter_round_category_items",
+  "info": {
+    "displayName": "MinDef.Sorter.Round.Category.Item",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "unique": false,
+      "required": true
+    }
+  }
+}
