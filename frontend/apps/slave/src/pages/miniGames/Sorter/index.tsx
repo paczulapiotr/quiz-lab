@@ -3,6 +3,7 @@ import { PageTemplate, GenericNavigator } from "@repo/ui/components";
 import { SyncReceiveData } from "@repo/ui/services/types";
 import { SorterActions } from "@repo/ui/minigames/actions";
 import Sorting from "./Sorting";
+import Summary from "./Summary";
 
 type Props = {
   basePath: string;
@@ -10,7 +11,7 @@ type Props = {
 
 const Sorter = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
-  console.log("Sorter", gameId);
+
   return (
     <PageTemplate squares>
       <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
@@ -20,13 +21,20 @@ const Sorter = ({ basePath }: Props) => {
         createNavigationPath={(message) => {
           switch (message.action) {
             case SorterActions.RoundStart:
-              return "/sort_prepare";
+              return "/start";
+            case SorterActions.RoundStarted:
+              return "/started";
+            case SorterActions.RoundEnd:
+            case SorterActions.RoundSummary:
+              return "/end";
             default:
               return "";
           }
         }}
         routes={{
-          "/sort_prepare": <Sorting />,
+          "/start": <Sorting gameId={gameId} />,
+          "/started": <Sorting gameId={gameId} start />,
+          "/end": <Summary gameId={gameId} />,
         }}
       />
     </PageTemplate>

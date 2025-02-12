@@ -1,5 +1,4 @@
 import { Tile } from "../Tile";
-import { FlyingSquare } from "../FlyingSquare";
 
 type Props = {
   title: string;
@@ -31,7 +30,6 @@ const CenteredInstruction = ({ secondaryText, title }: Props) => {
       >
         {secondaryText}
       </p>
-      <FlyingSquare count={5} />
     </div>
   );
 };

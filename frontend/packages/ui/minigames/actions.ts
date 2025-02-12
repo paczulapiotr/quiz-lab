@@ -50,6 +50,9 @@ export const LettersAndPhrasesInteractions = {
 
 export const SorterActions = {
   RoundStart: "Sorter.RoundStart",
+  RoundStarted: "Sorter.RoundStarted",
+  RoundEnd: "Sorter.RoundEnd",
+  RoundSummary: "Sorter.RoundSummary",
 };
 
 export const SorterInteractions = {

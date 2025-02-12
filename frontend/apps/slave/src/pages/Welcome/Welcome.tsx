@@ -1,4 +1,3 @@
-//import { FlyingSquare } from "@repo/ui/components";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
 import { useCallback } from "react";
 import { useNavigate } from "react-router";

@@ -1,13 +1,57 @@
+import React, { useState, useRef } from "react";
 import ItemSorter, { Item } from "@repo/ui/components/ItemSorter";
+import classNames from "classnames";
 import styles from "./Component.module.scss";
 
 export type Props = {
   leftAnswer: string;
   rightAnswer: string;
   items: Item[];
-}
+};
 
-const Component = ({items,leftAnswer,rightAnswer}:Props) => {
+// We'll use a string state: "green" | "red" | null
+const Component = ({ items, leftAnswer, rightAnswer }: Props) => {
+  const [highlightedLeft, setHighlightedLeft] = useState<
+    "green" | "red" | null
+  >(null);
+  const timeoutLeftRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [highlightedRight, setHighlightedRight] = useState<
+    "green" | "red" | null
+  >(null);
+  const timeoutRightRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Simplified helper: sets the highlight color based on the item's flag.
+  const triggerHighlight = (
+    side: "LEFT" | "RIGHT",
+    setter: React.Dispatch<React.SetStateAction<"green" | "red" | null>>,
+    timeoutRef: React.MutableRefObject<NodeJS.Timeout | null>,
+    item: Item,
+  ) => {
+    const color =
+      side === "LEFT"
+        ? item.left
+          ? "green"
+          : "red"
+        : item.right
+          ? "green"
+          : "red";
+    setter(color);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setter(null);
+    }, 400);
+    console.log(`${side} ${item.name} (${color})`);
+  };
+
+  const handleAssignLeft = (item: Item) => {
+    triggerHighlight("LEFT", setHighlightedLeft, timeoutLeftRef, item);
+  };
+
+  const handleAssignRight = (item: Item) => {
+    triggerHighlight("RIGHT", setHighlightedRight, timeoutRightRef, item);
+  };
+
   return (
     <div className={styles.page}>
       <ItemSorter
@@ -23,18 +67,32 @@ const Component = ({items,leftAnswer,rightAnswer}:Props) => {
         )}
         left={
           <div className={styles.leftContainer}>
-            <h1 className={styles.title}>{leftAnswer}</h1>
+            <h1
+              className={classNames(styles.title, {
+                [styles.green]: highlightedLeft === "green",
+                [styles.red]: highlightedLeft === "red",
+              })}
+            >
+              {leftAnswer}
+            </h1>
           </div>
         }
         right={
           <div className={styles.rightContainer}>
-            <h1 className={styles.title}>{rightAnswer}</h1>
+            <h1
+              className={classNames(styles.title, {
+                [styles.green]: highlightedRight === "green",
+                [styles.red]: highlightedRight === "red",
+              })}
+            >
+              {rightAnswer}
+            </h1>
           </div>
         }
         items={items}
         onAllSorted={() => console.log("ALL SORTED")}
-        onAssignLeft={(i) => console.log("LEFT " + i.name)}
-        onAssignRight={(i) => console.log("LEFT " + i.name)}
+        onAssignLeft={handleAssignLeft}
+        onAssignRight={handleAssignRight}
       />
     </div>
   );

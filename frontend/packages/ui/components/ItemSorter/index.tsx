@@ -5,6 +5,8 @@ import styles from "./index.module.scss";
 export type Item = {
   id: string;
   name: string;
+  left?: boolean;
+  right?: boolean;
 }
 
 type Alignment = "left" | "right" | "center";
