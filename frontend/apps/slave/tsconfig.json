@@ -1,6 +1,6 @@
 {
   "extends": "@repo/typescript-config/vite.json",
-  "include": ["src", "../../packages/ui/hooks/miniGames/LettersAndPhrases/useLetters.ts"],
+  "include": ["src", "../../packages/ui/hooks/miniGames/LettersAndPhrases/useLetters.ts", "../../packages/ui/components/ItemSorter"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

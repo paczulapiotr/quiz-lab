@@ -1,0 +1,64 @@
+@use "/src/variables" as vars;
+
+.page {
+    flex: 1;
+    display: flex;
+    height: 100%;
+    width: calc(100% + 4rem);
+    margin: -2rem;
+    flex-direction: column;
+
+    .item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("/src/assets/svg/token.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        width: 15rem;
+        height: 15rem;
+        color: vars.$white;
+        transition: transform 0.1s ease-in;
+
+        .text {
+            font-size: 1rem;
+            font-weight: 400;
+            width: 8rem;
+            text-transform: uppercase;
+        }
+    }
+
+
+    .leftContainer,
+    .rightContainer {
+        width: 20rem;
+        height: 100vh;
+        box-sizing: border-box;
+
+        .title {
+            background-color: vars.$pastell-blue-dark;
+            padding: 1rem;
+            font-weight: 400;
+            color: vars.$white;
+        }
+    }
+
+    .leftContainer {
+        background: linear-gradient(to right,
+                rgba(vars.$pastell-blue-dark, 1) 0%,
+                rgba(vars.$pastell-blue-dark, 0.8) 2.5%,
+                rgba(vars.$pastell-blue-dark, 0.6) 5%,
+                rgba(vars.$pastell-blue-dark, 0) 100%,
+            );
+    }
+
+    .rightContainer {
+        background: linear-gradient(to left,
+                rgba(vars.$pastell-blue-dark, 1) 0%,
+                rgba(vars.$pastell-blue-dark, 0.8) 2.5%,
+                rgba(vars.$pastell-blue-dark, 0.6) 5%,
+                rgba(vars.$pastell-blue-dark, 0) 100%,
+            );
+    }
+}

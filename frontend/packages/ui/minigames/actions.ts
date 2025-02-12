@@ -46,3 +46,12 @@ export const LettersAndPhrasesActions = {
 export const LettersAndPhrasesInteractions = {
   Answer: "Letters.Answer",
 };
+
+
+export const SorterActions = {
+  RoundStart: "Sorter.RoundStart",
+};
+
+export const SorterInteractions = {
+  SortSelection: "Sorter.SortSelection",
+};
