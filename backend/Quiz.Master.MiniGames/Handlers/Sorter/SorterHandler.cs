@@ -38,6 +38,7 @@ public class SorterHandler(IMiniGameEventService eventService, IMiniGameReposito
     private async Task RunRoundBase(Definition.Round round, CancellationToken cancellationToken)
     {
         _state.CurrentRoundId = round.Id;
+        await _onStateUpdate(_state, cancellationToken);
         var gameId = _miniGame.GameId.ToString();
         var playerIds = _miniGame.PlayerIds.Select(x => x.ToString()).ToArray();
 
@@ -68,7 +69,7 @@ public class SorterHandler(IMiniGameEventService eventService, IMiniGameReposito
 
         var timedToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(30_000).Token)
+            new CancellationTokenSource(30_000_000).Token)
             .Token;
 
         while (!timedToken.IsCancellationRequested)

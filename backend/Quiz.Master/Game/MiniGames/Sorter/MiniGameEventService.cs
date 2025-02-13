@@ -17,7 +17,7 @@ internal static class Actions
 
 internal static class Interactions
 {
-    public static string SortSeletion = "Sorter.SortSeletion";
+    public static string SortSeletion = "Sorter.SortSelection";
 }
 
 internal class MiniGameEventService(
@@ -68,7 +68,7 @@ internal class MiniGameEventService(
 
     public async Task SendOnRoundEnd(string gameId, CancellationToken cancellationToken = default)
     {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.RoundStart), gameId, cancellationToken);
+        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.RoundEnd), gameId, cancellationToken);
     }
 
     public async Task WaitForRoundSummary(string gameId, CancellationToken cancellationToken = default)

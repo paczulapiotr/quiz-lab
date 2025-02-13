@@ -33,7 +33,7 @@ const Sorter = ({ basePath }: Props) => {
         }}
         routes={{
           "/start": <Sorting gameId={gameId} />,
-          "/started": <Sorting gameId={gameId} start />,
+          "/started": <Sorting gameId={gameId} started />,
           "/end": <Summary gameId={gameId} />,
         }}
       />

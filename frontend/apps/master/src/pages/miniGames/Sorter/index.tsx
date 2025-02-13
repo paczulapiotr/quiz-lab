@@ -1,8 +1,10 @@
 import { useParams } from "react-router";
-import { SyncReceiveData } from "@repo/ui/services/types";
 import { PageTemplate, GenericNavigator } from "@repo/ui/components";
+import { SyncReceiveData } from "@repo/ui/services/types";
 import { SorterActions } from "@repo/ui/minigames/actions";
-import { useCallback } from "react";
+import Sorting from "./Sorting";
+import Summary from "./Summary";
+
 type Props = {
   basePath: string;
 };
@@ -16,16 +18,25 @@ const Sorter = ({ basePath }: Props) => {
         disableAnimation
         basePath={basePath}
         queueName={"MiniGameNotification"}
-        createNavigationPath={useCallback((message) => {
+        createNavigationPath={(message) => {
           switch (message.action) {
             case SorterActions.RoundStart:
-              return "/sort_prepare";
+              return "/start";
+            case SorterActions.RoundStarted:
+              return "/started";
+            case SorterActions.RoundEnd:
+              return "/end";
+            case SorterActions.RoundSummary:
+              return "/ended";
             default:
               return "";
           }
-        }, [])}
+        }}
         routes={{
-          "/sort_prepare": <h1>{`TODO: ${gameId}`}</h1>,
+          "/start": <Sorting gameId={gameId} />,
+          "/started": <Sorting gameId={gameId} started />,
+          "/end": <Summary gameId={gameId} />,
+          "/ended": <Summary gameId={gameId} finished/>,
         }}
       />
     </PageTemplate>

@@ -41,5 +41,5 @@ export type Category = {
 
 export type CategoryItem = {
   id: string;
-  text: string;
+  name: string;
 };

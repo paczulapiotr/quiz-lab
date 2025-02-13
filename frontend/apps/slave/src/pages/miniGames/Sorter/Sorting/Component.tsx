@@ -6,11 +6,13 @@ import styles from "./Component.module.scss";
 export type Props = {
   leftAnswer: string;
   rightAnswer: string;
+  onLeftAnswer: (item: Item) => void;
+  onRightAnswer: (item: Item) => void;
   items: Item[];
 };
 
 // We'll use a string state: "green" | "red" | null
-const Component = ({ items, leftAnswer, rightAnswer }: Props) => {
+const Component = ({ items, leftAnswer, rightAnswer, onLeftAnswer, onRightAnswer }: Props) => {
   const [highlightedLeft, setHighlightedLeft] = useState<
     "green" | "red" | null
   >(null);
@@ -46,10 +48,12 @@ const Component = ({ items, leftAnswer, rightAnswer }: Props) => {
 
   const handleAssignLeft = (item: Item) => {
     triggerHighlight("LEFT", setHighlightedLeft, timeoutLeftRef, item);
+    onLeftAnswer(item);
   };
 
   const handleAssignRight = (item: Item) => {
     triggerHighlight("RIGHT", setHighlightedRight, timeoutRightRef, item);
+    onRightAnswer(item);
   };
 
   return (
