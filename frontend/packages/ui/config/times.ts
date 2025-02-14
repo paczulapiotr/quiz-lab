@@ -21,6 +21,9 @@ const Times = {
     ShowPhraseSeconds: 5,
     ShowResolvedPhraseSeconds: 5,
   },
+  Sorter: {
+    RoundStartWaitSeconds: 5,
+  },
   TEMP: {
     MiniGameStartingSeconds: 5,
     RulesExplainSeconds: 5,

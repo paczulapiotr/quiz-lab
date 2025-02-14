@@ -96,6 +96,28 @@ public class ContentManagementClient : IContentManagementClient
                         id,
                         phrase,
                       }
+                    },
+                    ... on ComponentSharedMinDefSorter {
+                      id,
+                      rounds {
+                        id,
+                        leftCategory {
+                          id,
+                          name,
+                          items {
+                            id,
+                            name
+                          }
+                        },
+                        rightCategory {
+                          id,
+                          name,
+                          items {
+                            id,
+                            name
+                          }
+                        }
+                      }
                     }
                     }
                 } 

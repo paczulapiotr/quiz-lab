@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from "react";
 import styles from "./PageTemplate.module.scss";
-import { FlyingSquare, Timer } from "../../components";
+import { Timer } from "../../components";
 import { motion as m } from "motion/react";
 import classNames from "classnames";
 
@@ -13,7 +13,6 @@ type Props = {
 const PageTemplate = ({
   children,
   initialTimerSeconds,
-  squares,
   className,
 }: Props) => {
   const [showTimer, setShowTimer] = useState((initialTimerSeconds ?? 0) > 0);
@@ -50,7 +49,6 @@ const PageTemplate = ({
           <div className={styles.content}>{children}</div>
         )}
       </div>
-      {squares ? <FlyingSquare count={5} /> : null}
     </m.main>
   );
 };

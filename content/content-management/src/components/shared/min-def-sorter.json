@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_shared_min_def_sorters",
+  "info": {
+    "displayName": "MinDef.Sorter"
+  },
+  "options": {},
+  "attributes": {
+    "rounds": {
+      "displayName": "MinDef.Sorter.Round",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-sorter-round",
+      "required": true,
+      "min": 1
+    }
+  }
+}

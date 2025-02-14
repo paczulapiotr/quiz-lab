@@ -199,6 +199,78 @@ export interface SharedMinDefMusicRoundCategoryQuestionAnswer
   };
 }
 
+export interface SharedMinDefSorter extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_sorters';
+  info: {
+    displayName: 'MinDef.Sorter';
+  };
+  attributes: {
+    rounds: Schema.Attribute.Component<'shared.min-def-sorter-round', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefSorterRound extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_sorter_rounds';
+  info: {
+    description: '';
+    displayName: 'MinDef.Sorter.Round';
+  };
+  attributes: {
+    leftCategory: Schema.Attribute.Component<
+      'shared.min-def-sorter-round-category',
+      false
+    > &
+      Schema.Attribute.Required;
+    rightCategory: Schema.Attribute.Component<
+      'shared.min-def-sorter-round-category',
+      false
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface SharedMinDefSorterRoundCategory
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_sorter_round_categories';
+  info: {
+    description: '';
+    displayName: 'MinDef.Sorter.Round.Category';
+  };
+  attributes: {
+    items: Schema.Attribute.Component<
+      'shared.min-def-sorter-round-category-item',
+      true
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedMinDefSorterRoundCategoryItem
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_sorter_round_category_items';
+  info: {
+    description: '';
+    displayName: 'MinDef.Sorter.Round.Category.Item';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedMiniGameDefAbcd extends Struct.ComponentSchema {
   collectionName: 'components_shared_mini_game_def_abcds';
   info: {
@@ -277,6 +349,10 @@ declare module '@strapi/strapi' {
       'shared.min-def-music-round-category': SharedMinDefMusicRoundCategory;
       'shared.min-def-music-round-category-question': SharedMinDefMusicRoundCategoryQuestion;
       'shared.min-def-music-round-category-question-answer': SharedMinDefMusicRoundCategoryQuestionAnswer;
+      'shared.min-def-sorter': SharedMinDefSorter;
+      'shared.min-def-sorter-round': SharedMinDefSorterRound;
+      'shared.min-def-sorter-round-category': SharedMinDefSorterRoundCategory;
+      'shared.min-def-sorter-round-category-item': SharedMinDefSorterRoundCategoryItem;
       'shared.mini-game-def-abcd': SharedMiniGameDefAbcd;
       'shared.mini-game-definition': SharedMiniGameDefinition;
       'shared.rich-text': SharedRichText;

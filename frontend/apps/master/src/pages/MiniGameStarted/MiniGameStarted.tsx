@@ -5,6 +5,7 @@ import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
 import { useParams } from "react-router";
 import LettersAndPhrases from "../miniGames/LettersAndPhrases";
+import Sorter from "../miniGames/Sorter";
 
 type Props = {
   basePath: string;
@@ -22,6 +23,8 @@ const MiniGameStarted = ({ basePath }: Props) => {
         return <MusicGuess basePath={basePath} />;
       case MiniGameType.LettersAndPhrases:
         return <LettersAndPhrases basePath={basePath} />;
+      case MiniGameType.Sorter:
+        return <Sorter basePath={basePath} />;
       default:
         return (
           <PageTemplate>
