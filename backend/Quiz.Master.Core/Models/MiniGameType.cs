@@ -6,5 +6,6 @@ public enum MiniGameType
     AbcdWithCategories = 1,
     MusicGuess,
     LettersAndPhrases,
-    Sorter
+    Sorter,
+    FamilyFeud,
 }
