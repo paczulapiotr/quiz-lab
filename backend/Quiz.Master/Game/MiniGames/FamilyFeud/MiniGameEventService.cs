@@ -78,7 +78,7 @@ internal class MiniGameEventService(
         await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.RoundEnd), gameId, cancellationToken);
     }
 
-    public async Task WaitOnAnswerShown(string gameId, CancellationToken cancellationToken = default)
+    public async Task WaitForAnswerShown(string gameId, CancellationToken cancellationToken = default)
     {
         await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == Actions.AnswerShown, cancellationToken: cancellationToken);
         await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Actions.AnswerShown), gameId, cancellationToken);

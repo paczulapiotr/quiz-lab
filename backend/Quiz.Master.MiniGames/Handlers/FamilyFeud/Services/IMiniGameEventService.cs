@@ -11,7 +11,7 @@ public interface IMiniGameEventService
     public Task WaitForQuestionShown(string gameId, CancellationToken cancellationToken = default);
 
     public Task SendOnAnswerShow(string gameId, CancellationToken cancellationToken = default);
-    public Task WaitOnAnswerShown(string gameId, CancellationToken cancellationToken = default);
+    public Task WaitForAnswerShown(string gameId, CancellationToken cancellationToken = default);
 
     public Task SendOnRoundEnd(string gameId, CancellationToken cancellationToken = default);
     public Task WaitForRoundEnded(string gameId, CancellationToken cancellationToken = default);

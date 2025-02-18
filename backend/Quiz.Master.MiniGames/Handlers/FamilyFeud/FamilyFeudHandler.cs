@@ -41,7 +41,10 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
     private async Task<int> RunRoundBase(Definition.Round round, int playerRoundCounter, CancellationToken cancellationToken)
     {
         var gameId = _miniGame.GameId.ToString();
-        var roundState = _state.Rounds.Find(x => x.RoundId == _state.CurrentRoundId);
+        var roundState = _state.Rounds.Find(x => x.RoundId == round.Id);
+
+        if (roundState == null) throw new InvalidOperationException("Round state not found");
+
         var playerIds = _miniGame.PlayerIds.Select(x => x).ToArray();
         _state.CurrentRoundId = round.Id;
         await _onStateUpdate(_state, cancellationToken);
@@ -49,7 +52,8 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
         await eventService.SendOnQuestionShow(gameId, cancellationToken);
         await eventService.WaitForQuestionShown(gameId, cancellationToken);
 
-        while ((roundState?.Answers.Count ?? 0) < round.Answers.Count()) {
+        while (roundState!.Answers.Count < round.Answers.Count())
+        {
             var currentPlayerId = playerIds[playerRoundCounter % playerIds.Length];
             _state.CurrentGuessingPlayerId = currentPlayerId;
             await _onStateUpdate(_state, cancellationToken);
@@ -62,7 +66,7 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
                     options: new(options.Value.TimeForAnswerMs, [_state.CurrentGuessingPlayerId.Value.ToString()]),
                     cancellationToken: cancellationToken);
 
-            List<string> usedAnswers = roundState?.Answers.Select(x => x.MatchedAnswerId!).ToList() ?? [];
+            List<string> usedAnswers = roundState.Answers.Select(x => x.MatchedAnswerId!).ToList() ?? [];
             var matched = AnswerMatch.MatchAnswer(round.Answers, answer?.Answer ?? "", usedAnswers);
 
             var ans = matched?.answer;
@@ -79,7 +83,7 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
             await _onStateUpdate(_state, cancellationToken);
             await _onPlayerScoreUpdate(currentPlayerId, ans?.Points ?? 0, cancellationToken);
             await eventService.SendOnAnswerShow(gameId, cancellationToken);
-            await eventService.WaitOnAnswerShown(gameId, cancellationToken);
+            await eventService.WaitForAnswerShown(gameId, cancellationToken);
         }
 
         await eventService.SendOnRoundEnd(gameId, cancellationToken);
