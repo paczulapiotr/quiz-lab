@@ -11,7 +11,7 @@ public static class AnswerMatch
             .Select(x
                 => x.Synonyms
                     .Select(s => {
-                        var ratio = Fuzz.Ratio(s, answer);
+                        var ratio = Fuzz.Ratio(s.ToUpper(), answer.ToUpper());
                         return new
                         {
                             Ratio = ratio,
