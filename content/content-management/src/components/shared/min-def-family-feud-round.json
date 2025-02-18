@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_shared_min_def_family_feud_rounds",
+  "info": {
+    "displayName": "MinDef.FamilyFeud.Round",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answers": {
+      "displayName": "MinDef.FamilyFeud.Round.Answer",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-family-feud-round-answer",
+      "required": true,
+      "min": 1
+    }
+  }
+}

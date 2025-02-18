@@ -119,7 +119,22 @@ public class ContentManagementClient : IContentManagementClient
                         }
                       }
                     }
+                    ... on ComponentSharedMinDefFamilyFeud {
+                      id,
+                      rounds {
+                        id,
+                        question,
+                        answers {
+                          id,
+                          answer,
+                          points,
+                          synonyms {
+                            name
+                          }
+                        }
+                      }
                     }
+                  }
                 } 
             }
             """,

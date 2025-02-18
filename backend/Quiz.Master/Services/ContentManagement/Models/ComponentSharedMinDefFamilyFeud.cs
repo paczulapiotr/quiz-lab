@@ -20,8 +20,13 @@ public record ComponentSharedMinDefFamilyFeud : MiniGameDto
     {
         public required string Id { get; set; }
         public required string Answer { get; set; }
-        public required IEnumerable<string> Synonyms { get; set; }
+        public required IEnumerable<Synonym> Synonyms { get; set; }
         public required int Points { get; set; }
+    }
+
+    public record Synonym
+    {
+        public required string Name { get; set; }
     }
 
     override public MiniGameDefinitionData MapToDefinition()
@@ -36,7 +41,7 @@ public record ComponentSharedMinDefFamilyFeud : MiniGameDto
                     Id = a.Id,
                     Answer = a.Answer,
                     Points = a.Points,
-                    Synonyms = a.Synonyms
+                    Synonyms = a.Synonyms?.Select(x=>x.Name) ?? [],
                 }).ToList(),
                 Question = r.Question
             }).ToList()

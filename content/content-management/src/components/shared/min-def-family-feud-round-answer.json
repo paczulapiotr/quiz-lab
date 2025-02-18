@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_shared_min_def_family_feud_round_answers",
+  "info": {
+    "displayName": "MinDef.FamilyFeud.Round.Answer",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "answer": {
+      "type": "string",
+      "required": true
+    },
+    "points": {
+      "required": true,
+      "type": "integer"
+    },
+    "synonyms": {
+      "displayName": "MinDef.FamilyFeud.Round.Answer.Synonym",
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.min-def-family-feud-round-answer-synonym",
+      "required": false,
+      "min": 1
+    }
+  }
+}

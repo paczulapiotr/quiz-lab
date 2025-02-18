@@ -461,6 +461,7 @@ export interface ApiGameDefinitionGameDefinition
         'shared.min-def-music',
         'shared.min-def-letters',
         'shared.min-def-sorter',
+        'shared.min-def-family-feud',
       ]
     > &
       Schema.Attribute.Required &
