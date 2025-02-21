@@ -20,7 +20,8 @@ public class GetGameHandler(IDatabaseStorage storage, IHttpContextAccessor httpC
             return new GetGameResult(string.Empty, 0, []);
         }
 
-        var player = game.Players.FirstOrDefault(x => x.DeviceId == httpContextAccessor.GetDeviceId());
+        var deviceId = httpContextAccessor.GetUniqueId();
+        var player = game.Players.FirstOrDefault(x => x.DeviceId == deviceId);
 
         return game is null
             ? new GetGameResult(string.Empty, 0, [])

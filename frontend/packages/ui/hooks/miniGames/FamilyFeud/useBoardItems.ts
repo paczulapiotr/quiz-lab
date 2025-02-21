@@ -41,9 +41,11 @@ export const useBoardItems = (
       lastWrongAnswer:
         lastAns?.matchedAnswerId == null ? (lastAns?.answer ?? "") : "",
       currentPlayerId: data?.state?.currentGuessingPlayerId,
+      youAreGuessing: data?.state?.currentGuessingPlayerId === data?.playerId,
     };
   }, [
     data?.definition?.rounds,
+    data?.playerId,
     data?.state?.currentGuessingPlayerId,
     data?.state?.currentRoundId,
     data?.state?.rounds,

@@ -1,0 +1,10 @@
+namespace Quiz.Master.Core.Models;
+
+public record Room : IEntity
+{
+    public Guid Id { get; set; }
+    public required string Code { get; set; }
+    public required string HostDeviceId { get; set; }
+    public HashSet<string> PlayerDeviceIds { get; set; } = new HashSet<string>();
+}
+

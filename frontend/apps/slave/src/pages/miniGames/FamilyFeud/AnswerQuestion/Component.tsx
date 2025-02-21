@@ -13,29 +13,33 @@ type Props = {
 
 const Component = ({ gameId, onAnswer }: Props) => {
   const [answer, setAnswer] = useState("");
-  const { answers, question } = useBoardItems(gameId);
+  const { answers, question, youAreGuessing } = useBoardItems(gameId);
   const sendAnswer = () => onAnswer(answer);
 
   return (
     <div className={styles.container}>
       <MainBoard answers={answers} question={question} />
-      <div className={styles.input}>
-        <input
-          maxLength={40}
-          className={styles.playerName}
-          type="text"
-          placeholder="Podaj odpowiedź"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-        />
-        <TileButton
-          text={`Wyślij`}
-          blue
-          onClick={sendAnswer}
-          className={styles.button}
-        />
-      </div>
-      <Keyboard value={answer} onChange={(v) => setAnswer(v)} />
+      {youAreGuessing ? (
+        <>
+          <div className={styles.input}>
+            <input
+              maxLength={40}
+              className={styles.playerName}
+              type="text"
+              placeholder="Podaj odpowiedź"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+            />
+            <TileButton
+              text={`Wyślij`}
+              blue
+              onClick={sendAnswer}
+              className={styles.button}
+            />
+          </div>
+          <Keyboard value={answer} onChange={(v) => setAnswer(v)} />
+        </>
+      ) : null}
       <Timer startSeconds={Times.FamilyFeud.AnswerSeconds} />
     </div>
   );

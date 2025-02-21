@@ -11,7 +11,7 @@ public class GetMiniGameEndpoint : ICarterModule
     {
         app.MapGet("/api/game/{gameId}/mini-game", async ([FromRoute] Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetMiniGameQuery, GetMiniGameResult> commandHandler) =>
         {
-            var deviceId = httpContextAccessor.GetDeviceId();
+            var deviceId = httpContextAccessor.GetUniqueId()!;
             var game = await commandHandler.HandleAsync(new GetMiniGameQuery(gameId, deviceId));
 
             var gameSerialized = System.Text.Json.JsonSerializer.Serialize(game);

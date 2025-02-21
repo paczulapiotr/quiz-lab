@@ -14,7 +14,7 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
 {
     public async ValueTask<JoinGameResult?> HandleAsync(JoinGameRequest request, CancellationToken cancellationToken = default)
     {
-        var deviceId = httpContextAccessor.GetDeviceId();
+        var deviceId = httpContextAccessor.GetUniqueId()!;
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
 
         if (game is null)

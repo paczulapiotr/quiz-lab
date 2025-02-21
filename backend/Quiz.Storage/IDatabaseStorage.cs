@@ -4,6 +4,9 @@ namespace Quiz.Storage;
 
 public interface IDatabaseStorage
 {
+    Task<Room?> FindRoomByCodeAsync(string roomCode, CancellationToken cancellationToken = default);
+    Task UpdateRoomAsync(Room room, CancellationToken cancellationToken = default);
+    Task InsertRoomAsync(Room room, CancellationToken cancellationToken = default);
     Task<Game> FindGameAsync(Guid gameId, CancellationToken cancellationToken = default);
     Task UpdateGameAsync(Game game, CancellationToken cancellationToken = default);
     Task InsertGameAsync(Game game, CancellationToken cancellationToken = default);

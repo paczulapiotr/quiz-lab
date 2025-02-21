@@ -1,0 +1,51 @@
+import { createContext, ReactNode, useContext, useState } from "react";
+import { LocalSyncServiceProvider } from "../LocalSyncServiceContext/Provider";
+import JoinRoom from "./JoinRoom";
+
+export type Room = {
+  code: string;
+  uniqueId: string;
+};
+
+type RoomContextProps = {
+  room?: Room;
+  setRoom: (room?: Room) => void;
+};
+
+const RoomContext = createContext<RoomContextProps | undefined>(undefined);
+
+export const RoomProvider: React.FC<{
+  children: ReactNode;
+  isHost: boolean;
+}> = ({ children, isHost }) => {
+  const [room, setRoom] = useState<Room>();
+
+  return (
+    <RoomContext.Provider value={{ room, setRoom }}>
+      {room != null ? (
+        <LocalSyncServiceProvider
+          wsUrl={
+            import.meta.env.VITE_LOCAL_API_URL +
+            `/sync?uniqueId=${room.uniqueId}`
+          }
+        >
+          {children}
+        </LocalSyncServiceProvider>
+      ) : (
+        <JoinRoom
+          isHost={isHost}
+          onJoin={(roomCode, uniqueId) => setRoom({ code: roomCode, uniqueId })}
+        />
+      )}
+    </RoomContext.Provider>
+  );
+};
+
+export const useRoom = (): RoomContextProps => {
+  const context = useContext(RoomContext);
+  if (!context) {
+    throw new Error("useRoom must be used within a RoomProvider");
+  }
+
+  return context;
+};

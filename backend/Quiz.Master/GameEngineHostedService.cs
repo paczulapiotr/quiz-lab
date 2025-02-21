@@ -10,7 +10,7 @@ public class GameEngineHostedService(
     IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
 
-    private CancellationTokenSource? cancellationTokenSource;
+    private CancellationTokenSource? cancellationTokenSource = null!;
     private Task? backgroundTask;
     private List<(Task task, CancellationTokenSource tokenSource)> instanceTasks = new();
 

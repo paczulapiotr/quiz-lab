@@ -6,11 +6,12 @@ gameIdentifier="test_game"
 locale=1
 
 # Parse command-line arguments
-while getopts "s:i:l:" opt; do
+while getopts "s:i:l:r:" opt; do
   case $opt in
     s) gameSize=$OPTARG ;;
     i) gameIdentifier=$OPTARG ;;
     l) locale=$OPTARG ;;
+    r) roomCode=$OPTARG ;;
     \?) echo "Invalid option -$OPTARG" >&2 ;;
   esac
 done
@@ -23,7 +24,8 @@ JSON_BODY=$(cat <<EOF
 {
     "gameSize": $gameSize,
     "gameIdentifier": "$gameIdentifier",
-    "locale": $locale
+    "locale": $locale,
+    "roomCode": "$roomCode"
 }
 EOF
 )

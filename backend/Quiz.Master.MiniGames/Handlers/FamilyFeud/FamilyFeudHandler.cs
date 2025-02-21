@@ -54,7 +54,7 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
 
         while (roundState!.Answers.Count < round.Answers.Count())
         {
-            var currentPlayerId = playerIds[playerRoundCounter % playerIds.Length];
+            var currentPlayerId = playerIds[playerRoundCounter++ % playerIds.Length];
             _state.CurrentGuessingPlayerId = currentPlayerId;
             await _onStateUpdate(_state, cancellationToken);
 

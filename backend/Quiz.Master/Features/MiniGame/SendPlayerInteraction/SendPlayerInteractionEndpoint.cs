@@ -16,7 +16,7 @@ public class SendPlayerInteractionEndpoint : ICarterModule
             ICommandHandler<SendPlayerInteractionCommand> commandHandler) =>
         {
 
-            var deviceId = httpContextAccessor.GetDeviceId();
+            var deviceId = httpContextAccessor.GetUniqueId()!;
             var Game = await commandHandler.HandleAsync(new SendPlayerInteractionCommand(
                 gameId,
                 deviceId,
