@@ -70,13 +70,6 @@ public class GameEngineHostedService(
 
     private void ManageGameTask(Task gameTask, CancellationTokenSource source)
     {
-        instanceTasks.ForEach(x =>
-        {
-            if (!x.tokenSource.IsCancellationRequested)
-            {
-                x.tokenSource.Cancel();
-            }
-        });
         instanceTasks.RemoveAll(x => x.task.IsCanceled || x.task.IsCompleted || x.task.IsFaulted);
         instanceTasks.Add((gameTask, source));
         logger.LogInformation("GameEngineHostedService - currently running {0} games", instanceTasks.Count);
