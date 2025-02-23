@@ -13,6 +13,7 @@ type Props = {
 const RoundEnd = ({ gameId }: Props) => {
   const { answers, question } = useBoardItems(gameId);
   const { mutate } = useUpdateMiniGame();
+  const showAnswers = answers.map((x) => ({ ...x, show: true }));
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -29,7 +30,7 @@ const RoundEnd = ({ gameId }: Props) => {
 
   return (
     <>
-      <MainBoard answers={answers} question={question} />
+      <MainBoard answers={showAnswers} question={question} />
       <div style={{ marginTop: "auto" }}>
         <Tile text="KONIEC RUNDY" blue />
       </div>

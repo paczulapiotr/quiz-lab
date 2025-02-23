@@ -32,6 +32,13 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
     {
         var gameDefinitionId = await LoadGameDefinitionAsync(request, cancellationToken);
 
+        var room = await storage.FindRoomByCodeAsync(request.RoomCode, cancellationToken);
+
+        if (room is null)
+        {
+            return NoResult.Instance;
+        }
+
         var game = new Core.Models.Game
         {
             RoomCode = request.RoomCode,
@@ -40,7 +47,13 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
             Status = GameStatus.GameCreated,
             CreatedAt = DateTime.UtcNow,
         };
-        
+
+        if (room.IsOpen)
+        {
+            room.IsOpen = false;
+            await storage.UpdateRoomAsync(room);
+        }
+
         await storage.InsertGameAsync(game, cancellationToken);
 
         var gameId = game.Id.ToString();

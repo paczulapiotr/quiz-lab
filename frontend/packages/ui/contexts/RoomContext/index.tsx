@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import { LocalSyncServiceProvider } from "../LocalSyncServiceContext/Provider";
 import JoinRoom from "./JoinRoom";
 
@@ -20,6 +26,15 @@ export const RoomProvider: React.FC<{
 }> = ({ children, isHost }) => {
   const [room, setRoom] = useState<Room>();
 
+  const onJoin = useCallback(
+    (roomCode: string, uniqueId: string) => {
+      setRoom({ code: roomCode, uniqueId });
+      sessionStorage.setItem("roomCode", roomCode);
+      sessionStorage.setItem(isHost ? "hostId" : "deviceId", uniqueId);
+    },
+    [isHost]
+  );
+
   return (
     <RoomContext.Provider value={{ room, setRoom }}>
       {room != null ? (
@@ -32,10 +47,7 @@ export const RoomProvider: React.FC<{
           {children}
         </LocalSyncServiceProvider>
       ) : (
-        <JoinRoom
-          isHost={isHost}
-          onJoin={(roomCode, uniqueId) => setRoom({ code: roomCode, uniqueId })}
-        />
+        <JoinRoom isHost={isHost} onJoin={onJoin} />
       )}
     </RoomContext.Provider>
   );

@@ -12,52 +12,29 @@ public class RegisterDeviceEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/device/register", async (RegisterDeviceRequestDto dto, IGameRepository repository, IHttpContextAccessor httpContextAccessor, CancellationToken token = default) =>
+        app.MapPost("/api/device/register", async (RegisterDeviceRequestDto dto, IGameRepository repository, IHttpContextAccessor httpContextAccessor, ILogger<RegisterDeviceEndpoint> logger, CancellationToken token = default) =>
          {
              var uniqueId = dto.UniqueId ?? IdGenerator.New;
              Room? room = null;
+             string? errorCode = null;
              if (dto.IsHost)
              {
-                 room = await repository.RegisterHostAsync(uniqueId, dto.RoomCode, token);
+                 (room, errorCode) = await repository.RegisterHostAsync(uniqueId, dto.RoomCode, token);
              }
              else
              {
-                 room = await repository.RegisterPlayerAsync(uniqueId, dto.RoomCode, token);
+                 (room, errorCode) = await repository.RegisterPlayerAsync(uniqueId, dto.RoomCode, token);
              }
 
-             var cookieOptions = new CookieOptions
+             if (!string.IsNullOrWhiteSpace(errorCode))
              {
-                 HttpOnly = true,
-                 Secure = true,
-                 SameSite = SameSiteMode.None,
-             };
-
-             if (room != null)
-             {
-                 if (dto.IsHost)
-                 {
-
-                     httpContextAccessor?.HttpContext?.Response.Cookies.Append("hostId", uniqueId, cookieOptions);
-                     httpContextAccessor?.HttpContext?.Response.Cookies.Delete("deviceId");
-                 }
-                 else
-                 {
-                     httpContextAccessor?.HttpContext?.Response.Cookies.Append("deviceId", uniqueId, cookieOptions);
-                     httpContextAccessor?.HttpContext?.Response.Cookies.Delete("hostId");
-                 }
-
-                 httpContextAccessor?.HttpContext?.Response.Cookies.Append("roomCode", dto.RoomCode, cookieOptions);
-             }
-             else
-             {
-                 httpContextAccessor?.HttpContext?.Response.Cookies.Delete("hostId");
-                 httpContextAccessor?.HttpContext?.Response.Cookies.Delete("deviceId");
-                 httpContextAccessor?.HttpContext?.Response.Cookies.Delete("roomCode");
+                 logger.LogError("Error registering device {uniqueId} for roomCode {roomCode}: {errorCode}", uniqueId, dto.RoomCode, errorCode);
+                 return new RegisterDeviceResponseDto(null, null, false);
              }
 
-             return Results.Ok(room != null
+             return room != null
                 ? new RegisterDeviceResponseDto(dto.RoomCode, uniqueId, true)
-                : new RegisterDeviceResponseDto(null, null, false));
+                : new RegisterDeviceResponseDto(null, null, false);
          })
          .WithName("Register Device")
          .ProducesProblem(StatusCodes.Status400BadRequest)

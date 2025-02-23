@@ -15,7 +15,7 @@ type Props = {
 const MiniGameStarted = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { data } = useGetMiniGame(gameId);
-  
+
   const type = data?.miniGameType ?? MiniGameType.FamilyFeud;
 
   const renderMiniGame = () => {

@@ -12,9 +12,9 @@ public class GetDeviceIdEndpoint : ICarterModule
         app.MapGet("/api/device", async (IGameRepository repository, IHttpContextAccessor httpContextAccessor, CancellationToken token = default) =>
         {
             var ctx = httpContextAccessor.HttpContext!;
-            var deviceId = ctx.Request.Cookies["deviceId"];
-            var hostId = ctx.Request.Cookies["hostId"];
-            var roomCode = ctx.Request.Cookies["roomCode"];
+            var deviceId = ctx.Request.Headers["deviceId"].ToString();
+            var hostId = ctx.Request.Headers["hostId"].ToString();
+            var roomCode = ctx.Request.Headers["roomCode"].ToString();
 
             var room = roomCode != null ? await repository.FindRoomByCodeAsync(roomCode, token) : null;
 
@@ -22,35 +22,12 @@ public class GetDeviceIdEndpoint : ICarterModule
             deviceId = room?.PlayerDeviceIds.FirstOrDefault(x => x == deviceId);
             hostId = room?.HostDeviceId == hostId ? hostId : null;
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-            };
-
-            UpdateCookie(ctx, "hostId", hostId, cookieOptions);
-            UpdateCookie(ctx, "deviceId", deviceId, cookieOptions);
-            UpdateCookie(ctx, "roomCode", roomCode, cookieOptions);
-
             return Results.Ok(new Response(deviceId, hostId, roomCode));
         })
-                 .WithName("GetDeviceId")
+         .WithName("GetDeviceId")
          .ProducesProblem(StatusCodes.Status400BadRequest)
          .WithSummary("Get Device Id")
          .WithDescription("Get Device Id")
          .WithTags("Device");
-    }
-
-    private void UpdateCookie(HttpContext ctx, string key, string? value, CookieOptions cookieOptions)
-    {
-        if (value != null)
-        {
-            ctx.Response.Cookies.Append(key, value, cookieOptions);
-        }
-        else
-        {
-            ctx.Response.Cookies.Delete(key);
-        }
     }
 }

@@ -16,11 +16,11 @@ export const useLocalSyncConsumer = <T extends SyncReceiveDefinitionNames>(
 
   useEffect(() => {
     callbackRef.current = callback;
-    console.log("onSync", name, key);
+    console.debug("onSync", name, key);
     onSync(name, callback, key);
     return () => {
       if (callbackRef.current) {
-        console.log("offSync", name, key);
+        console.debug("offSync", name, key);
         offSync(name, key);
       }
     };

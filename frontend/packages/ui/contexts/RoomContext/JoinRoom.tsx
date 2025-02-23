@@ -10,7 +10,7 @@ type Props = {
 const JoinRoom = ({ onJoin, isHost }: Props) => {
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState("");
-  console.log("JoinRoom", isHost);
+
   useEffect(() => {
     getDevice().then((data) => {
       if (data && data.roomCode) {

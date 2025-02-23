@@ -19,6 +19,10 @@
     }
 
     handle_path /cms* {
-        reverse_proxy localhost:1337
+        reverse_proxy localhost:1337 {
+            header_up Upgrade {upstream_upgrade}
+            header_up Connection {upstream_connection}
+        }
     }
 }
+

@@ -22,31 +22,55 @@ public class StorageGameRepository(IDatabaseStorage storage) : IGameRepository
         return await storage.FindRoomByCodeAsync(roomCode, cancellationToken);
     }
 
-    public async Task<Room> RegisterHostAsync(string hostId, string roomCode, CancellationToken cancellationToken = default)
+    public async Task<(Room? room, string? errorCode)> RegisterHostAsync(string hostId, string roomCode, CancellationToken cancellationToken = default)
     {
+        var existingRoom = await storage.FindRoomByCodeAsync(roomCode, cancellationToken);
+
+        if (existingRoom?.IsOpen == false)
+        {
+            return (null, "RoomAlreadyExists");
+        }
+
         var room = new Room
         {
             Code = roomCode,
             HostDeviceId = hostId,
-            PlayerDeviceIds = []
+            PlayerDeviceIds = [],
+            CreatedAt = DateTime.UtcNow,
+            IsOpen = true,
         };
 
         await storage.InsertRoomAsync(room, cancellationToken);
 
-        return room;
+        return (room, null);
     }
 
-    public async Task<Room?> RegisterPlayerAsync(string deviceId, string roomCode, CancellationToken cancellationToken = default)
+    public async Task<(Room? room, string? errorCode)> RegisterPlayerAsync(string deviceId, string roomCode, CancellationToken cancellationToken = default)
     {
         var room = await storage.FindRoomByCodeAsync(roomCode, cancellationToken);
-        if (room is null) return null;
+        if (room is null) return (null, "RoomNotFound");
 
+        if (room.IsOpen == false)
+        {
+            return (null, "RoomClosed");
+        }
+        
         room.PlayerDeviceIds ??= new HashSet<string>();
         room.PlayerDeviceIds.Add(deviceId);
 
         await storage.UpdateRoomAsync(room, cancellationToken);
 
-        return room;
+        return (room, null);
+    }
+
+    public async Task CloseRoomAsync(string roomCode, CancellationToken cancellationToken = default)
+    {
+        var room = await storage.FindRoomByCodeAsync(roomCode, cancellationToken);
+        if (room is null) return;
+
+        room.IsOpen = false;
+
+        await storage.UpdateRoomAsync(room, cancellationToken);
     }
 
     public async Task UpdateAsync(Core.Models.Game game, CancellationToken cancellationToken = default)
