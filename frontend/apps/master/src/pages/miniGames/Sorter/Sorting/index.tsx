@@ -14,7 +14,6 @@ const Sorting = ({ gameId, started }: Props) => {
 
   useEffect(() => {
     if (!started) {
-      debugger
       setTimeout(
         () =>
           mutate({

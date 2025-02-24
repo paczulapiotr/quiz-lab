@@ -1,0 +1,21 @@
+@use "@repo/ui/mixins" as mixins;
+
+.join {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    .control {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .loading {
+        color: white;
+        font-weight: 400;
+
+        @include mixins.ellipsis_animation;
+    }
+}

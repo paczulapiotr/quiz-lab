@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .input {
+        margin-top: auto;
+        margin-bottom: 1rem;
+        display: flex;
+        width: 100%;
+
+        .playerName {
+            flex: 1;
+            padding: 1rem 4rem;
+            font-size: 2rem;
+        }
+
+        .button {
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+    }
+}

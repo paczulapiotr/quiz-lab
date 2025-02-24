@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import "./App.scss";
 import GameRoutes from "./Routes";
 import FrontScreen from "./pages/FrontScreen";
-import { LocalSyncServiceProvider } from "@repo/ui/contexts";
 import { PlayersProvider } from "@repo/ui/contexts/PlayersContext";
+import { RoomProvider } from "@repo/ui/contexts/RoomContext";
 
 function App() {
   const queryClient = new QueryClient({
@@ -18,22 +18,20 @@ function App() {
       },
     },
   });
-
+  
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalSyncServiceProvider
-        wsUrl={import.meta.env.VITE_LOCAL_API_URL + "/sync"}
-      >
-        <PlayersProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route index element={<Welcome />} />
-              <Route path="front" element={<FrontScreen />} />
-              <Route path="*" element={<GameRoutes />} />
-            </Routes>
-          </BrowserRouter>
-        </PlayersProvider>
-      </LocalSyncServiceProvider>
+      <RoomProvider isHost={false}>
+          <PlayersProvider>
+            <BrowserRouter basename="/slave_ui">
+              <Routes>
+                <Route index element={<Welcome />} />
+                <Route path="front" element={<FrontScreen />} />
+                <Route path="*" element={<GameRoutes />} />
+              </Routes>
+            </BrowserRouter>
+          </PlayersProvider>
+      </RoomProvider>
     </QueryClientProvider>
   );
 }

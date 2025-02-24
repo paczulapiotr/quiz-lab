@@ -13,6 +13,7 @@ var builder = WebApplication.CreateSlimBuilder(args);
 DeviceIdHelper.Setup(builder.Configuration["DeviceId"]);
 var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
 var databaseName = builder.Configuration["Mongo:Database"]!;
+builder.Services.AddMemoryCache();
 builder.Services.AddStorage(connectionString, databaseName);
 builder.Services.AddCarter();
 builder.Services.AddMvcCore();
@@ -45,15 +46,17 @@ builder.Services
         });
 builder.Services.AddCors(options =>
 {
+    var corsUrls = builder.Configuration["Cors"]!.Split(",");
     options.AddDefaultPolicy(opts =>
     {
-        opts.AllowAnyOrigin()
+        opts.WithOrigins(corsUrls)
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
     options.AddPolicy("SignalR", opts =>
     {
-        opts.WithOrigins(builder.Configuration["Cors"]!.Split(","))
+        opts.WithOrigins(corsUrls)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();

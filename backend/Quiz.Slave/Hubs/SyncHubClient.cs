@@ -10,33 +10,16 @@ internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
     {
     }
 
-    public async Task GameCreated(GameCreatedSyncMessage payload, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendGameCreated,
-            payload,
-            cancellationToken);
-
-    public async Task SelectAnswer(SelectAnswer payload, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendSelectAnswer,
-            payload,
-            cancellationToken);
-
-    public async Task PlayerJoined(PlayerJoinedSyncMessage payload, CancellationToken cancellationToken = default)
-        => await SendAsync(
-            SyncDefinitions.SendPlayerJoined,
-            payload,
-            cancellationToken);
-
     public async Task GameStatusUpdated(GameStatusUpdateSyncMessage payload, CancellationToken cancellationToken = default)
         => await SendAsync(
             SyncDefinitions.SendGameStatusUpdate,
             payload,
+            [],
             cancellationToken);
 
     public async Task MiniGameNotification(MiniGameNotificationSyncMessage payload, CancellationToken cancellationToken = default)
         => await SendAsync(
             SyncDefinitions.SendMiniGameNotification,
-            payload,
+            payload, [],
             cancellationToken);
 }

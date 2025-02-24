@@ -24,10 +24,12 @@ public class DatabaseStorage : IDatabaseStorage
         BsonClassMap.RegisterClassMap(new MiniGameStateDataClassMap());
         BsonClassMap.RegisterClassMap(new MiniGameInstanceClassMap());
         BsonClassMap.RegisterClassMap(new MiniGameDefinitionClassMap());
+        BsonClassMap.RegisterClassMap(new RoomClassMap());
     }
 
 
     public IMongoCollection<Game> Games => _database.GetCollection<Game>("Games");
+    public IMongoCollection<Room> Rooms => _database.GetCollection<Room>("Rooms");
     public IMongoCollection<GameDefinition> GameDefinitions => _database.GetCollection<GameDefinition>("GameDefinitions");
     public IMongoCollection<MiniGameInstance> MiniGameInstances
         => _database.GetCollection<MiniGameInstance>("MiniGameInstances");
@@ -143,5 +145,21 @@ public class DatabaseStorage : IDatabaseStorage
         var state = miniGame.State.As<TState>();
 
         return (state, definition); 
+    }
+
+    public async Task<Room?> FindRoomByCodeAsync(string roomCode, CancellationToken cancellationToken = default)
+    {
+        var result = await Rooms.FindAsync(x => x.Code == roomCode, cancellationToken: cancellationToken);
+        return await result.FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task UpdateRoomAsync(Room room, CancellationToken cancellationToken = default)
+    {
+        await Rooms.FindOneAndReplaceAsync(x=>x.Code == room.Code, room, cancellationToken: cancellationToken);
+    }
+
+    public async Task InsertRoomAsync(Room room, CancellationToken cancellationToken = default)
+    {
+        await Rooms.InsertOneAsync(room, cancellationToken: cancellationToken);
     }
 }

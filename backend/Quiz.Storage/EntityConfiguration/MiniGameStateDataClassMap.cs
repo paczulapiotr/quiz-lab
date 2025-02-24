@@ -1,6 +1,7 @@
 using MongoDB.Bson.Serialization;
 using Quiz.Master.Core.Models;
 using Quiz.Master.MiniGames.Models.AbcdCategories;
+using Quiz.Master.MiniGames.Models.FamilyFeud;
 using Quiz.Master.MiniGames.Models.LettersAndPhrases;
 using Quiz.Master.MiniGames.Models.MusicGuess;
 using Quiz.Master.MiniGames.Models.Sorter;
@@ -14,5 +15,6 @@ public class MiniGameStateDataClassMap : BsonClassMap<MiniGameStateData>
         AddKnownType(typeof(MusicGuessState));
         AddKnownType(typeof(LettersAndPhrasesState));
         AddKnownType(typeof(SorterState));
+        AddKnownType(typeof(FamilyFeudState));
     }
 }

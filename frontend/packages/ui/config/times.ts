@@ -24,6 +24,12 @@ const Times = {
   Sorter: {
     RoundStartWaitSeconds: 5,
   },
+  FamilyFeud: {
+    QuestionShowSeconds: 5,
+    AnswerSeconds: 30,
+    AnswerShowSeconds: 5,
+    RoundEndSeconds: 5,
+  },
   TEMP: {
     MiniGameStartingSeconds: 5,
     RulesExplainSeconds: 5,

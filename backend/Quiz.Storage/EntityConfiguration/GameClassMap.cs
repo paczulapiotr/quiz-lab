@@ -1,6 +1,4 @@
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using Quiz.Master.Core.Models;
 
 public class GameClassMap : BsonClassMap<Game>

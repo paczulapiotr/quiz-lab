@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import {
   SyncReceiveCallback,
   SyncReceiveDefinitionNames,
@@ -9,20 +9,17 @@ import { v4 as uuid } from "uuid";
 export const useLocalSyncConsumer = <T extends SyncReceiveDefinitionNames>(
   name: T,
   callback: SyncReceiveCallback<T>,
+  silent: boolean = false,
 ) => {
   const key = useMemo(() => uuid(), []);
   const { onSync, offSync } = useLocalSyncService();
-  const callbackRef = useRef<SyncReceiveCallback<T>>();
 
   useEffect(() => {
-    callbackRef.current = callback;
-    console.log("onSync", name, key);
-    onSync(name, callback, key);
+    console.debug("onSync", name, key);
+    onSync(name, callback, key, silent);
     return () => {
-      if (callbackRef.current) {
-        console.log("offSync", name, key);
+        console.debug("offSync", name, key);
         offSync(name, key);
-      }
     };
-  }, [callback, key, name, offSync, onSync]);
+  }, [callback, key, name, offSync, onSync, silent]);
 };

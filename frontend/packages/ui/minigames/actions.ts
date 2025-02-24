@@ -47,7 +47,6 @@ export const LettersAndPhrasesInteractions = {
   Answer: "Letters.Answer",
 };
 
-
 export const SorterActions = {
   RoundStart: "Sorter.RoundStart",
   RoundStarted: "Sorter.RoundStarted",
@@ -57,4 +56,19 @@ export const SorterActions = {
 
 export const SorterInteractions = {
   SortSelection: "Sorter.SortSelection",
+};
+
+export const FamilyFeudActions = {
+  QuestionShow: "FamilyFeud.QuestionShow",
+  QuestionShown: "FamilyFeud.QuestionShown",
+  AnswerStart: "FamilyFeud.AnswerStart",
+  Answered: "FamilyFeud.Answered",
+  AnswerShow: "FamilyFeud.AnswerShow",
+  AnswerShown: "FamilyFeud.AnswerShown",
+  RoundEnd: "FamilyFeud.RoundEnd",
+  RoundEnded: "FamilyFeud.RoundEnded",
+};
+
+export const FamilyFeudInteractions = {
+  Answer: "FamilyFeud.Answer",
 };

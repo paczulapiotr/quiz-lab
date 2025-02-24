@@ -13,7 +13,11 @@ public abstract class SyncHubBase : Hub
 
     public override async Task OnConnectedAsync()
     {
-        await _hubConnection.Connected(Context.ConnectionId);
+        var uniqueId = Context.GetHttpContext()?.Request.Query["uniqueId"].ToString();
+        if (!string.IsNullOrWhiteSpace(uniqueId))
+        {
+            await _hubConnection.Connected(Context.ConnectionId, uniqueId);
+        }
         await base.OnConnectedAsync();
     }
 

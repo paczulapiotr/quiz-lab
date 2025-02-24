@@ -10,7 +10,7 @@ public class GameEngineHostedService(
     IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
 
-    private CancellationTokenSource? cancellationTokenSource;
+    private CancellationTokenSource? cancellationTokenSource = null!;
     private Task? backgroundTask;
     private List<(Task task, CancellationTokenSource tokenSource)> instanceTasks = new();
 
@@ -70,13 +70,6 @@ public class GameEngineHostedService(
 
     private void ManageGameTask(Task gameTask, CancellationTokenSource source)
     {
-        instanceTasks.ForEach(x =>
-        {
-            if (!x.tokenSource.IsCancellationRequested)
-            {
-                x.tokenSource.Cancel();
-            }
-        });
         instanceTasks.RemoveAll(x => x.task.IsCanceled || x.task.IsCompleted || x.task.IsFaulted);
         instanceTasks.Add((gameTask, source));
         logger.LogInformation("GameEngineHostedService - currently running {0} games", instanceTasks.Count);

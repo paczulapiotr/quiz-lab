@@ -4,8 +4,14 @@
 namespace Quiz.Master.Extensions;
 public static class HttpContextExtensions
 {
-    public static string GetDeviceId(this IHttpContextAccessor httpContextAccessor)
+    public static string? GetUniqueId(this IHttpContextAccessor httpContextAccessor)
     {
-        return httpContextAccessor.HttpContext?.Request?.Headers["DeviceId"].FirstOrDefault() ?? "";
+        var ctx = httpContextAccessor.HttpContext;
+        return ctx?.Request.Headers["deviceId"] ?? ctx?.Request.Headers["hostId"];
+    }
+
+    public static string? GetRoomCode(this IHttpContextAccessor httpContextAccessor)
+    {
+        return httpContextAccessor.HttpContext?.Request.Headers["roomCode"];
     }
 }

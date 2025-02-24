@@ -6,6 +6,7 @@ import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
 import { useParams } from "react-router";
 import LettersAndPhrases from "../miniGames/LettersAndPhrases";
 import Sorter from "../miniGames/Sorter";
+import FamilyFeud from "../miniGames/FamilyFeud";
 
 type Props = {
   basePath: string;
@@ -25,6 +26,8 @@ const MiniGameStarted = ({ basePath }: Props) => {
         return <LettersAndPhrases basePath={basePath} />;
       case MiniGameType.Sorter:
         return <Sorter basePath={basePath} />;
+      case MiniGameType.FamilyFeud:
+        return <FamilyFeud basePath={basePath} />;
       default:
         return (
           <PageTemplate>

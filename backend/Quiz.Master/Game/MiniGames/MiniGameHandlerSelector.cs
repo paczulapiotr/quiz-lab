@@ -3,6 +3,7 @@ using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.MiniGames.Handlers.MusicGuess;
 using Quiz.Master.MiniGames.Handlers.LettersAndPhrases;
 using Quiz.Master.MiniGames.Handlers.Sorter;
+using Quiz.Master.MiniGames.Handlers.FamilyFeud;
 
 namespace Quiz.Master.Game.MiniGames;
 
@@ -21,6 +22,8 @@ public class MiniGameHandlerSelector(IServiceScopeFactory scopeFactory) : IMiniG
                 return scope.ServiceProvider.GetRequiredService<LettersAndPhrasesHandler>();
             case MiniGameType.Sorter:
                 return scope.ServiceProvider.GetRequiredService<SorterHandler>();
+            case MiniGameType.FamilyFeud:
+                return scope.ServiceProvider.GetRequiredService<FamilyFeudHandler>();
             default:
                 throw new ArgumentOutOfRangeException(nameof(miniGame), miniGame, null);
         }
