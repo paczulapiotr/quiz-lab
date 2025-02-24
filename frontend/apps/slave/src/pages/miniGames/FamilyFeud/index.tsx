@@ -8,6 +8,7 @@ import ShowAnswer from "./ShowAnswer";
 import RoundEnd from "./RoundEnd";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { useLocalSyncConsumer } from "@repo/ui/hooks";
+import { useCallback } from "react";
 
 type Props = {
   basePath: string;
@@ -17,11 +18,11 @@ const FamilyFeud = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { data, refetch } = useGetScore(gameId);
 
-  useLocalSyncConsumer("MiniGameNotification", (message) => {
+  useLocalSyncConsumer("MiniGameNotification", useCallback((message) => {
     if (message?.action === FamilyFeudActions.Answered) {
       refetch();
     }
-  });
+  },[refetch]), true);
 
   return (
     <PageTemplate squares>

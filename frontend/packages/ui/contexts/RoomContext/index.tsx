@@ -39,6 +39,7 @@ export const RoomProvider: React.FC<{
     <RoomContext.Provider value={{ room, setRoom }}>
       {room != null ? (
         <LocalSyncServiceProvider
+          listenToMessages={["GameStatusUpdate", "MiniGameNotification"]}
           wsUrl={
             import.meta.env.VITE_LOCAL_API_URL +
             `/sync?uniqueId=${room.uniqueId}`
