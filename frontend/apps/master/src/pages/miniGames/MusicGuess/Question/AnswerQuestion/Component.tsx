@@ -21,6 +21,7 @@ const Component = ({ answers, question, questionAudio }: Props) => {
           <Tile key={x.id} text={x.text ?? ""} />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Music.QestionAnswerSeconds} />
     </>
   );

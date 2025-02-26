@@ -30,7 +30,7 @@ export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
     [gameId, refetch, refreshOnActions],
   );
 
-  useLocalSyncConsumer("MiniGameNotification", onGameNotification);
+  useLocalSyncConsumer("MiniGameNotification", onGameNotification, true);
 
   return useMemo(() => {
     const round = data?.definition?.rounds.find(
@@ -40,7 +40,7 @@ export const useLetters = (gameId?: string, refreshOnActions?: string[]) => {
       (x) => x.roundId === data?.state?.currentRoundId,
     );
     const phrase = round?.phrase.split(" ") ?? [];
-    const usedLetters = roundState?.answers.map((a) => a.letter) ?? [];
+    const usedLetters = uniq(roundState?.answers.map((a) => a.letter) ?? []);
     const incorrectLetters = uniq(
       roundState?.answers
         .filter((x) => !x.isCorrect || x.letter == null)

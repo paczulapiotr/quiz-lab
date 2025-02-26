@@ -17,13 +17,13 @@ public class PowerPlaySelector(IMiniGameEventService eventService) : CommonSelec
             state = new PowerPlaysDictionary();
         }
         
-        if (state.ContainsKey(selection.PlayerId))
+        if (state.ContainsKey(selection.TargetPlayerId.ToString()))
         {
-            state[selection.TargetPlayerId].Add(new(selection.PlayerId, selection.PowerPlay));
+            state[selection.TargetPlayerId.ToString()].Add(new(selection.PlayerId.ToString(), selection.PowerPlay));
         }
         else
         {
-            state.Add(selection.TargetPlayerId, [new(selection.PlayerId, selection.PowerPlay)]);
+            state.Add(selection.TargetPlayerId.ToString(), [new(selection.PlayerId.ToString(), selection.PowerPlay)]);
         }
 
         return state;

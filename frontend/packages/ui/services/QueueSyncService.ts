@@ -170,12 +170,24 @@ export class QueueSyncService {
       return;
     }
 
+    this.removeOnDisconnectedCallback(this._reconnectInterval);
+    this.addOnDisconnectedCallback(this._reconnectInterval);
     await this._connect();
   }
 
   isConnected() {
     return this.hubConnection?.state === signalR.HubConnectionState.Connected;
   }
+
+  _reconnectInterval = () => {
+    this.interval = setTimeout(async () => {
+      if (
+        this.hubConnection?.state === signalR.HubConnectionState.Disconnected
+      ) {
+        await this._connect();
+      }
+    }, 10_000);
+  };
 
   async dispose() {
     if (this.interval) {

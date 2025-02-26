@@ -7,6 +7,7 @@ import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
 import LettersAndPhrases from "../miniGames/LettersAndPhrases";
 import Sorter from "../miniGames/Sorter";
 import FamilyFeud from "../miniGames/FamilyFeud";
+import { memo } from "react";
 
 type Props = {
   basePath: string;
@@ -15,7 +16,6 @@ type Props = {
 const MiniGameStarted = ({ basePath }: Props) => {
   const { gameId } = useParams<{ gameId: string }>();
   const { data } = useGetMiniGame(gameId);
-
   const type = data?.miniGameType ?? MiniGameType.FamilyFeud;
 
   const renderMiniGame = () => {
@@ -42,4 +42,4 @@ const MiniGameStarted = ({ basePath }: Props) => {
   return renderMiniGame();
 };
 
-export default MiniGameStarted;
+export default memo(MiniGameStarted);

@@ -33,6 +33,7 @@ const Component = ({ answers, onAnswer, question, score }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Music.QestionAnswerSeconds} />
     </>
   );

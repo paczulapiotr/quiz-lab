@@ -6,8 +6,29 @@ import { MiniGameStarting } from "./pages/MiniGameStarting";
 import { MiniGameStarted } from "./pages/MiniGameStarted";
 import { GameNavigator } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui/services/types";
+import { usePlayers } from "@repo/ui/contexts/PlayersContext";
+import { useLocalSyncConsumer } from "@repo/ui/hooks";
+import { useCallback } from "react";
 
 const Routes = () => {
+  const { reload } = usePlayers();
+
+  useLocalSyncConsumer(
+    "GameStatusUpdate",
+    useCallback(
+      (message) => {
+        if (
+          message?.status === GameStatus.GameJoined ||
+          message?.status === GameStatus.GameStarting
+        ) {
+          reload();
+        }
+      },
+      [reload],
+    ),
+    true,
+  );
+
   return (
     <GameNavigator
       basePath=""

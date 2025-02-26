@@ -26,6 +26,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         _miniGameInstance = game;
         _onPlayerScoreUpdate = onPlayerScoreUpdate;
         _onStateUpdate = onStateUpdate;
+
         var definition = (await repository.FindMiniGameDefinitionAsync(game.DefinitionId, cancellationToken)).Definition.As<Definition>();
         if (definition is null)
         {
@@ -37,6 +38,9 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
         }
+        _state.CurrentRoundId = firstRoundDefinition.Id;
+        await _onStateUpdate(_state, cancellationToken);
+
         await eventService.Initialize(_gameId, cancellationToken);
         await RunRoundBase(firstRoundDefinition.Id, cancellationToken);
 
@@ -49,6 +53,8 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
             // Save PowerPlay selection for every player
             var roundState = new State.RoundState { RoundId = roundDefinition.Id };
             _state.Rounds.Add(roundState);
+            _state.CurrentRoundId = roundDefinition.Id;
+            await _onStateUpdate(_state, cancellationToken);
 
             await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
             await SelectPowerPlays(roundDefinition.Id, cancellationToken);
@@ -95,9 +101,6 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
 
     private async Task RunRoundBase(string roundId, CancellationToken cancellationToken)
     {
-        _state.CurrentRoundId = roundId;
-        await _onStateUpdate(_state, cancellationToken);
-
         await eventService.SendOnCategorySelection(_gameId, cancellationToken);
 
         // Choose most voted category or random iftied
@@ -181,6 +184,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         if (round is not null && category is not null)
         {
             round.CategoryId = category.Id;
+            round.SelectedCategories = categories ?? new();
         }
 
         await _onStateUpdate(_state, cancellationToken);

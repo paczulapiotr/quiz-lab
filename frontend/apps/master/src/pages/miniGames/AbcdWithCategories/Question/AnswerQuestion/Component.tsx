@@ -16,6 +16,7 @@ const Component = ({ answers, question }: Props) => {
           <Tile key={x.id} text={x.text} />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.QestionAnswerSeconds} />
     </>
   );

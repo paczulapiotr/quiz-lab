@@ -7,7 +7,7 @@ type Props = {
 const WatchOtherScreen = ({ title }: Props) => {
   return (
     <CenteredInstruction
-      title="Objerzyj prezentację na ekranie na środku sali"
+      title="Oberzyj prezentację na ekranie na środku sali"
       secondaryText={title}
     />
   );

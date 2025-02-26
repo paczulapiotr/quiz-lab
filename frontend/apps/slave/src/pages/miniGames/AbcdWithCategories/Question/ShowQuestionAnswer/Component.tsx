@@ -28,6 +28,7 @@ const Component = ({ answers, answerId, answerScore, score }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.AnswerShowSeconds} />
     </>
   );

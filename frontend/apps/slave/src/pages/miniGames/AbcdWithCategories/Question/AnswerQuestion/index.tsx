@@ -3,7 +3,6 @@ import Component from "./Component";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { AbcdInteractions } from "@repo/ui/minigames/actions";
 import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
-import { PowerPlaysEnum } from "../../PowerPlays/types";
 import { AbcdDefinition, AbcdState } from "@repo/ui/api/queries/minigames/abcd";
 
 type Props = {
@@ -22,14 +21,19 @@ const AnswerQuestion = ({ gameId }: Props) => {
       value,
     });
 
-  const question = data?.definition?.rounds
-    .find((round) => round.id === data?.state?.currentRoundId)
-    ?.categories.find(
-      (category) => category.id === data?.state?.currentCategoryId,
-    )
+  const roundState = data?.state?.rounds.find(
+    (round) => round.roundId === data?.state?.currentRoundId);
+  
+  const roundDef = data?.definition?.rounds.find(
+    (round) => round.id === data?.state?.currentRoundId);
+  
+  const question = roundDef?.categories
+    .find((category) => category.id === data?.state?.currentCategoryId)
     ?.questions.find(
       (question) => question.id === data?.state?.currentQuestionId,
-    );
+  );
+  
+  const powerPlays = (roundState?.powerPlays[data?.playerId ?? ""] ?? []).map(x => x.powerPlay);
 
   return (
     <Component
@@ -37,12 +41,7 @@ const AnswerQuestion = ({ gameId }: Props) => {
       answers={question?.answers ?? []}
       question={question?.text ?? ""}
       onAnswer={answer}
-      powerPlays={[
-        PowerPlaysEnum.Bombs,
-        PowerPlaysEnum.Freeze,
-        PowerPlaysEnum.Letters,
-        PowerPlaysEnum.Slime,
-      ]}
+      powerPlays={powerPlays}
     />
   );
 };

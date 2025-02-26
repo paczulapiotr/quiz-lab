@@ -12,7 +12,7 @@ type Props = {
 const SelectPowerPlay = ({ gameId }: Props) => {
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
   const { data: score } = useGetScore(gameId);
-  const { players } = usePlayers();
+  const { players, you } = usePlayers();
 
   const sendSelectPowerPlay = async (
     powerPlay: PowerPlaysEnum,
@@ -32,7 +32,7 @@ const SelectPowerPlay = ({ gameId }: Props) => {
     <Component
       score={score?.miniGameScore ?? 0}
       onSelect={sendSelectPowerPlay}
-      players={players}
+      players={players.filter((p) => p.id !== you?.id)}
     />
   );
 };

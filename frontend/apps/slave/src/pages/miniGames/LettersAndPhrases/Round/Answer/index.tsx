@@ -20,25 +20,29 @@ const Answer = () => {
   const { mutateAsync } = useSendPlayerInteraction();
   const { gameId } = useParams<{ gameId: string }>();
   const { data: score, refetch } = useGetScore(gameId);
-  const { incorrectLetters, phrase, usedLetters, yourTurn, timestamp } = useLetters(
-    gameId,
-    RefreshOnActions,
-  );
+  const { incorrectLetters, phrase, usedLetters, yourTurn, timestamp } =
+    useLetters(gameId, RefreshOnActions);
 
   useEffect(() => {
-    if(yourTurn && timestamp) {
+    if (yourTurn && timestamp) {
       refetch();
     }
-  }, [refetch, timestamp, yourTurn])
+  }, [refetch, timestamp, yourTurn]);
 
   const handleSelect = useCallback(
     async (selected: string) => {
+      if (usedLetters.includes(selected.toLowerCase())) return;
+
       const letter = selected.toLowerCase();
       if (!canAnswer.current || usedLetters.includes(letter)) return;
-      
-      const setCanAnswer = throttle((can:boolean) => { 
-        canAnswer.current = can;
-      }, 1000, { trailing: true });
+
+      const setCanAnswer = throttle(
+        (can: boolean) => {
+          canAnswer.current = can;
+        },
+        1000,
+        { trailing: true },
+      );
 
       setCanAnswer(false);
       await mutateAsync({

@@ -39,6 +39,7 @@ const Component = ({ players }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer
         startSeconds={Times.Abdc.PowerPlayShowSeconds}
         onTimeUp={onTimeUp}

@@ -32,6 +32,7 @@ const SelectCategory = ({ categories, onSelect, score }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Music.CategorySelectionSeconds} />
     </>
   );

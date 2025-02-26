@@ -37,6 +37,7 @@ const Component = ({ selections }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer
         startSeconds={Times.Music.CategoryShowSeconds}
         onTimeUp={onTimeUp}

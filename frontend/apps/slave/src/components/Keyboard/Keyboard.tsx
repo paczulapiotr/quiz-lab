@@ -65,7 +65,7 @@ const Keyboard = ({
       buttonAttributes={btnAttributes}
       layout={mapLayout(keyboardOpts)}
       onChange={onChangeHandler}
-      onKeyPress={onKeyPressHandler}
+      onKeyReleased={onKeyPressHandler}
       theme={`hg-theme-default ${styles.theme}`}
     />
   );

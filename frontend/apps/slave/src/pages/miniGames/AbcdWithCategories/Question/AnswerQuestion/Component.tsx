@@ -23,7 +23,6 @@ const Component = ({
   powerPlays,
 }: Props) => {
   const [selected, setSelected] = useState<string>();
-
   const answerHandle = (ansId: string) => {
     if (selected != null) return;
     setSelected(ansId);
@@ -62,6 +61,7 @@ const Component = ({
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.QestionAnswerSeconds} />
       <Bombs powerPlays={powerPlays} />
     </>

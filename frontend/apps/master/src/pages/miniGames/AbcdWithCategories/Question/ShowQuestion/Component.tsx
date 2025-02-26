@@ -25,6 +25,7 @@ const Component = ({ question, audioUrl }: Props) => {
     <>
       {audioUrl ? <AudioPlayer play src={fileUrl(audioUrl)} /> : null}
       <HeaderTile title={question} />
+      <div style={{ flex: 1 }} />
       <Timer
         startSeconds={Times.Abdc.QuestionShowSeconds}
         onTimeUp={onTimeUp}

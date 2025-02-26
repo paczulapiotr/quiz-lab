@@ -17,7 +17,7 @@ const Bombs = ({ powerPlays }: Props) => {
   return (
     <>
       {bombsCount > 0 && (
-        <FlyingObjects count={bombsCount} speed={10} rotationSpeed={5}>
+        <FlyingObjects count={bombsCount} speed={10} rotationSpeed={5} className={styles.bombs}>
           <img
             className={styles.bomb}
             src={BombIcon}

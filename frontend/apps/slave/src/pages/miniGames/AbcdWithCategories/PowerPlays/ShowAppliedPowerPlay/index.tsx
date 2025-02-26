@@ -15,7 +15,6 @@ const ShowAppliedPowerPlay = ({ gameId }: Props) => {
       (round) => round.roundId === data?.state?.currentRoundId,
     )?.powerPlays ?? {};
   const applied = powerPlays[data?.playerId ?? ""] ?? [];
-
   const appliedPowerPlays = applied.map((pp) => ({
     playerId: pp.fromPlayerId,
     playerName: players.find((p) => p.id === pp.fromPlayerId)?.name ?? "",
