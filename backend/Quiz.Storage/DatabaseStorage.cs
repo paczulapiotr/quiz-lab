@@ -45,7 +45,7 @@ public class DatabaseStorage : IDatabaseStorage
 
     public async Task UpdateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
-        await Games.ReplaceOneAsync(x=>x.Id == game.Id, game, cancellationToken: cancellationToken);
+        await Games.ReplaceOneAsync(x => x.Id == game.Id, game, cancellationToken: cancellationToken);
     }
 
     public async Task InsertGameAsync(Game game, CancellationToken cancellationToken = default)
@@ -57,8 +57,8 @@ public class DatabaseStorage : IDatabaseStorage
     {
         await MiniGameInstances
             .ReplaceOneAsync(
-                x => x.Id == miniGame.Id, 
-                miniGame, 
+                x => x.Id == miniGame.Id,
+                miniGame,
                 cancellationToken: cancellationToken);
     }
 
@@ -91,20 +91,26 @@ public class DatabaseStorage : IDatabaseStorage
 
         var players = game.Players;
 
-        var miniGames = MiniGameInstances.Find(x=>x.GameId == gameId).ToList();
+        var miniGames = MiniGameInstances.Find(x => x.GameId == gameId).ToList();
 
         var scores = new Dictionary<Guid, Dictionary<Guid, int>>();
         foreach (var miniGame in miniGames)
         {
-            foreach (var score in miniGame.PlayerScores) {
-                if (scores.ContainsKey(score.PlayerId)) {
-                    if(scores[score.PlayerId].ContainsKey(miniGame.Id)) {
+            foreach (var score in miniGame.PlayerScores)
+            {
+                if (scores.ContainsKey(score.PlayerId))
+                {
+                    if (scores[score.PlayerId].ContainsKey(miniGame.Id))
+                    {
                         scores[score.PlayerId][miniGame.Id] += score.Score;
-                    } else {
+                    }
+                    else
+                    {
                         scores[score.PlayerId].Add(miniGame.Id, score.Score);
                     }
                 }
-                else {
+                else
+                {
                     scores.Add(score.PlayerId, new Dictionary<Guid, int> {
                         { miniGame.Id, score.Score }
                     });
@@ -144,7 +150,7 @@ public class DatabaseStorage : IDatabaseStorage
         var definition = miniGameDefinition.Definition.As<TDefinition>();
         var state = miniGame.State.As<TState>();
 
-        return (state, definition); 
+        return (state, definition);
     }
 
     public async Task<Room?> FindRoomByCodeAsync(string roomCode, CancellationToken cancellationToken = default)
@@ -155,11 +161,16 @@ public class DatabaseStorage : IDatabaseStorage
 
     public async Task UpdateRoomAsync(Room room, CancellationToken cancellationToken = default)
     {
-        await Rooms.FindOneAndReplaceAsync(x=>x.Code == room.Code, room, cancellationToken: cancellationToken);
+        await Rooms.FindOneAndReplaceAsync(x => x.Code == room.Code, room, cancellationToken: cancellationToken);
     }
 
     public async Task InsertRoomAsync(Room room, CancellationToken cancellationToken = default)
     {
         await Rooms.InsertOneAsync(room, cancellationToken: cancellationToken);
+    }
+
+    public async Task UpdateMiniGameStatusAsync(Guid Id, string Status, CancellationToken cancellationToken = default)
+    {
+        await MiniGameInstances.UpdateOneAsync(x => x.Id == Id, Builders<MiniGameInstance>.Update.Set(x => x.MiniGameStatus, Status), cancellationToken: cancellationToken);
     }
 }

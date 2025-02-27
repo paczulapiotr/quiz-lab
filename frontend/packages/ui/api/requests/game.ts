@@ -5,6 +5,8 @@ import { GameStatus } from "@repo/ui";
 export type GetCurrentGameResponse = {
   gameId: string;
   gameSize: number;
+  gameStatus: GameStatus;
+  miniGameId?: string;
   players: { id: string; name: string; deviceId: string }[];
   yourName?: string;
   yourDeviceId?: string;

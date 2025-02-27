@@ -15,6 +15,7 @@ public interface IDatabaseStorage
     Task<MiniGameInstance> FindMiniGameAsync(Guid id, CancellationToken cancellationToken = default);
     Task InsertMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default);
     Task UpdateMiniGameAsync(MiniGameInstance miniGame, CancellationToken cancellationToken = default);
+    Task UpdateMiniGameStatusAsync(Guid Id, string Status, CancellationToken cancellationToken = default);
     Task InsertManyMiniGameDefinitionAsync(IEnumerable<MiniGameDefinition> gameDefinitions, CancellationToken cancellationToken = default);
     Task<MiniGameDefinition> FindMiniGameDefinitionAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<(Player player, Dictionary<Guid, int> scores)>> ListPlayerScores(Guid gameId, CancellationToken cancellationToken = default);

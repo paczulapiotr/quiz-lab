@@ -56,4 +56,9 @@ public class StorageMiniGameRepository(IDatabaseStorage databaseStorage) : IMini
 
         await databaseStorage.UpdateMiniGameAsync(miniGame, cancellationToken);
     }
+
+    public async Task UpdateMiniGameStatusAsync(Guid miniGameId, string miniGameStatus, CancellationToken cancellationToken = default)
+    {
+        await databaseStorage.UpdateMiniGameStatusAsync(miniGameId, miniGameStatus, cancellationToken);
+    }
 }

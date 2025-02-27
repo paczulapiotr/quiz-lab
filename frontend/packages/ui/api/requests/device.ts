@@ -4,6 +4,7 @@ import instance from "../instance";
 export type GetDeviceResponse = {
   deviceId?: string;
   hostId?: string;
+  gameId?: string;
   roomCode?: string;
 };
 

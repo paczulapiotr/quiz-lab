@@ -6,6 +6,7 @@ public record MiniGameInstance : IEntity
     public Guid GameId { get; set; }
     public List<MiniGameInstanceScore> PlayerScores { get; set; } = new List<MiniGameInstanceScore>();
     public Guid MiniGameDefinitionId { get; set; }
+    public string? MiniGameStatus { get; set; }
     public MiniGameType Type { get; set; }
     public MiniGameStateData State { get; set; } = new(); // property for mini game state rounds information
 }

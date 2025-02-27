@@ -48,15 +48,13 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
             CreatedAt = DateTime.UtcNow,
         };
 
-        if (room.IsOpen)
-        {
-            room.IsOpen = false;
-            await storage.UpdateRoomAsync(room);
-        }
-
         await storage.InsertGameAsync(game, cancellationToken);
-
         var gameId = game.Id.ToString();
+
+        room.IsOpen = false;
+        room.GameId = game.Id.ToString();
+        await storage.UpdateRoomAsync(room);
+
         await publisher.PublishAsync(new NewGameCreation(gameId), cancellationToken: cancellationToken);
 
         return NoResult.Instance;

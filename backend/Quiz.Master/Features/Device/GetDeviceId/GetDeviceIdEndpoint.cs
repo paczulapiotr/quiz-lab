@@ -3,7 +3,7 @@ using Quiz.Master.Persistance.Repositories.Abstract;
 
 namespace Quiz.Master.Features.Device.GetDeviceId;
 
-public record Response(string? DeviceId, string? HostId, string? RoomCode);
+public record Response(string? DeviceId, string? HostId, string? RoomCode, string? GameId);
 
 public class GetDeviceIdEndpoint : ICarterModule
 {
@@ -21,8 +21,9 @@ public class GetDeviceIdEndpoint : ICarterModule
             roomCode = room?.Code;
             deviceId = room?.PlayerDeviceIds.FirstOrDefault(x => x == deviceId);
             hostId = room?.HostDeviceId == hostId ? hostId : null;
+            var gameId = room?.GameId?.ToString();
 
-            return Results.Ok(new Response(deviceId, hostId, roomCode));
+            return Results.Ok(new Response(deviceId, hostId, roomCode, gameId));
         })
          .WithName("GetDeviceId")
          .ProducesProblem(StatusCodes.Status400BadRequest)

@@ -11,20 +11,22 @@ import {
   SyncReceiveCallback,
   SyncReceiveDefinitionNames,
 } from "../../services/types";
+import { useRoom } from "../RoomContext";
 
 type QueueSyncCallback = {
   callback: SyncReceiveCallback<SyncReceiveDefinitionNames>;
   silent: boolean;
 };
 
+const LISTEN_TO_MESSAGES: SyncReceiveDefinitionNames[] = [
+  "GameStatusUpdate",
+  "MiniGameNotification",
+];
+
 export const LocalSyncServiceProvider = ({
   children,
-  wsUrl,
-  listenToMessages,
-}: PropsWithChildren & {
-  wsUrl: string;
-  listenToMessages: SyncReceiveDefinitionNames[];
-}) => {
+}: PropsWithChildren) => {
+  const { room } = useRoom();
   const callbackDict = useRef<
     Record<SyncReceiveDefinitionNames, Record<string, QueueSyncCallback>>
   >({
@@ -37,8 +39,8 @@ export const LocalSyncServiceProvider = ({
   const [connected, setConnected] = useState(false);
   const queueSyncService = useRef<QueueSyncService>(
     new QueueSyncService(
-      wsUrl,
-      listenToMessages,
+      import.meta.env.VITE_LOCAL_API_URL + `/sync?uniqueId=${room!.uniqueId}`,
+      LISTEN_TO_MESSAGES,
       () => {
         setConnected(true);
         console.log("Connected to LocalSyncService");
@@ -59,29 +61,34 @@ export const LocalSyncServiceProvider = ({
     };
   }, [queueSyncService]);
 
-  const onSync = useCallback(<T extends SyncReceiveDefinitionNames>(defName: T, useCallback: SyncReceiveCallback<T>, key: string, silent: boolean = false) => {
-    (callbackDict.current[defName][key] as unknown) = {
-      callback: useCallback,
-      silent,
-    };
-      useCallback;
-    queueSyncService.current.onSync(
-      defName,
-      Object.values(callbackDict.current[defName])
-        .filter((x) => !x.silent)
-        .map((x) => x.callback),
-      Object.values(callbackDict.current[defName])
-        .filter((x) => x.silent)
-        .map((x) => x.callback)
-    );
-  }, []);
-
-  const offSync = useCallback(
+  const onSync = useCallback(
     <T extends SyncReceiveDefinitionNames>(
       defName: T,
-      key: string
+      useCallback: SyncReceiveCallback<T>,
+      key: string,
+      silent: boolean = false
     ) => {
-      delete callbackDict.current[defName][key]
+      (callbackDict.current[defName][key] as unknown) = {
+        callback: useCallback,
+        silent,
+      };
+      useCallback;
+      queueSyncService.current.onSync(
+        defName,
+        Object.values(callbackDict.current[defName])
+          .filter((x) => !x.silent)
+          .map((x) => x.callback),
+        Object.values(callbackDict.current[defName])
+          .filter((x) => x.silent)
+          .map((x) => x.callback)
+      );
+    },
+    []
+  );
+
+  const offSync = useCallback(
+    <T extends SyncReceiveDefinitionNames>(defName: T, key: string) => {
+      delete callbackDict.current[defName][key];
       queueSyncService.current.onSync(
         defName,
         Object.values(callbackDict.current[defName])

@@ -5,7 +5,6 @@ import {
   useContext,
   useState,
 } from "react";
-import { LocalSyncServiceProvider } from "../LocalSyncServiceContext/Provider";
 import JoinRoom from "./JoinRoom";
 
 export type Room = {
@@ -15,7 +14,6 @@ export type Room = {
 
 type RoomContextProps = {
   room?: Room;
-  setRoom: (room?: Room) => void;
 };
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
@@ -36,20 +34,8 @@ export const RoomProvider: React.FC<{
   );
 
   return (
-    <RoomContext.Provider value={{ room, setRoom }}>
-      {room != null ? (
-        <LocalSyncServiceProvider
-          listenToMessages={["GameStatusUpdate", "MiniGameNotification"]}
-          wsUrl={
-            import.meta.env.VITE_LOCAL_API_URL +
-            `/sync?uniqueId=${room.uniqueId}`
-          }
-        >
-          {children}
-        </LocalSyncServiceProvider>
-      ) : (
-        <JoinRoom isHost={isHost} onJoin={onJoin} />
-      )}
+    <RoomContext.Provider value={{ room }}>
+      {room != null ? children : <JoinRoom isHost={isHost} onJoin={onJoin} />}
     </RoomContext.Provider>
   );
 };
