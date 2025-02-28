@@ -1,15 +1,15 @@
 import AdminPanel from "@/AdminPanel";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
-import { useParams } from "react-router";
 import styles from "./MiniGameEnding.module.scss";
 import { useEffect } from "react";
 import { PageTemplate, HeaderTile, Tile } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui/services/types";
 import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const MiniGameEnding = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { data } = useGetScore(gameId);
   const { mutate } = useUpdateGameStatus();
 

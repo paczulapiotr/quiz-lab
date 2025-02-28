@@ -1,9 +1,9 @@
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { PageTemplate, CenteredInstruction } from "@repo/ui/components";
-import { useParams } from "react-router";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const MiniGameEnding = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { data } = useGetScore(gameId);
 
   return (

@@ -1,33 +1,27 @@
 import Component from "./Component";
 import { useLetters } from "@repo/ui/hooks/miniGames/LettersAndPhrases/useLetters";
-import { useParams } from "react-router";
 import {
-  LettersAndPhrasesActions,
   LettersAndPhrasesInteractions,
 } from "@repo/ui/minigames/actions";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import { useCallback, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
-
-const RefreshOnActions = [
-  LettersAndPhrasesActions.AnswerStart,
-  LettersAndPhrasesActions.Answered,
-];
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const Answer = () => {
   const canAnswer = useRef(true);
   const { mutateAsync } = useSendPlayerInteraction();
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { data: score, refetch } = useGetScore(gameId);
-  const { incorrectLetters, phrase, usedLetters, yourTurn, timestamp } =
-    useLetters(gameId, RefreshOnActions);
+  const { incorrectLetters, phrase, usedLetters, yourTurn } =
+    useLetters();
 
   useEffect(() => {
-    if (yourTurn && timestamp) {
+    if (yourTurn) {
       refetch();
     }
-  }, [refetch, timestamp, yourTurn]);
+  }, [refetch, yourTurn]);
 
   const handleSelect = useCallback(
     async (selected: string) => {
@@ -63,7 +57,6 @@ const Answer = () => {
       phrase={phrase}
       usedLetters={usedLetters}
       yourTurn={yourTurn}
-      timerKey={timestamp}
     />
   );
 };

@@ -1,17 +1,13 @@
 import { Tile, Timer } from "@repo/ui/components";
 import MainBoard from "@repo/ui/components/minigames/FamilyFeud/MainBoard";
-import { usePlayers } from "@repo/ui/contexts/PlayersContext";
 import { useBoardItems } from "@repo/ui/hooks/minigames/FamilyFeud/useBoardItems";
 import styles from "./index.module.scss";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId?: string;
-};
-
-const AnswerQuestion = ({ gameId }: Props) => {
-  const { answers, question, currentPlayerId } = useBoardItems(gameId);
-  const { players } = usePlayers();
+const AnswerQuestion = () => {
+  const { players } = useGame();
+  const { answers, question, currentPlayerId } = useBoardItems();
   const currentPlayer = players.find((player) => player.id === currentPlayerId);
 
   return (

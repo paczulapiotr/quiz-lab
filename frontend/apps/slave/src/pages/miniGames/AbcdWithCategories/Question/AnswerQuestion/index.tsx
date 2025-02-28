@@ -2,38 +2,34 @@ import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerIn
 import Component from "./Component";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { AbcdInteractions } from "@repo/ui/minigames/actions";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { AbcdDefinition, AbcdState } from "@repo/ui/api/queries/minigames/abcd";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const AnswerQuestion = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
+const AnswerQuestion = () => {
+  const { you, gameId, miniGameState: state, miniGameDefinition: definition} = useGame<AbcdState, AbcdDefinition>();
   const { data: score } = useGetScore(gameId);
   const { mutateAsync: sendAsync } = useSendPlayerInteraction();
 
   const answer = (value: string) =>
     sendAsync({
-      gameId,
+      gameId: gameId!,
       interactionType: AbcdInteractions.QuestionAnswer,
       value,
     });
 
-  const roundState = data?.state?.rounds.find(
-    (round) => round.roundId === data?.state?.currentRoundId);
+  const roundState = state?.rounds.find(
+    (round) => round.roundId === state?.currentRoundId);
   
-  const roundDef = data?.definition?.rounds.find(
-    (round) => round.id === data?.state?.currentRoundId);
+  const roundDef = definition?.rounds.find(
+    (round) => round.id === state?.currentRoundId);
   
   const question = roundDef?.categories
-    .find((category) => category.id === data?.state?.currentCategoryId)
+    .find((category) => category.id === state?.currentCategoryId)
     ?.questions.find(
-      (question) => question.id === data?.state?.currentQuestionId,
+      (question) => question.id === state?.currentQuestionId,
   );
   
-  const powerPlays = (roundState?.powerPlays[data?.playerId ?? ""] ?? []).map(x => x.powerPlay);
+  const powerPlays = (roundState?.powerPlays[you?.id ?? ""] ?? []).map(x => x.powerPlay);
 
   return (
     <Component

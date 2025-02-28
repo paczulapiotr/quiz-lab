@@ -2,14 +2,12 @@ import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerIn
 import Component from "./Component";
 import { FamilyFeudInteractions } from "@repo/ui/minigames/actions";
 import { useCallback } from "react";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId?: string;
-};
-
-const AnswerQuestion = ({ gameId }: Props) => {
+const AnswerQuestion = () => {
   const { mutateAsync } = useSendPlayerInteraction();
-
+  const { gameId } = useGame();
+  
   const onAnswer = useCallback(
     (ans: string) =>
       mutateAsync({
@@ -20,7 +18,7 @@ const AnswerQuestion = ({ gameId }: Props) => {
     [gameId, mutateAsync],
   );
 
-  return <Component gameId={gameId} onAnswer={onAnswer} />;
+  return <Component onAnswer={onAnswer} />;
 };
 
 export default AnswerQuestion;

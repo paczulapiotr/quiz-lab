@@ -3,25 +3,26 @@ import {
   FamilyFeudDefinition,
   FamilyFeudState,
 } from "@repo/ui/api/queries/minigames/familyFeud";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { Answer } from "@repo/ui/components/minigames/FamilyFeud/MainBoard";
+import { useGame } from "../../../contexts/GameContext";
 
 export const useBoardItems = (
-  gameId?: string,
   showLastAnswer: boolean = false
 ) => {
-  const { data } = useGetMiniGame<FamilyFeudState, FamilyFeudDefinition>(
-    gameId
-  );
+  const {
+    miniGameState: state,
+    miniGameDefinition: definition,
+    you,
+  } = useGame<FamilyFeudState, FamilyFeudDefinition>();
 
   return useMemo(() => {
-    const roundState = data?.state?.rounds.find(
-      (x) => x.roundId == data?.state?.currentRoundId
+    const roundState = state?.rounds.find(
+      (x) => x.roundId == state?.currentRoundId
     );
     const lastAns = roundState?.answers.at(-1);
 
-    const roundDef = data?.definition?.rounds.find(
-      (x) => x.id == data?.state?.currentRoundId
+    const roundDef = definition?.rounds.find(
+      (x) => x.id == state?.currentRoundId
     );
     const selectedIds = roundState?.answers
       .filter((x) => x.matchedAnswerId !== null)
@@ -40,15 +41,15 @@ export const useBoardItems = (
       question: roundDef?.question ?? "",
       lastWrongAnswer:
         lastAns?.matchedAnswerId == null ? (lastAns?.answer ?? "") : "",
-      currentPlayerId: data?.state?.currentGuessingPlayerId,
-      youAreGuessing: data?.state?.currentGuessingPlayerId === data?.playerId,
+      currentPlayerId: state?.currentGuessingPlayerId,
+      youAreGuessing: state?.currentGuessingPlayerId === you?.id,
     };
   }, [
-    data?.definition?.rounds,
-    data?.playerId,
-    data?.state?.currentGuessingPlayerId,
-    data?.state?.currentRoundId,
-    data?.state?.rounds,
+    definition?.rounds,
     showLastAnswer,
+    state?.currentGuessingPlayerId,
+    state?.currentRoundId,
+    state?.rounds,
+    you?.id,
   ]);
 };

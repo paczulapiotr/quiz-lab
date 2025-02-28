@@ -2,14 +2,13 @@ import { PageTemplate } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui/services/types";
 import TutorialVideo from "../temp/TutorialVideo";
 import { useEffect } from "react";
-import { useParams } from "react-router";
 import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const RulesExplaining = () => {
-  const { gameId } = useParams<{ gameId: string }>();
   const { mutate } = useUpdateGameStatus();
-
+  const { gameId } = useGame();
   useEffect(() => {
     const timeout = setTimeout(
       () =>

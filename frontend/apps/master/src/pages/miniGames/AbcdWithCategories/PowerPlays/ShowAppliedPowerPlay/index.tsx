@@ -1,19 +1,13 @@
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import Component from "./Component";
 import { AbcdDefinition, AbcdState } from "@repo/ui/api/queries/minigames/abcd";
-import { usePlayers } from "@repo/ui/contexts/PlayersContext";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const ShowAppliedPowerPlay = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
-  const { players } = usePlayers();
+const ShowAppliedPowerPlay = () => {
+  const { players, miniGameState: state } = useGame<AbcdState, AbcdDefinition>();
 
   const powerPlays =
-    data?.state?.rounds.find(
-      (round) => round.roundId === data?.state?.currentRoundId,
+    state?.rounds.find(
+      (round) => round.roundId === state?.currentRoundId,
     )?.powerPlays ?? {};
 
   const playersData = players.map((player) => ({

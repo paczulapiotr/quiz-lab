@@ -1,16 +1,14 @@
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import MainBoard from "@repo/ui/components/minigames/FamilyFeud/MainBoard";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 import { useBoardItems } from "@repo/ui/hooks/minigames/FamilyFeud/useBoardItems";
 import { FamilyFeudActions } from "@repo/ui/minigames/actions";
 import { useEffect } from "react";
 
-type Props = {
-  gameId?: string;
-};
-
-const ShowAnswer = ({ gameId }: Props) => {
-  const { answers, question, lastWrongAnswer } = useBoardItems(gameId, true);
+const ShowAnswer = () => {
+  const { gameId } = useGame();
+  const { answers, question, lastWrongAnswer } = useBoardItems(true);
   const { mutate } = useUpdateMiniGame();
 
   useEffect(() => {

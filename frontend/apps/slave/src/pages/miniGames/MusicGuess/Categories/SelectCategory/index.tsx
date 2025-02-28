@@ -2,27 +2,23 @@ import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerIn
 import Component from "./Component";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import { MusicGuessInteractions } from "@repo/ui/minigames/actions";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import {
   MusicGuessDefinition,
   MusicGuessState,
 } from "@repo/ui/api/queries/minigames/musicGuess";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const SelectCategory = ({ gameId }: Props) => {
+const SelectCategory = () => {
+  const {
+    gameId,
+    miniGameDefinition: definition,
+    miniGameState: state,
+  } = useGame<MusicGuessState, MusicGuessDefinition>();
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
   const { data: score } = useGetScore(gameId);
-  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(
-    gameId,
-  );
-
   const categories =
-    data?.definition?.rounds.find(
-      (round) => round.id === data?.state?.currentRoundId,
-    )?.categories ?? [];
+    definition?.rounds.find((round) => round.id === state?.currentRoundId)
+      ?.categories ?? [];
 
   const onSelectHandle = async (categoryId: string) => {
     await sendInteraction({

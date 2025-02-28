@@ -3,13 +3,16 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import JoinRoom from "./JoinRoom";
+import { getDevice } from "../../api/requests/device";
 
 export type Room = {
   code: string;
   uniqueId: string;
+  gameId?: string;
 };
 
 type RoomContextProps = {
@@ -23,19 +26,37 @@ export const RoomProvider: React.FC<{
   isHost: boolean;
 }> = ({ children, isHost }) => {
   const [room, setRoom] = useState<Room>();
+  const [loading, setLoading] = useState(true);
 
   const onJoin = useCallback(
-    (roomCode: string, uniqueId: string) => {
-      setRoom({ code: roomCode, uniqueId });
+    (roomCode: string, uniqueId: string, gameId?:string) => {
+      setRoom({ code: roomCode, uniqueId, gameId });
       sessionStorage.setItem("roomCode", roomCode);
       sessionStorage.setItem(isHost ? "hostId" : "deviceId", uniqueId);
     },
     [isHost]
   );
 
+  useEffect(() => {
+    getDevice()
+      .then((device) => {
+        const uniqueId = isHost ? device?.hostId : device?.deviceId;
+        if (device != null && device.roomCode != null && uniqueId != null) {
+          onJoin(device.roomCode, uniqueId, device.gameId);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [isHost, onJoin]);
+
   return (
     <RoomContext.Provider value={{ room }}>
-      {room != null ? children : <JoinRoom isHost={isHost} onJoin={onJoin} />}
+      {loading ? (
+        "..."
+      ) : room != null ? (
+        children
+      ) : (
+        <JoinRoom isHost={isHost} onJoin={onJoin} />
+      )}
     </RoomContext.Provider>
   );
 };

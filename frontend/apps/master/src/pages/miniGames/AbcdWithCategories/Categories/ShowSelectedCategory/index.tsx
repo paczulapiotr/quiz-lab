@@ -1,12 +1,10 @@
 import Component from "./Component";
 import { useShowCategories } from "@repo/ui/hooks/minigames/AbcdWithCategories/useShowCategories";
 
-type Props = {
-  gameId: string;
-};
 
-const ShowSelectedCategory = ({ gameId }: Props) => {
-  const selections = useShowCategories(gameId);
+
+const ShowSelectedCategory = () => {
+  const selections = useShowCategories();
 
   return <Component selections={selections} />;
 };

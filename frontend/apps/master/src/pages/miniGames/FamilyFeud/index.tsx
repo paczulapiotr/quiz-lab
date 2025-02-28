@@ -1,52 +1,33 @@
-import { useParams } from "react-router";
-import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { SyncReceiveData } from "@repo/ui/services/types";
+import { PageTemplate } from "@repo/ui/components";
 import { FamilyFeudActions } from "@repo/ui/minigames/actions";
 import ShowQuestion from "./ShowQuestion";
 import AnswerQuestion from "./AnswerQuestion";
 import ShowAnswer from "./ShowAnswer";
 import RoundEnd from "./RoundEnd";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  basePath: string;
-};
-
-const FamilyFeud = ({ basePath }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return (
-    <PageTemplate squares>
-      <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
-        disableAnimation
-        basePath={basePath}
-        queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
-          switch (message.action) {
-            case FamilyFeudActions.QuestionShow:
-            case FamilyFeudActions.QuestionShown:
-              return "/question";
-            case FamilyFeudActions.AnswerStart:
-            case FamilyFeudActions.Answered:
-              return "/answer";
-            case FamilyFeudActions.AnswerShow:
-            case FamilyFeudActions.AnswerShown:
-              return "/answer_show";
-            case FamilyFeudActions.RoundEnd:
-            case FamilyFeudActions.RoundEnded:
-              return "/end";
-            default:
-              return "";
-          }
-        }}
-        routes={{
-          "/question": <ShowQuestion gameId={gameId} />,
-          "/answer": <AnswerQuestion gameId={gameId} />,
-          "/answer_show": <ShowAnswer gameId={gameId} />,
-          "/end": <RoundEnd gameId={gameId} />,
-        }}
-      />
-    </PageTemplate>
-  );
+const FamilyFeud = () => {
+  const { miniGameStatus } = useGame();
+  return <PageTemplate squares>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default FamilyFeud;
+
+const render = (miniGameStatus?: string) => {
+  switch (miniGameStatus) {
+    case FamilyFeudActions.QuestionShow:
+    case FamilyFeudActions.QuestionShown:
+      return <ShowQuestion />;
+    case FamilyFeudActions.AnswerStart:
+    case FamilyFeudActions.Answered:
+      return <AnswerQuestion />;
+    case FamilyFeudActions.AnswerShow:
+    case FamilyFeudActions.AnswerShown:
+      return <ShowAnswer />;
+    case FamilyFeudActions.RoundEnd:
+    case FamilyFeudActions.RoundEnded:
+      return <RoundEnd />;
+    default:
+      return null;
+  }
+};

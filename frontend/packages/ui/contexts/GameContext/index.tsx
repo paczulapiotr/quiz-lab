@@ -1,4 +1,10 @@
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { GameContextType } from "./types";
 import { GameStatus } from "../../services/types";
 import { useGetGame } from "../../api/queries/useGetGame";
@@ -7,9 +13,11 @@ import { useGetMiniGame } from "../../api/queries/useGetMiniGame";
 import { useRoom } from "../RoomContext";
 
 export const GameContext = createContext<GameContextType>({
+  gameId: undefined,
   you: undefined,
   players: [],
   gameStatus: undefined,
+  miniGameType: undefined,
   miniGameStatus: undefined,
   miniGameDefinition: undefined,
   miniGameState: undefined,
@@ -24,6 +32,7 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
   const miniGameState = miniGame?.state;
   const miniGameStatus = miniGame?.miniGameStatus;
   const miniGameDefinition = miniGame?.definition;
+  const miniGameType = miniGame?.miniGameType;
   const gameStatus = game?.gameStatus;
   const players = game?.players ?? [];
   const you = players.find((p) => p.deviceId === room?.uniqueId);
@@ -42,11 +51,19 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
 
   useLocalSyncConsumer("MiniGameNotification", () => refetchMiniGame(), false);
 
+  useEffect(() => {
+    if (room?.gameId) {
+      setGameId(room.gameId);
+    }
+  }, [room?.gameId]);
+
   return (
     <GameContext.Provider
       value={{
+        gameId,
         players,
         gameStatus,
+        miniGameType,
         miniGameDefinition,
         miniGameState,
         miniGameStatus,

@@ -3,16 +3,14 @@ import { PowerPlaysEnum, PowerPlaysNames } from "../types";
 import Component from "./Component";
 import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import { AbcdInteractions } from "@repo/ui/minigames/actions";
-import { usePlayers } from "@repo/ui/contexts/PlayersContext";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
 
-const SelectPowerPlay = ({ gameId }: Props) => {
+
+const SelectPowerPlay = () => {
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
+  const { players, you, gameId } = useGame();
   const { data: score } = useGetScore(gameId);
-  const { players, you } = usePlayers();
 
   const sendSelectPowerPlay = async (
     powerPlay: PowerPlaysEnum,

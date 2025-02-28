@@ -1,10 +1,8 @@
 import "./App.scss";
-import { Welcome } from "./pages/Welcome";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import GameRoutes from "./Routes";
-import { PlayersProvider } from "@repo/ui/contexts/PlayersContext";
-import { RoomProvider } from "@repo/ui/contexts/RoomContext";
+import { MainProvider } from "@repo/ui/contexts/MainProvider";
 
 function App() {
   const queryClient = new QueryClient({
@@ -20,16 +18,13 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PlayersProvider>
-        <RoomProvider isHost={true}>
-          <BrowserRouter basename="/master_ui">
-            <Routes>
-              <Route index element={<Welcome />} />
-              <Route path="*" element={<GameRoutes />} />
-            </Routes>
-          </BrowserRouter>
-        </RoomProvider>
-      </PlayersProvider>
+      <MainProvider isHost={true}>
+        <BrowserRouter basename="/master_ui">
+          <Routes>
+            <Route index element={<GameRoutes />} />
+          </Routes>
+        </BrowserRouter>
+      </MainProvider>
     </QueryClientProvider>
   );
 }

@@ -1,20 +1,16 @@
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import {
   MusicGuessState,
   MusicGuessDefinition,
 } from "@repo/ui/api/queries/minigames/musicGuess";
 import Component from "./Component";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
+const AnswerQuestion = () => {
+  const { miniGameState: state, miniGameDefinition: def } = useGame<
+    MusicGuessState,
+    MusicGuessDefinition
+  >();
 
-const AnswerQuestion = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(
-    gameId,
-  );
-  const def = data?.definition;
-  const state = data?.state;
   const question = def?.rounds
     .find((r) => r.id === state?.currentRoundId)
     ?.categories.find((c) => c.id === state?.currentCategoryId)

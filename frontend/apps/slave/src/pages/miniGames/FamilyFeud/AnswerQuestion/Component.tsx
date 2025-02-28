@@ -7,13 +7,12 @@ import { Keyboard } from "@/components/Keyboard";
 import Times from "@repo/ui/config/times";
 
 type Props = {
-  gameId?: string;
   onAnswer: (answer: string) => void;
 };
 
-const Component = ({ gameId, onAnswer }: Props) => {
+const Component = ({ onAnswer }: Props) => {
   const [answer, setAnswer] = useState("");
-  const { answers, question, youAreGuessing } = useBoardItems(gameId);
+  const { answers, question, youAreGuessing } = useBoardItems();
   const sendAnswer = () => onAnswer(answer);
 
   return (

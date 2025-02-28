@@ -2,8 +2,8 @@ import { fileUrl } from "@repo/ui/api/files";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import { AudioPlayer, HeaderTile, Timer } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 import { AbcdActions } from "@repo/ui/minigames/actions";
-import { useParams } from "react-router";
 
 type Props = {
   audioUrl?: string;
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Component = ({ question, audioUrl }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { mutate } = useUpdateMiniGame();
 
   const onTimeUp = () =>

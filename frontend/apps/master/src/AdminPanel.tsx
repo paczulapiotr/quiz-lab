@@ -1,11 +1,11 @@
 import { GameStatus, GameStatusNames } from "@repo/ui/services/types";
-import { useParams } from "react-router";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import { AbcdActions } from "@repo/ui/minigames/actions";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const AdminPanel = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   return (
     <div
       style={{

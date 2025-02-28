@@ -1,76 +1,64 @@
-// import { useParams } from "react-router";
-import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { SyncReceiveData } from "@repo/ui/services/types";
+import { PageTemplate } from "@repo/ui/components";
 import { LettersAndPhrasesActions } from "@repo/ui/minigames/actions";
 import Round from "./Round";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
-import { useParams } from "react-router";
 import Times from "@repo/ui/config/times";
 import { useCallback } from "react";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  basePath: string;
-};
-
-const LettersAndPhrases = ({ basePath }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
+const LettersAndPhrases = () => {
+  const { gameId, miniGameStatus } = useGame();
   const { mutate } = useUpdateMiniGame();
 
-  const onQuestionShown = () =>
-    mutate({
-      gameId: gameId!,
-      action: LettersAndPhrasesActions.QuestionShown,
-    });
+  const onQuestionShown = useCallback(
+    () =>
+      mutate({
+        gameId: gameId!,
+        action: LettersAndPhrasesActions.QuestionShown,
+      }),
+    [gameId, mutate],
+  );
 
-  const onSolved = () => {
+  const onSolved = useCallback(() => {
     mutate({
       gameId: gameId!,
       action: LettersAndPhrasesActions.PhraseSolvedPresented,
     });
-  };
+  }, [gameId, mutate]);
 
-  return (
-    <PageTemplate squares>
-      <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
-        disableAnimation
-        basePath={basePath}
-        queueName={"MiniGameNotification"}
-        createNavigationPath={useCallback((message) => {
-          switch (message.action) {
-            case LettersAndPhrasesActions.QuestionShow:
-              return "/question_show";
-            case LettersAndPhrasesActions.QuestionShown:
-              return "/question_shown";
-            case LettersAndPhrasesActions.AnswerStart:
-              return "/answer_start";
-            case LettersAndPhrasesActions.Answered:
-              return "/answered";
-            case LettersAndPhrasesActions.PhraseSolvedPresentation:
-              return "/phrase_solved_presentation";
-            case LettersAndPhrasesActions.PhraseSolvedPresented:
-              return "/phrase_solved_presented";
-            default:
-              return "";
-          }
-        },[])}
-        routes={{
-          "/question_show": (
+  const render = useCallback(
+    (miniGameStatus?: string) => {
+      switch (miniGameStatus) {
+        case LettersAndPhrasesActions.QuestionShow:
+          return (
             <Round
               onTimeUp={onQuestionShown}
               startSeconds={Times.Letters.ShowPhraseSeconds}
             />
-          ),
-          "/question_shown": <Round />,
-          "/answer_start": <Round startSeconds={Times.Letters.AnswerSeconds}/>,
-          "/answered": <Round />,
-          "/phrase_solved_presentation": (
-            <Round onTimeUp={onSolved} startSeconds={Times.Letters.ShowResolvedPhraseSeconds} />
-          ),
-          "/phrase_solved_presented": <Round />,
-        }}
-      />
-    </PageTemplate>
+          );
+        case LettersAndPhrasesActions.QuestionShown:
+          return <Round />;
+        case LettersAndPhrasesActions.AnswerStart:
+          return <Round startSeconds={Times.Letters.AnswerSeconds} />;
+        case LettersAndPhrasesActions.Answered:
+          return <Round />;
+        case LettersAndPhrasesActions.PhraseSolvedPresentation:
+          return (
+            <Round
+              onTimeUp={onSolved}
+              startSeconds={Times.Letters.ShowResolvedPhraseSeconds}
+            />
+          );
+        case LettersAndPhrasesActions.PhraseSolvedPresented:
+          return <Round />;
+        default:
+          return null;
+      }
+    },
+    [onQuestionShown, onSolved],
   );
+
+  return <PageTemplate squares>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default LettersAndPhrases;

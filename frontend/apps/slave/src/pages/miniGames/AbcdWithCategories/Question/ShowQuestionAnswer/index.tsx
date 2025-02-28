@@ -1,29 +1,27 @@
 import Component from "./Component";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { AbcdState, AbcdDefinition } from "@repo/ui/api/queries/minigames/abcd";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const ShowQuestionAnswer = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<AbcdState, AbcdDefinition>(gameId);
-  const answers = data?.state?.rounds.find(
-    (r) => r.roundId === data?.state?.currentRoundId,
+const ShowQuestionAnswer = () => {
+  const {
+    you,
+    miniGameState: state,
+    miniGameDefinition: definition,
+  } = useGame<AbcdState, AbcdDefinition>();
+  const answers = state?.rounds.find(
+    (r) => r.roundId === state?.currentRoundId,
   )?.answers;
-  const selected = answers?.find((x) => x.playerId === data?.playerId);
+  const selected = answers?.find((x) => x.playerId === you?.id);
   const answerDefs =
-    data?.definition?.rounds
-      .find((x) => x.id === data.state?.currentRoundId)
-      ?.categories.find((x) => x.id === data.state?.currentCategoryId)
-      ?.questions.find((x) => x.id === data.state?.currentQuestionId)
-      ?.answers ?? [];
+    definition?.rounds
+      .find((x) => x.id === state?.currentRoundId)
+      ?.categories.find((x) => x.id === state?.currentCategoryId)
+      ?.questions.find((x) => x.id === state?.currentQuestionId)?.answers ?? [];
 
   const totalScore =
-    data?.state?.rounds.reduce(
+    state?.rounds.reduce(
       (acc, round) =>
-        acc +
-        (round.answers.find((a) => a.playerId === data?.playerId)?.points ?? 0),
+        acc + (round.answers.find((a) => a.playerId === you?.id)?.points ?? 0),
       0,
     ) ?? 0;
 

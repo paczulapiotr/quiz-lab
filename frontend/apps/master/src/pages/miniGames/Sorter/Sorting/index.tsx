@@ -3,15 +3,16 @@ import Component from "./Component";
 import { SorterActions } from "@repo/ui/minigames/actions";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 type Props = {
-  gameId?: string;
   started?: boolean;
 };
 
-const Sorting = ({ gameId, started }: Props) => {
+const Sorting = ({ started }: Props) => {
   const { mutate } = useUpdateMiniGame();
-
+  const { gameId } = useGame();
+  
   useEffect(() => {
     if (!started) {
       setTimeout(

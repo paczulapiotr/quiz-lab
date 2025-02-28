@@ -69,8 +69,10 @@ export class QueueSyncService {
       })
       .build();
 
+    console.time("queue");
     this.messageQueues.forEach((queue) => {
       this.hubConnection?.on(queue, (dto) => {
+        console.timeLog("queue", queue, dto);
         this.messagesQueue[queue].push(dto);
         if (this.messageReceivedIntervals[queue] != null) {
           clearInterval(this.messageReceivedIntervals[queue]);
@@ -133,7 +135,7 @@ export class QueueSyncService {
 
     this.messageReceivedIntervals[definitionName] = setTimeout(() => {
       this.onMessageReceived(definitionName);
-    }, 150);
+    }, 2500);
   };
 
   sendSync = async <T extends SyncSendDefinitionNames>(

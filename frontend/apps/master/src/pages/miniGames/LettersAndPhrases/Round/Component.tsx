@@ -10,7 +10,6 @@ type Props = {
   incorrectLetters: string[];
   onTimeUp?: () => void;
   playerAnswering?: string;
-  timerKey?: React.Key;
 };
 
 const Round = ({
@@ -20,7 +19,6 @@ const Round = ({
   startSeconds,
   incorrectLetters,
   playerAnswering,
-  timerKey,
 }: Props) => {
   return (
     <>
@@ -32,7 +30,7 @@ const Round = ({
       </div>
       <IncorrectLetters letters={incorrectLetters} />
       {startSeconds ? (
-        <Timer startSeconds={startSeconds} onTimeUp={onTimeUp} key={timerKey} />
+        <Timer startSeconds={startSeconds} onTimeUp={onTimeUp} key={usedLetters.join()} />
       ) : null}
     </>
   );

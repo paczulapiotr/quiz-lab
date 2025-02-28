@@ -1,31 +1,25 @@
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import styles from "./Component.module.scss";
 import {
   SorterDefinition,
   SorterState,
 } from "@repo/ui/api/queries/minigames/sorter";
 import { useMemo } from "react";
-import { usePlayers } from "@repo/ui/contexts/PlayersContext";
 import { Tile } from "@repo/ui/components";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId?: string;
-};
-
-const Component = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<SorterState, SorterDefinition>(gameId);
-  const { players } = usePlayers();
+const Component = () => {
+  const { miniGameState: state, miniGameDefinition: definition, players } = useGame<SorterState, SorterDefinition>();
   const playerScores = useMemo(() => {
-    const roundDef = data?.definition?.rounds.find(
-      (x) => x.id == data.state?.currentRoundId,
+    const roundDef = definition?.rounds.find(
+      (x) => x.id == state?.currentRoundId,
     );
 
     const t =
       (roundDef?.leftCategory.items.length ?? 0) +
       (roundDef?.rightCategory.items.length ?? 0);
 
-    const round = data?.state?.rounds.find(
-      (x) => x.roundId == data?.state?.currentRoundId,
+    const round = state?.rounds.find(
+      (x) => x.roundId == state?.currentRoundId,
     );
 
     return players.map((p) => ({
@@ -36,9 +30,9 @@ const Component = ({ gameId }: Props) => {
         round?.answers.find((x) => x.playerId === p.id)?.correctAnswers ?? 0,
     }));
   }, [
-    data?.definition?.rounds,
-    data?.state?.currentRoundId,
-    data?.state?.rounds,
+    definition?.rounds,
+    state?.currentRoundId,
+    state?.rounds,
     players,
   ]);
 

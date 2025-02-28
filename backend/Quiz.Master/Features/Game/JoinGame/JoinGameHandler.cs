@@ -46,14 +46,24 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
             CreatedAt = DateTime.UtcNow,
         });
 
+        var isStarting = game.Players.Count == game.GameSize;
+
+        if (isStarting)
+        {
+            game.Status = Core.Models.GameStatus.GameStarting;
+        }
+
         await storage.UpdateGameAsync(game, cancellationToken);
 
         var gameId = request.GameId.ToString();
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
 
-        if (game.Players.Count == game.GameSize)
+        if (isStarting)
         {
             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarting), cancellationToken: cancellationToken);
+        }
+        else
+        {
+            await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
         }
 
         return new JoinGameResult(true);

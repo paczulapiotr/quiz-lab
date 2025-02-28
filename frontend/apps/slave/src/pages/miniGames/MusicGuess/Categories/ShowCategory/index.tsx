@@ -4,30 +4,26 @@ import {
 } from "@repo/ui/api/queries/minigames/musicGuess";
 import Component from "./Component";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
-import { usePlayers } from "@repo/ui/contexts/PlayersContext";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const ShowCategory = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(
+const ShowCategory = () => {
+  const {
+    players,
     gameId,
-  );
-
+    miniGameState: state,
+    miniGameDefinition: definition,
+  } = useGame<MusicGuessState, MusicGuessDefinition>();
   const { data: score } = useGetScore(gameId);
-  const { players } = usePlayers();
 
-  const selectedCategories = data?.state?.rounds.find(
-    (r) => r.roundId === data?.state?.currentRoundId,
+  const selectedCategories = state?.rounds.find(
+    (r) => r.roundId === state?.currentRoundId,
   )?.selectedCategories;
-  const categories = data?.definition?.rounds.find(
-    (r) => r.id === data?.state?.currentRoundId,
+  const categories = definition?.rounds.find(
+    (r) => r.id === state?.currentRoundId,
   )?.categories;
   const selections =
     categories?.map((c) => ({
-      isSelected: c.id === data?.state?.currentCategoryId,
+      isSelected: c.id === state?.currentCategoryId,
       text: c.name,
       id: c.id,
       players:

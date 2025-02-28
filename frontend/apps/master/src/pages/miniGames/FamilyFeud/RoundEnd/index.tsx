@@ -5,13 +5,11 @@ import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
 import { FamilyFeudActions } from "@repo/ui/minigames/actions";
 import { useEffect } from "react";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId?: string;
-};
-
-const RoundEnd = ({ gameId }: Props) => {
-  const { answers, question } = useBoardItems(gameId);
+const RoundEnd = () => {
+  const { gameId } = useGame();
+  const { answers, question } = useBoardItems();
   const { mutate } = useUpdateMiniGame();
   const showAnswers = answers.map((x) => ({ ...x, show: true }));
 
