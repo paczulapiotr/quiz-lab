@@ -21,7 +21,7 @@ const Summary = ({ finished }: Props) => {
             gameId: gameId!,
             action: SorterActions.RoundSummary,
           }),
-        Times.Sorter.RoundStartWaitSeconds,
+        Times.Sorter.RoundStartWaitSeconds * 1000,
       );
     }
   }, [mutate, finished, gameId]);

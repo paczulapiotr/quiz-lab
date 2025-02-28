@@ -1,5 +1,4 @@
 import Component from "./Component";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import {
   SorterState,
   SorterDefinition,
@@ -9,19 +8,19 @@ import shuffle from "lodash/shuffle";
 import { useMemo } from "react";
 import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import { SorterInteractions } from "@repo/ui/minigames/actions";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 type Props = {
   started?: boolean;
-  gameId?: string;
 };
 
-const Sorting = ({ started, gameId }: Props) => {
-  const { data } = useGetMiniGame<SorterState, SorterDefinition>(gameId);
+const Sorting = ({ started}: Props) => {
+  const { gameId, miniGameState: state, miniGameDefinition: definition } = useGame<SorterState, SorterDefinition>();
   const { mutateAsync } = useSendPlayerInteraction();
 
   const { items, left, right, leftId, rightId } = useMemo(() => {
-    const roundDef = data?.definition?.rounds.find(
-      (x) => x.id == data?.state?.currentRoundId,
+    const roundDef = definition?.rounds.find(
+      (x) => x.id == state?.currentRoundId,
     );
     const leftItems =
       roundDef?.leftCategory.items.map<Item>((x) => ({
@@ -47,7 +46,7 @@ const Sorting = ({ started, gameId }: Props) => {
       rightId: roundDef?.rightCategory.id,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.state?.currentRoundId, gameId]);
+  }, [state?.currentRoundId, gameId]);
 
   const sortItem = (item: Item, categoryId: string) => {
     mutateAsync({

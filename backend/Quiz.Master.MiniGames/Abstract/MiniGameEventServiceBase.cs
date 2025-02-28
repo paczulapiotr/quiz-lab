@@ -41,7 +41,7 @@ public abstract class MiniGameEventServiceBase
 
     protected async Task<string> WaitFor(string gameId, string miniGameId, string action, CancellationToken cancellationToken)
     {
-        await _miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == action, cancellationToken: cancellationToken);
+        await _miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == action && x.GameId == gameId, cancellationToken: cancellationToken);
         if (Guid.TryParse(miniGameId, out var id))
         {
             await _miniGameRepository.UpdateMiniGameStatusAsync(id, action, cancellationToken);

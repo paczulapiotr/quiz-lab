@@ -11,7 +11,6 @@ export type Props = {
   items: Item[];
 };
 
-// We'll use a string state: "green" | "red" | null
 const Component = ({ items, leftAnswer, rightAnswer, onLeftAnswer, onRightAnswer }: Props) => {
   const [highlightedLeft, setHighlightedLeft] = useState<
     "green" | "red" | null
