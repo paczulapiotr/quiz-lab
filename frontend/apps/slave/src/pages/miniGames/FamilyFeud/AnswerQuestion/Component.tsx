@@ -38,7 +38,9 @@ const Component = ({ onAnswer }: Props) => {
           </div>
           <Keyboard value={answer} onChange={(v) => setAnswer(v)} />
         </>
-      ) : null}
+      ) : (
+        <div style={{ flex: 1 }} />
+      )}
       <Timer startSeconds={Times.FamilyFeud.AnswerSeconds} />
     </div>
   );

@@ -2,6 +2,7 @@ using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Messages.Game;
 using Quiz.Master.Core.Models;
+using Quiz.Master.MiniGames.Abstract;
 using Quiz.Master.MiniGames.Handlers.FamilyFeud;
 using Quiz.Master.Persistance.Repositories.Abstract;
 
@@ -24,19 +25,27 @@ internal static class Interactions
     public static string Answer = "FamilyFeud.Answer";
 }
 
-internal class MiniGameEventService(
-    ILogger<MiniGameEventService> logger,
+internal class MiniGameEventService: MiniGameEventServiceBase, IMiniGameEventService
+{
+    public MiniGameEventService(ILogger<MiniGameEventService> logger,
     IOneTimeConsumer<PlayerInteraction> playerInteraction,
     IOneTimeConsumer<MiniGameUpdate> miniGameUpdate,
+    IMiniGameRepository miniGameRepository,
     IGameRepository repository,
-    IPublisher publisher
-) : IMiniGameEventService
-{
+    IPublisher publisher) : base(publisher, miniGameUpdate, miniGameRepository)
+    {
+        this.logger = logger;
+        this.playerInteraction = playerInteraction;
+        this.repository = repository;
+    }
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+    private readonly ILogger<MiniGameEventService> logger;
+    private readonly IOneTimeConsumer<PlayerInteraction> playerInteraction;
+    private readonly IGameRepository repository;
     private bool _isSetup = false;
-    private static string Type => MiniGameType.MusicGuess.ToString();
+    protected override string Type => MiniGameType.MusicGuess.ToString();
 
-    public async Task Initialize(string gameId, CancellationToken cancellationToken = default)
+    public override async Task Initialize(string gameId, CancellationToken cancellationToken = default)
     {
         if (_isSetup) return;
 
@@ -44,7 +53,7 @@ internal class MiniGameEventService(
         {
             await _semaphore.WaitAsync(cancellationToken);
             await playerInteraction.RegisterAsync(gameId, cancellationToken);
-            await miniGameUpdate.RegisterAsync(gameId, cancellationToken);
+            await base.Initialize(gameId, cancellationToken);
             _isSetup = true;
         }
         catch (Exception e)
@@ -58,49 +67,29 @@ internal class MiniGameEventService(
         }
     }
 
-    public async Task SendOnAnswerShow(string gameId, CancellationToken cancellationToken = default)
-    {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.AnswerShow), gameId, cancellationToken);
-    }
+    public Task SendOnAnswerShow(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => Send(gameId, miniGameId, Actions.AnswerShow, cancellationToken);
 
-    public async Task SendOnAnswerStart(string gameId, CancellationToken cancellationToken = default)
-    {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.AnswerStart), gameId, cancellationToken);
-    }
+    public  Task SendOnAnswerStart(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => Send(gameId, miniGameId, Actions.AnswerStart, cancellationToken);
 
-    public async Task SendOnQuestionShow(string gameId, CancellationToken cancellationToken = default)
-    {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.QuestionShow), gameId, cancellationToken);
-    }
+    public Task SendOnQuestionShow(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => Send(gameId, miniGameId, Actions.QuestionShow, cancellationToken);
 
-    public async Task SendOnRoundEnd(string gameId, CancellationToken cancellationToken = default)
-    {
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Action: Actions.RoundEnd), gameId, cancellationToken);
-    }
+    public Task SendOnRoundEnd(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => Send(gameId, miniGameId, Actions.RoundEnd, cancellationToken);
 
-    public async Task WaitForAnswerShown(string gameId, CancellationToken cancellationToken = default)
-    {
-        await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == Actions.AnswerShown, cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Actions.AnswerShown), gameId, cancellationToken);
-    }
+    public Task WaitForAnswerShown(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => WaitFor(gameId, miniGameId, Actions.AnswerShown, cancellationToken);
 
-    public async Task WaitOnAsnwered(string gameId, CancellationToken cancellationToken = default)
-    {
-        await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == Actions.Answered, cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Actions.Answered), gameId, cancellationToken);
-    }
+    public Task WaitOnAsnwered(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => WaitFor(gameId, miniGameId, Actions.Answered, cancellationToken);
 
-    public async Task WaitForQuestionShown(string gameId, CancellationToken cancellationToken = default)
-    {
-        await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == Actions.QuestionShown, cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Actions.QuestionShown), gameId, cancellationToken);
-    }
+    public Task WaitForQuestionShown(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => WaitFor(gameId, miniGameId, Actions.QuestionShown, cancellationToken);
 
-    public async Task WaitForRoundEnded(string gameId, CancellationToken cancellationToken = default)
-    {
-        await miniGameUpdate.ConsumeFirstAsync(condition: x => x.Action == Actions.RoundEnded, cancellationToken: cancellationToken);
-        await publisher.PublishAsync(new MiniGameNotification(gameId, Type, Actions.RoundEnded), gameId, cancellationToken);
-    }
+    public Task WaitForRoundEnded(string gameId, string miniGameId, CancellationToken cancellationToken = default)
+        => WaitFor(gameId, miniGameId, Actions.RoundEnded, cancellationToken);
 
     public async Task<IMiniGameEventService.AnswerSelection?> GetAnswer(string gameId, CancellationToken cancellationToken = default)
     {

@@ -4,7 +4,6 @@ using State = Quiz.Master.MiniGames.Models.FamilyFeud.FamilyFeudState;
 using Definition = Quiz.Master.MiniGames.Models.FamilyFeud.FamilyFeudDefinition;
 using Configuration = Quiz.Master.MiniGames.Models.FamilyFeud.Configuration;
 using Quiz.Master.MiniGames.Handlers.FamilyFeud.Logic;
-using FuzzySharp;
 
 namespace Quiz.Master.MiniGames.Handlers.FamilyFeud;
 
@@ -49,8 +48,8 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
         _state.CurrentRoundId = round.Id;
         await _onStateUpdate(_state, cancellationToken);
 
-        await eventService.SendOnQuestionShow(gameId, cancellationToken);
-        await eventService.WaitForQuestionShown(gameId, cancellationToken);
+        await eventService.SendOnQuestionShow(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForQuestionShown(gameId, _miniGame.IdString, cancellationToken);
 
         while (roundState!.Answers.Count < round.Answers.Count())
         {
@@ -58,7 +57,7 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
             _state.CurrentGuessingPlayerId = currentPlayerId;
             await _onStateUpdate(_state, cancellationToken);
 
-            await eventService.SendOnAnswerStart(gameId, cancellationToken);
+            await eventService.SendOnAnswerStart(gameId, _miniGame.IdString, cancellationToken);
 
             var answer = await new Selector(eventService)
                 .Select(
@@ -82,12 +81,12 @@ public class FamilyFeudHandler(IMiniGameEventService eventService, IMiniGameRepo
 
             await _onStateUpdate(_state, cancellationToken);
             await _onPlayerScoreUpdate(currentPlayerId, ans?.Points ?? 0, cancellationToken);
-            await eventService.SendOnAnswerShow(gameId, cancellationToken);
-            await eventService.WaitForAnswerShown(gameId, cancellationToken);
+            await eventService.SendOnAnswerShow(gameId, _miniGame.IdString, cancellationToken);
+            await eventService.WaitForAnswerShown(gameId, _miniGame.IdString, cancellationToken);
         }
 
-        await eventService.SendOnRoundEnd(gameId, cancellationToken);
-        await eventService.WaitForRoundEnded(gameId, cancellationToken);
+        await eventService.SendOnRoundEnd(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForRoundEnded(gameId, _miniGame.IdString, cancellationToken);
         return playerRoundCounter;
     }
 }
