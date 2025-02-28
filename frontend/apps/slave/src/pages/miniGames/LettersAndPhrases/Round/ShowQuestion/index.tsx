@@ -1,10 +1,10 @@
 import Component from "./Component";
 import { useLetters } from "@repo/ui/hooks/miniGames/LettersAndPhrases/useLetters";
-import { useParams } from "react-router";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const ShowQuestion = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { data: score } = useGetScore(gameId);
   const { phrase } = useLetters();
 

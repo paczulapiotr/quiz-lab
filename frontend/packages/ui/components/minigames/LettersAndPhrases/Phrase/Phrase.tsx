@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import styles from "./Phrase.module.scss";
+import { memo } from "react";
 
 type Props = {
   usedLetters?: string[];
@@ -32,4 +33,4 @@ const Phrase = ({ usedLetters, phrase, className, solved }: Props) => {
   );
 };
 
-export default Phrase;
+export default memo(Phrase);

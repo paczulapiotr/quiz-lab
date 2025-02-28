@@ -12,7 +12,7 @@ const Component = ({ question, score }: Props) => {
     <>
       <ScoreTile score={score} />
       <Tile blue text={question} />
-      <div style={{ flex:1 }} />
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.QuestionShowSeconds} />
     </>
   );

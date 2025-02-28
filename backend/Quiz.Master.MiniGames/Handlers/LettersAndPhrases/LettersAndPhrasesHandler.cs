@@ -49,8 +49,8 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
         var roundState = _state.Rounds.Find(x => x.RoundId == _state.CurrentRoundId);
         var playerIds = _miniGame.PlayerIds.Select(x => x).ToArray();
 
-        await eventService.SendOnQuestionShow(gameId, cancellationToken);
-        await eventService.WaitForQuestionShown(gameId, cancellationToken);
+        await eventService.SendOnQuestionShow(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForQuestionShown(gameId, _miniGame.IdString, cancellationToken);
 
  
         while (GetAvailableLetters(round, roundState).Count() > 0)
@@ -58,7 +58,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
             var playerId = playerIds[playerRoundCounter % playerIds.Length];
             _state.CurrentGuessingPlayerId = playerId;
             await _onStateUpdate(_state, cancellationToken);
-            await eventService.SendOnAnswerStart(gameId, cancellationToken);
+            await eventService.SendOnAnswerStart(gameId, _miniGame.IdString, cancellationToken);
 
             var letter = await SelectLetter(gameId, playerId, cancellationToken);
 
@@ -82,7 +82,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
 
             await _onStateUpdate(_state, cancellationToken);
             await _onPlayerScoreUpdate(playerId, points, cancellationToken);
-            await eventService.SendOnAnswered(gameId, cancellationToken);
+            await eventService.SendOnAnswered(gameId, _miniGame.IdString, cancellationToken);
 
             if (!isCorrect)
             {
@@ -90,8 +90,8 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
             }
         }
 
-        await eventService.SendOnPhraseSolvedPresentation(gameId, cancellationToken);
-        await eventService.WaitForPhraseSolvedPresented(gameId, cancellationToken);
+        await eventService.SendOnPhraseSolvedPresentation(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForPhraseSolvedPresented(gameId, _miniGame.IdString, cancellationToken);
 
         return playerRoundCounter;
     }

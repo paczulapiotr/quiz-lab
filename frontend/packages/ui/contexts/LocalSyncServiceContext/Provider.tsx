@@ -23,9 +23,7 @@ const LISTEN_TO_MESSAGES: SyncReceiveDefinitionNames[] = [
   "MiniGameNotification",
 ];
 
-export const LocalSyncServiceProvider = ({
-  children,
-}: PropsWithChildren) => {
+export const LocalSyncServiceProvider = ({ children }: PropsWithChildren) => {
   const { room } = useRoom();
   const callbackDict = useRef<
     Record<SyncReceiveDefinitionNames, Record<string, QueueSyncCallback>>

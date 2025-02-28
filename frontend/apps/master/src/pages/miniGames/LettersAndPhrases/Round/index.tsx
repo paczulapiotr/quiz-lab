@@ -6,7 +6,6 @@ import {
 } from "@repo/ui/api/queries/minigames/letters";
 import { useGame } from "@repo/ui/contexts/GameContext";
 
-
 type Props = {
   startSeconds?: number;
   onTimeUp?: () => void;
@@ -18,6 +17,9 @@ const Round = ({ onTimeUp, startSeconds }: Props) => {
     LettersDefinition
   >();
   const { incorrectLetters, usedLetters, phrase } = useLetters();
+  const answerCount =
+    state?.rounds.find((x) => x.roundId === state.currentRoundId)?.answers
+      .length ?? 0;
 
   return (
     <Component
@@ -29,6 +31,7 @@ const Round = ({ onTimeUp, startSeconds }: Props) => {
       playerAnswering={
         players.find((x) => x.id === state?.currentGuessingPlayerId)?.name
       }
+      timerKey={answerCount}
     />
   );
 };
