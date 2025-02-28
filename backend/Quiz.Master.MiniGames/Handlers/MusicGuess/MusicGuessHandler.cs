@@ -38,26 +38,26 @@ public class MusicGuessHandler(IMiniGameEventService eventService, IMiniGameRepo
         _state.CurrentRoundId = round.Id;
         await _onStateUpdate(_state, cancellationToken);
 
-        await eventService.SendOnCategorySelection(gameId, cancellationToken);
+        await eventService.SendOnCategorySelection(gameId, _miniGame.IdString, cancellationToken);
 
         // Choose most voted category or random iftied
         var category = await SelectCategory(round, cancellationToken);
 
-        await eventService.SendOnCategorySelected(gameId, cancellationToken);
+        await eventService.SendOnCategorySelected(gameId, _miniGame.IdString, cancellationToken);
 
-        await eventService.WaitForCategoryPresented(gameId, cancellationToken);
+        await eventService.WaitForCategoryPresented(gameId, _miniGame.IdString, cancellationToken);
 
         foreach (var question in category.Questions)
         {
             await SetCurrentQuestion(round, question, cancellationToken);
 
-            await eventService.SendOnQuestionSelection(gameId, cancellationToken);
+            await eventService.SendOnQuestionSelection(gameId, _miniGame.IdString, cancellationToken);
 
             await AnswerQuestion(question, cancellationToken);
 
-            await eventService.SendOnQuestionAnswersPresentation(gameId, cancellationToken);
+            await eventService.SendOnQuestionAnswersPresentation(gameId, _miniGame.IdString, cancellationToken);
 
-            await eventService.WaitForQuestionAnswersPresented(gameId, cancellationToken);
+            await eventService.WaitForQuestionAnswersPresented(gameId, _miniGame.IdString, cancellationToken);
         }
     }
 
