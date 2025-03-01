@@ -1,4 +1,3 @@
-import AdminPanel from "@/AdminPanel";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import styles from "./GameEnding.module.scss";
 import { HeaderTile, Tile } from "@repo/ui/components";
@@ -48,7 +47,6 @@ const GameEnding = ({ ended }: Props) => {
             />
           ))}
       </div>
-      <AdminPanel />
     </>
   );
 };

@@ -1,4 +1,3 @@
-import AdminPanel from "@/AdminPanel";
 import { useGetScore } from "@repo/ui/api/queries/useGetScore";
 import styles from "./MiniGameEnding.module.scss";
 import { useEffect } from "react";
@@ -37,7 +36,6 @@ const MiniGameEnding = () => {
           />
         ))}
       </div>
-      <AdminPanel />
     </PageTemplate>
   );
 };

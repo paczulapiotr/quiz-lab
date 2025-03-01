@@ -22,7 +22,7 @@ const Component = () => {
     return () => clearTimeout(timeout);
   }, [gameId, mutate]);
 
-  return <TutorialVideo title="Prezentacja zagrywek..." />;
+  return <TutorialVideo />;
 };
 
 export default Component;

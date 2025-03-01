@@ -12,7 +12,7 @@ type Props = {
 const Sorting = ({ started }: Props) => {
   const { mutate } = useUpdateMiniGame();
   const { gameId } = useGame();
-  
+
   useEffect(() => {
     if (!started) {
       setTimeout(
@@ -26,7 +26,7 @@ const Sorting = ({ started }: Props) => {
     }
   }, [gameId, mutate, started]);
 
-  return <Component gameId={gameId} started={started} />;
+  return <Component />;
 };
 
 export default Sorting;

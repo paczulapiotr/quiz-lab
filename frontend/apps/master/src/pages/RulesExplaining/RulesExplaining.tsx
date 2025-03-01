@@ -24,7 +24,7 @@ const RulesExplaining = () => {
 
   return (
     <PageTemplate>
-      <TutorialVideo title="Zasady gry..." />;
+      <TutorialVideo />;
     </PageTemplate>
   );
 };

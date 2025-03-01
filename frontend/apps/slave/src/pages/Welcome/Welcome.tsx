@@ -1,12 +1,7 @@
-import WelcomeLogo from "@/assets/images/welcome-logo.png";
-import styles from "./Welcome.module.scss";
+import { BackgroundLogo } from "@repo/ui/components/BackgroundLogo";
 
 const Welcome = () => {
-  return (
-    <div className={styles.container}>
-      <img src={WelcomeLogo} alt="welcome image" />
-    </div>
-  );
+  return <BackgroundLogo />;
 };
 
 export default Welcome;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getDevice, registerDevice } from "../../api/requests/device";
 import styles from "./JoinRoom.module.scss";
+import { BackgroundLogo } from "../../components/BackgroundLogo";
 
 type Props = {
   onJoin: (roomCode: string, uniqueId: string) => void;
@@ -32,16 +33,21 @@ const JoinRoom = ({ onJoin, isHost }: Props) => {
   };
 
   return (
-    <section className={styles.join}>
-      {loading ? (
-        <h1 className={styles.loading}>{"Loading"}</h1>
-      ) : (
-        <div className={styles.control}>
-          <input value={code} onChange={(e) => setCode(e.target.value)} />
-          <button onClick={handleJoin}>{"Join Room"}</button>
-        </div>
-      )}
-    </section>
+    <>
+      <BackgroundLogo />
+      <section className={styles.join}>
+        {loading ? (
+          <h1 className={styles.loading}>{"Loading"}</h1>
+        ) : (
+          <div className={styles.control}>
+            <input value={code} onChange={(e) => setCode(e.target.value)} />
+            <button onClick={handleJoin}>
+              {isHost ? "Create Room" : "Join Room"}
+            </button>
+          </div>
+        )}
+      </section>
+    </>
   );
 };
 

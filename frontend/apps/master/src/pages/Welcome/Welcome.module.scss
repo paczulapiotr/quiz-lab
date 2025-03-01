@@ -7,6 +7,13 @@
     display: block;
     animation: zoomInOut 10s infinite ease-in-out;
   }
+
+  .create {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 @keyframes zoomInOut {

@@ -25,7 +25,7 @@ const MiniGameStarting = () => {
 
   return (
     <PageTemplate>
-      <TutorialVideo title="Zasady rundy..." />
+      <TutorialVideo />
     </PageTemplate>
   );
 };

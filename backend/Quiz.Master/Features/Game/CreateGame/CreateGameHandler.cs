@@ -39,6 +39,11 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
             return NoResult.Instance;
         }
 
+        if (room.PlayerDeviceIds.Count < request.GameSize)
+        {
+            return NoResult.Instance;
+        }
+
         var game = new Core.Models.Game
         {
             RoomCode = request.RoomCode,
