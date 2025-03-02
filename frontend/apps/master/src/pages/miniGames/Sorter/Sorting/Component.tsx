@@ -1,15 +1,22 @@
+import {
+  SorterState,
+  SorterDefinition,
+} from "@repo/ui/api/queries/minigames/sorter";
+import { Tile } from "@repo/ui/components";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-import styles from './Component.module.scss'
+const Component = () => {
+  const { miniGameDefinition: definition, miniGameState: state } = useGame<
+    SorterState,
+    SorterDefinition
+  >();
+  const roundDef = definition?.rounds.find(
+    (x) => x.id == state?.currentRoundId,
+  );
+  const left = roundDef?.leftCategory.name;
+  const right = roundDef?.rightCategory.name;
 
-type Props = {
-  gameId?: string;
-  started?: boolean;
+  return <Tile blue text={`Posortuj, ${left} czy ${right}?`} />;
 };
 
-const Component = ({gameId}: Props) => {
-  return (
-      <div className={styles.page}>{gameId}</div>
-  )
-}
-
-export default Component
+export default Component;

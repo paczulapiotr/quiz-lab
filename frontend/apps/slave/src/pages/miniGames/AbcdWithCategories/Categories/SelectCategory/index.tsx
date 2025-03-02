@@ -5,22 +5,20 @@ import {
   MusicGuessDefinition,
   MusicGuessState,
 } from "@repo/ui/api/queries/minigames/musicGuess";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import Component from "./Component";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const SelectCategory = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(
+const SelectCategory = () => {
+  const {
     gameId,
-  );
+    miniGameState: state,
+    miniGameDefinition: definition,
+  } = useGame<MusicGuessState, MusicGuessDefinition>();
   const { mutateAsync: sendInteraction } = useSendPlayerInteraction();
   const { data: score } = useGetScore(gameId);
   const categories =
-    data?.definition?.rounds
-      .find((x) => x.id === data.state?.currentRoundId)
+    definition?.rounds
+      .find((x) => x.id === state?.currentRoundId)
       ?.categories.map((x) => ({ text: x.name, id: x.id })) ?? [];
 
   const onSelectHandle = async (categoryId: string) => {

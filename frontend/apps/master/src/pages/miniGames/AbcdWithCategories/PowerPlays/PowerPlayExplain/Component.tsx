@@ -3,10 +3,10 @@ import TutorialVideo from "@/pages/temp/TutorialVideo";
 import Times from "@repo/ui/config/times";
 import { AbcdActions } from "@repo/ui/minigames/actions";
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const Component = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { mutate } = useUpdateMiniGame();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Component = () => {
     return () => clearTimeout(timeout);
   }, [gameId, mutate]);
 
-  return <TutorialVideo title="Prezentacja zagrywek..." />;
+  return <TutorialVideo />;
 };
 
 export default Component;

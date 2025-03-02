@@ -35,7 +35,8 @@
         "shared.mini-game-def-abcd",
         "shared.min-def-music",
         "shared.min-def-letters",
-        "shared.min-def-sorter"
+        "shared.min-def-sorter",
+        "shared.min-def-family-feud"
       ],
       "required": true,
       "min": 1

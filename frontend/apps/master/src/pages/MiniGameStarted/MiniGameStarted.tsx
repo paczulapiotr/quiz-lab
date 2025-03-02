@@ -1,35 +1,30 @@
 import { PageTemplate } from "@repo/ui/components";
 import AbcdWithCategories from "../miniGames/AbcdWithCategories";
 import MusicGuess from "../miniGames/MusicGuess";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
-import { useParams } from "react-router";
 import LettersAndPhrases from "../miniGames/LettersAndPhrases";
 import Sorter from "../miniGames/Sorter";
+import FamilyFeud from "../miniGames/FamilyFeud";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  basePath: string;
-};
-
-const MiniGameStarted = ({ basePath }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
-  const { data } = useGetMiniGame(gameId);
+const MiniGameStarted = () => {
+  const { miniGameType } = useGame();
 
   const renderMiniGame = () => {
-    switch (data?.miniGameType) {
+    switch (miniGameType) {
       case MiniGameType.AbcdWithCategories:
-        return <AbcdWithCategories basePath={basePath} />;
+        return <AbcdWithCategories/>;
       case MiniGameType.MusicGuess:
-        return <MusicGuess basePath={basePath} />;
+        return <MusicGuess/>;
       case MiniGameType.LettersAndPhrases:
-        return <LettersAndPhrases basePath={basePath} />;
+        return <LettersAndPhrases/>;
       case MiniGameType.Sorter:
-        return <Sorter basePath={basePath} />;
+        return <Sorter/>;
+      case MiniGameType.FamilyFeud:
+        return <FamilyFeud/>;
       default:
         return (
-          <PageTemplate>
-            Unknown mini game type: {data?.miniGameType}
-          </PageTemplate>
+          <PageTemplate>Unknown mini game type: {miniGameType}</PageTemplate>
         );
     }
   };

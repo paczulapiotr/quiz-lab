@@ -43,15 +43,15 @@ public class SorterHandler(IMiniGameEventService eventService, IMiniGameReposito
         var playerIds = _miniGame.PlayerIds.Select(x => x.ToString()).ToArray();
 
         // Start round
-        await eventService.SendOnRoundStart(gameId, cancellationToken);
-        await eventService.WaitForRoundStarted(gameId, cancellationToken);
+        await eventService.SendOnRoundStart(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForRoundStarted(gameId, _miniGame.IdString, cancellationToken);
 
         // Start sorting
         await ProcessSortSelections(gameId, round, cancellationToken);
 
         // End round
-        await eventService.SendOnRoundEnd(gameId, cancellationToken);
-        await eventService.WaitForRoundSummary(gameId, cancellationToken);
+        await eventService.SendOnRoundEnd(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForRoundSummary(gameId, _miniGame.IdString, cancellationToken);
     }
 
     private async Task ProcessSortSelections(string gameId, Definition.Round round, CancellationToken cancellationToken)

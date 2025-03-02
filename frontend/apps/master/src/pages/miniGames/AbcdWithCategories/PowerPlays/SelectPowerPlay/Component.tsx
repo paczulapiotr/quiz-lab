@@ -8,6 +8,7 @@ const Component = () => {
         title="Wybierz zagrywkę na swoim monitorze"
         secondaryText=""
       />
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.PowerPlaySelectionSeconds} />
     </>
   );

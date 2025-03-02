@@ -1,46 +1,27 @@
-import { useParams } from "react-router";
-import { PageTemplate, GenericNavigator } from "@repo/ui/components";
-import { SyncReceiveData } from "@repo/ui/services/types";
+import { PageTemplate } from "@repo/ui/components";
 import { SorterActions } from "@repo/ui/minigames/actions";
 import Sorting from "./Sorting";
 import Summary from "./Summary";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  basePath: string;
-};
-
-const Sorter = ({ basePath }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return (
-    <PageTemplate squares>
-      <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
-        disableAnimation
-        basePath={basePath}
-        queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
-          switch (message.action) {
-            case SorterActions.RoundStart:
-              return "/start";
-            case SorterActions.RoundStarted:
-              return "/started";
-            case SorterActions.RoundEnd:
-              return "/end";
-            case SorterActions.RoundSummary:
-              return "/ended";
-            default:
-              return "";
-          }
-        }}
-        routes={{
-          "/start": <Sorting gameId={gameId} />,
-          "/started": <Sorting gameId={gameId} started />,
-          "/end": <Summary gameId={gameId} />,
-          "/ended": <Summary gameId={gameId} finished/>,
-        }}
-      />
-    </PageTemplate>
-  );
+const Sorter = () => {
+  const { miniGameStatus } = useGame();
+  return <PageTemplate squares>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default Sorter;
+
+const render = (miniGameStatus?: string) => {
+  switch (miniGameStatus) {
+    case SorterActions.RoundStart:
+      return <Sorting />;
+    case SorterActions.RoundStarted:
+      return <Sorting started />;
+    case SorterActions.RoundEnd:
+      return <Summary />;
+    case SorterActions.RoundSummary:
+      return <Summary finished />;
+    default:
+      return null;
+  }
+};

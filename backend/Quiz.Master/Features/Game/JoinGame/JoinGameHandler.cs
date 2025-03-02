@@ -14,7 +14,7 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
 {
     public async ValueTask<JoinGameResult?> HandleAsync(JoinGameRequest request, CancellationToken cancellationToken = default)
     {
-        var deviceId = httpContextAccessor.GetDeviceId();
+        var deviceId = httpContextAccessor.GetUniqueId()!;
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
 
         if (game is null)
@@ -46,14 +46,24 @@ public class JoinGameHandler(IDatabaseStorage storage, IPublisher publisher, IHt
             CreatedAt = DateTime.UtcNow,
         });
 
+        var isStarting = game.Players.Count == game.GameSize;
+
+        if (isStarting)
+        {
+            game.Status = Core.Models.GameStatus.GameStarting;
+        }
+
         await storage.UpdateGameAsync(game, cancellationToken);
 
         var gameId = request.GameId.ToString();
-        await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
 
-        if (game.Players.Count == game.GameSize)
+        if (isStarting)
         {
             await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameStarting), cancellationToken: cancellationToken);
+        }
+        else
+        {
+            await publisher.PublishAsync(new GameStatusUpdate(gameId, GameStatus.GameJoined, deviceId), gameId, cancellationToken);
         }
 
         return new JoinGameResult(true);

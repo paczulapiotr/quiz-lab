@@ -1,38 +1,34 @@
 import Component from "./Component";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import {
   MusicGuessState,
   MusicGuessDefinition,
 } from "@repo/ui/api/queries/minigames/musicGuess";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId: string;
-};
-
-const ShowQuestionAnswer = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<MusicGuessState, MusicGuessDefinition>(
-    gameId,
-  );
-  const definition = data?.definition;
+const ShowQuestionAnswer = () => {
+  const {
+    miniGameDefinition: definition,
+    miniGameState: state,
+    you,
+  } = useGame<MusicGuessState, MusicGuessDefinition>();
   const definitionRound = definition?.rounds.find(
-    (x) => x.id === data?.state?.currentRoundId,
+    (x) => x.id === state?.currentRoundId,
   );
 
   const answers =
     definitionRound?.categories
-      .find((x) => x.id === data?.state?.currentCategoryId)
-      ?.questions.find((x) => x.id === data?.state?.currentQuestionId)
-      ?.answers ?? [];
+      .find((x) => x.id === state?.currentCategoryId)
+      ?.questions.find((x) => x.id === state?.currentQuestionId)?.answers ?? [];
 
-  const answer = data?.state?.rounds
-    .find((round) => round.roundId === data?.state?.currentRoundId)
-    ?.answers.find((x) => x.playerId === data?.playerId);
+  const answer = state?.rounds
+    .find((round) => round.roundId === state?.currentRoundId)
+    ?.answers.find((x) => x.playerId === you?.id);
 
   const totalScore =
-    data?.state?.rounds.reduce(
+    state?.rounds.reduce(
       (acc, round) =>
         acc +
-        (round.answers.find((a) => a.playerId === data?.playerId)?.points ?? 0),
+        (round.answers.find((a) => a.playerId === you?.id)?.points ?? 0),
       0,
     ) ?? 0;
 

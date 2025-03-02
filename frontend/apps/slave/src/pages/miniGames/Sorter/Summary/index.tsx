@@ -1,11 +1,8 @@
+import Component from "./Component";
 
-type Props = {
-  gameId?: string;
-};
-
-const Summary = ({gameId}: Props) => {
+const Summary = () => {
   return (
-    <div>{gameId}</div>
+    <Component/>
   )
 }
 

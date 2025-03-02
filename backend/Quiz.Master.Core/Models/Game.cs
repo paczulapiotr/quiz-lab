@@ -3,6 +3,7 @@ namespace Quiz.Master.Core.Models;
 public record Game : IEntity
 {
     public Guid Id { get; set; }
+    public required string RoomCode { get; set; }
     public Guid GameDefinitionId { get; set; }
     public GameStatus Status { get; set; }
     public Guid? CurrentMiniGameId { get; set; }

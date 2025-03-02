@@ -4,27 +4,37 @@ import GameEnding from "./pages/GameEnding";
 import MiniGameStarting from "./pages/MiniGameStarting";
 import MiniGameEnding from "./pages/MiniGameEnding";
 import MiniGameStarted from "./pages/MiniGameStarted";
-import { GameNavigator } from "@repo/ui/components";
+import { Animate } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui";
+import { useGame } from "@repo/ui/contexts/GameContext";
+import { Welcome } from "./pages/Welcome";
 
 const Routes = () => {
-  return (
-    <GameNavigator
-      basePath=""
-      pages={{
-        [GameStatus.GameCreated]: <JoinGame />,
-        [GameStatus.GameStarting]: <JoinGame starting />,
-        [GameStatus.RulesExplaining]: <RulesExplaining />,
-        [GameStatus.MiniGameStarting]: <MiniGameStarting />,
-        [GameStatus.MiniGameStarted]: (
-          <MiniGameStarted basePath="minigame_play" />
-        ),
-        [GameStatus.MiniGameEnding]: <MiniGameEnding />,
-        [GameStatus.GameEnding]: <GameEnding />,
-        [GameStatus.GameEnded]: <GameEnding />,
-      }}
-    />
-  );
+  const { gameStatus, gameId } = useGame();
+  return <Animate>{gameId == null ? <Welcome /> : render(gameStatus)}</Animate>;
 };
 
 export default Routes;
+
+const render = (gameStatus: GameStatus | undefined) => {
+  switch (gameStatus) {
+    case GameStatus.GameCreated:
+      return <JoinGame key={GameStatus.GameCreated} />;
+    case GameStatus.GameStarting:
+      return <JoinGame starting key={GameStatus.GameCreated} />;
+    case GameStatus.RulesExplaining:
+      return <RulesExplaining key={gameStatus} />;
+    case GameStatus.MiniGameStarting:
+      return <MiniGameStarting key={gameStatus} />;
+    case GameStatus.MiniGameStarted:
+      return <MiniGameStarted key={gameStatus} />;
+    case GameStatus.MiniGameEnding:
+      return <MiniGameEnding key={gameStatus} />;
+    case GameStatus.GameEnding:
+      return <GameEnding key={GameStatus.GameEnding} />;
+    case GameStatus.GameEnded:
+      return <GameEnding key={GameStatus.GameEnding} />;
+    default:
+      return null;
+  }
+};

@@ -30,7 +30,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
 
         foreach (var round in definition.Rounds)
         {
-            if(playerRoundCounter != 0)
+            if (playerRoundCounter != 0)
             {
                 playerRoundCounter++;
             }
@@ -49,16 +49,16 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
         var roundState = _state.Rounds.Find(x => x.RoundId == _state.CurrentRoundId);
         var playerIds = _miniGame.PlayerIds.Select(x => x).ToArray();
 
-        await eventService.SendOnQuestionShow(gameId, cancellationToken);
-        await eventService.WaitForQuestionShown(gameId, cancellationToken);
+        await eventService.SendOnQuestionShow(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForQuestionShown(gameId, _miniGame.IdString, cancellationToken);
 
- 
+
         while (GetAvailableLetters(round, roundState).Count() > 0)
         {
             var playerId = playerIds[playerRoundCounter % playerIds.Length];
             _state.CurrentGuessingPlayerId = playerId;
             await _onStateUpdate(_state, cancellationToken);
-            await eventService.SendOnAnswerStart(gameId, cancellationToken);
+            await eventService.SendOnAnswerStart(gameId, _miniGame.IdString, cancellationToken);
 
             var letter = await SelectLetter(gameId, playerId, cancellationToken);
 
@@ -67,8 +67,8 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
             var isCorrect = availableLetters?.Contains(letter?.Letter ?? '-') ?? false;
             var points = isCorrect ? options.Value.PointsForAnswer : 0;
 
-            char? selectedLetter = letter?.Letter != null && char.IsLetter(letter.Letter) 
-                ? char.ToLower(letter.Letter) 
+            char? selectedLetter = letter?.Letter != null && char.IsLetter(letter.Letter)
+                ? char.ToLower(letter.Letter)
                 : null;
 
             roundState?.Answers.Add(new State.RoundAnswer
@@ -82,7 +82,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
 
             await _onStateUpdate(_state, cancellationToken);
             await _onPlayerScoreUpdate(playerId, points, cancellationToken);
-            await eventService.SendOnAnswered(gameId, cancellationToken);
+            await eventService.SendOnAnswered(gameId, _miniGame.IdString, cancellationToken);
 
             if (!isCorrect)
             {
@@ -90,8 +90,8 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
             }
         }
 
-        await eventService.SendOnPhraseSolvedPresentation(gameId, cancellationToken);
-        await eventService.WaitForPhraseSolvedPresented(gameId, cancellationToken);
+        await eventService.SendOnPhraseSolvedPresentation(gameId, _miniGame.IdString, cancellationToken);
+        await eventService.WaitForPhraseSolvedPresented(gameId, _miniGame.IdString, cancellationToken);
 
         return playerRoundCounter;
     }
@@ -100,7 +100,7 @@ public class LettersAndPhrasesHandler(IMiniGameEventService eventService, IMiniG
     {
         var phraseLetters = round.Phrase.Replace(" ", "").ToLower().ToCharArray().Distinct() ?? [];
         var selectedLetters = roundState?.Answers
-            .Where(x=>x.Letter != null)
+            .Where(x => x.Letter != null)
             .Select(x => x.Letter!.Value).Distinct() ?? [];
 
         var availableLetters = phraseLetters.Except(selectedLetters);

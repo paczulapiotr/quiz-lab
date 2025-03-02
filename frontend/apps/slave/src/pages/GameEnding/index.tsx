@@ -4,11 +4,10 @@ import {
   PageTemplate,
   ScoreTile,
 } from "@repo/ui/components";
-
-import { useParams } from "react-router";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const GameEnding = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { data } = useGetScore(gameId);
 
   return (

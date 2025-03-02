@@ -16,6 +16,7 @@ type Props = {
   players: {
     id: string;
     name: string;
+    deviceId: string;
   }[];
 };
 
@@ -68,8 +69,8 @@ const Component = ({ onSelect, players, score }: Props) => {
           <div className={styles.grid}>
             {players.map((player) => (
               <TileButton
-                selected={deviceId === player.id}
-                onClick={() => choosePlayer(player.id)}
+                selected={deviceId === player.deviceId}
+                onClick={() => choosePlayer(player.deviceId)}
                 key={player.id}
                 text={player.name}
               />
@@ -79,6 +80,7 @@ const Component = ({ onSelect, players, score }: Props) => {
       ) : (
         <CenteredInstruction title="Poczekaj na resztę" secondaryText="" />
       )}
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.PowerPlaySelectionSeconds} />
     </>
   );

@@ -26,6 +26,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         _miniGameInstance = game;
         _onPlayerScoreUpdate = onPlayerScoreUpdate;
         _onStateUpdate = onStateUpdate;
+
         var definition = (await repository.FindMiniGameDefinitionAsync(game.DefinitionId, cancellationToken)).Definition.As<Definition>();
         if (definition is null)
         {
@@ -37,11 +38,14 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         {
             throw new InvalidOperationException("Invalid mini game configuration - no rounds found");
         }
+        _state.CurrentRoundId = firstRoundDefinition.Id;
+        await _onStateUpdate(_state, cancellationToken);
+
         await eventService.Initialize(_gameId, cancellationToken);
         await RunRoundBase(firstRoundDefinition.Id, cancellationToken);
 
-        await eventService.SendOnPowerPlayExplain(_gameId, cancellationToken);
-        await eventService.WaitForPowerPlayExplained(_gameId, cancellationToken);
+        await eventService.SendOnPowerPlayExplain(_gameId, _miniGameInstance.IdString, cancellationToken);
+        await eventService.WaitForPowerPlayExplained(_gameId, _miniGameInstance.IdString, cancellationToken);
 
         // For each question after first one
         foreach (var roundDefinition in _definition.Rounds.Skip(1))
@@ -49,11 +53,13 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
             // Save PowerPlay selection for every player
             var roundState = new State.RoundState { RoundId = roundDefinition.Id };
             _state.Rounds.Add(roundState);
+            _state.CurrentRoundId = roundDefinition.Id;
+            await _onStateUpdate(_state, cancellationToken);
 
-            await eventService.SendOnPowerPlayStart(_gameId, cancellationToken);
+            await eventService.SendOnPowerPlayStart(_gameId, _miniGameInstance.IdString, cancellationToken);
             await SelectPowerPlays(roundDefinition.Id, cancellationToken);
-            await eventService.SendOnPowerPlayApplication(_gameId, cancellationToken);
-            await eventService.WaitForPowerPlayApplied(_gameId, cancellationToken);
+            await eventService.SendOnPowerPlayApplication(_gameId, _miniGameInstance.IdString, cancellationToken);
+            await eventService.WaitForPowerPlayApplied(_gameId, _miniGameInstance.IdString, cancellationToken);
 
             await RunRoundBase(roundDefinition.Id, cancellationToken);
         }
@@ -95,29 +101,26 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
 
     private async Task RunRoundBase(string roundId, CancellationToken cancellationToken)
     {
-        _state.CurrentRoundId = roundId;
-        await _onStateUpdate(_state, cancellationToken);
-
-        await eventService.SendOnCategorySelection(_gameId, cancellationToken);
+        await eventService.SendOnCategorySelection(_gameId, _miniGameInstance.IdString, cancellationToken);
 
         // Choose most voted category or random iftied
         await SelectCategory(roundId, cancellationToken);
 
-        await eventService.SendOnCategorySelected(_gameId, cancellationToken);
+        await eventService.SendOnCategorySelected(_gameId, _miniGameInstance.IdString, cancellationToken);
 
-        await eventService.WaitForCategoryPresented(_gameId, cancellationToken);
+        await eventService.WaitForCategoryPresented(_gameId, _miniGameInstance.IdString, cancellationToken);
 
-        await eventService.SendOnQuestionPresentation(_gameId, cancellationToken);
+        await eventService.SendOnQuestionPresentation(_gameId, _miniGameInstance.IdString, cancellationToken);
 
-        await eventService.WaitForQuestionPresented(_gameId, cancellationToken);
+        await eventService.WaitForQuestionPresented(_gameId, _miniGameInstance.IdString, cancellationToken);
 
-        await eventService.SendOnQuestionSelection(_gameId, cancellationToken);
+        await eventService.SendOnQuestionSelection(_gameId, _miniGameInstance.IdString, cancellationToken);
 
         await AnswerQuestion(roundId, cancellationToken);
 
-        await eventService.SendOnQuestionAnswersPresentation(_gameId, cancellationToken);
+        await eventService.SendOnQuestionAnswersPresentation(_gameId, _miniGameInstance.IdString, cancellationToken);
 
-        await eventService.WaitForQuestionAnswersPresented(_gameId, cancellationToken);
+        await eventService.WaitForQuestionAnswersPresented(_gameId, _miniGameInstance.IdString, cancellationToken);
     }
 
     private async Task AnswerQuestion(string roundId, CancellationToken cancellationToken)
@@ -181,6 +184,7 @@ public class AbcdWithCategoriesHandler(IMiniGameEventService eventService, IMini
         if (round is not null && category is not null)
         {
             round.CategoryId = category.Id;
+            round.SelectedCategories = categories ?? new();
         }
 
         await _onStateUpdate(_state, cancellationToken);

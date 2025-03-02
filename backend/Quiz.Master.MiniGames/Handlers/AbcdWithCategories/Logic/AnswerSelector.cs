@@ -16,7 +16,7 @@ public class AnswerSelector(IMiniGameEventService eventService, string correctAn
         {
             state = new List<State.RoundAnswer>();
         }
-        
+
         state.Add(new State.RoundAnswer
         {
             PlayerId = selection.PlayerId,
@@ -26,9 +26,16 @@ public class AnswerSelector(IMiniGameEventService eventService, string correctAn
             Points = 0,
         });
 
+        return state;
+    }
+
+    protected override List<State.RoundAnswer>? FinalizeState(List<State.RoundAnswer>? state)
+    {
         var correctAnswerCount = 0;
 
-        foreach (var ans in state.OrderByDescending(x => x.Timestamp))
+        if (state is null) return [];
+
+        foreach (var ans in state.OrderBy(x => x.Timestamp))
         {
             if (ans.IsCorrect)
             {

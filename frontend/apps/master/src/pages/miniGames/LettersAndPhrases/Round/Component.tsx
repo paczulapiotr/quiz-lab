@@ -1,7 +1,8 @@
 import { Tile, Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
-import { IncorrectLetters} from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
+import { IncorrectLetters } from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
 import { memo } from "react";
+import styles from "./Component.module.scss";
 
 type Props = {
   phrase: string[];
@@ -23,18 +24,22 @@ const Round = ({
   timerKey,
 }: Props) => {
   return (
-    <>
+    <div className={styles.page}>
       {playerAnswering ? (
         <Tile blue text={`Odpowiada: ${playerAnswering}`} />
       ) : null}
-      <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
-        <Phrase phrase={phrase} usedLetters={usedLetters} />
+      <Phrase phrase={phrase} usedLetters={usedLetters} />
+      <div>
+        <IncorrectLetters letters={incorrectLetters} />
+        {startSeconds ? (
+          <Timer
+            startSeconds={startSeconds}
+            onTimeUp={onTimeUp}
+            key={timerKey}
+          />
+        ) : null}
       </div>
-      <IncorrectLetters letters={incorrectLetters} />
-      {startSeconds ? (
-        <Timer startSeconds={startSeconds} onTimeUp={onTimeUp} key={timerKey} />
-      ) : null}
-    </>
+    </div>
   );
 };
 

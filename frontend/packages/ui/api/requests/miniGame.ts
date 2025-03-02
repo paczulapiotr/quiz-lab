@@ -8,6 +8,7 @@ export type GetCurrentMiniGameResponse<
 > = {
   miniGameId: string;
   miniGameType: MiniGameType;
+  miniGameStatus?: string;
   playerName?: string;
   playerId?: string;
   playerDeviceId?: string;
@@ -23,11 +24,11 @@ export const getMiniGame = async <
   S extends StateBase,
   D extends DefinitionBase,
 >(
-  gameId: string,
+  gameId: string
 ) =>
   (
     await instance.get<never, AxiosResponse<GetCurrentMiniGameResponse<S, D>>>(
-      `/game/${gameId}/mini-game`,
+      `/game/${gameId}/mini-game`
     )
   ).data;
 
@@ -44,7 +45,7 @@ export const updateMiniGame = async ({
     `/game/${gameId}/mini-game/update`,
     {
       action,
-    },
+    }
   );
 
 export type SendPlayerInteractionRequest = {
@@ -62,5 +63,5 @@ export const sendPlayerInteraction = async ({
     `/game/${gameId}/mini-game/interaction`,
     {
       ...data,
-    },
+    }
   );

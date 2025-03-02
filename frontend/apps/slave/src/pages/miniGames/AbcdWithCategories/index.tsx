@@ -5,77 +5,51 @@ import ShowQuestion from "./Question/ShowQuestion";
 import AnswerQuestion from "./Question/AnswerQuestion";
 import ShowQuestionAnswer from "./Question/ShowQuestionAnswer";
 import SelectPowerPlay from "./PowerPlays/SelectPowerPlay";
-import { useParams } from "react-router";
 import {
   PageTemplate,
-  GenericNavigator,
   CenteredInstruction,
 } from "@repo/ui/components";
-import { SyncReceiveData } from "@repo/ui/services/types";
 import { AbcdActions } from "@repo/ui/minigames/actions";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  basePath: string;
-};
-
-const AbcdWithCategories = ({ basePath }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
-
-  return (
-    <PageTemplate squares>
-      <GenericNavigator<SyncReceiveData["MiniGameNotification"]>
-        disableAnimation
-        basePath={basePath}
-        queueName={"MiniGameNotification"}
-        createNavigationPath={(message) => {
-          switch (message.action) {
-            case AbcdActions.PowerPlayExplainStart:
-              return "/powerplay_explain";
-            case AbcdActions.PowerPlayExplainStop:
-              return "/powerplay_explain";
-            case AbcdActions.PowerPlayStart:
-              return "/powerplay_select";
-            case AbcdActions.PowerPlayApplyStart:
-              return "/powerplay_apply";
-            case AbcdActions.PowerPlayApplyStop:
-              return "/powerplay_apply";
-            case AbcdActions.CategorySelectStart:
-              return "/category_select";
-            case AbcdActions.CategoryShowStart:
-              return "/category_show";
-            case AbcdActions.CategoryShowStop:
-              return "/category_show";
-            case AbcdActions.QuestionShowStart:
-            case AbcdActions.QuestionShowStop:
-              return "/question_show";
-            case AbcdActions.QuestionAnswerStart:
-              return "/question_answer";
-            case AbcdActions.QuestionAnswerShowStart:
-              return "/question_answer_show";
-            case AbcdActions.QuestionAnswerShowStop:
-              return "/question_answer_show";
-            default:
-              return "";
-          }
-        }}
-        routes={{
-          "/powerplay_explain": (
-            <CenteredInstruction
-              title="Obejrzyj prezentację zagrywek na monitorze na środku sali"
-              secondaryText="Zasady zagrywek..."
-            />
-          ),
-          "/powerplay_select": <SelectPowerPlay gameId={gameId!} />,
-          "/powerplay_apply": <ShowAppliedPowerPlay gameId={gameId!} />,
-          "/category_select": <SelectCategory gameId={gameId!} />,
-          "/category_show": <ShowCategory gameId={gameId!} />,
-          "/question_show": <ShowQuestion gameId={gameId!} />,
-          "/question_answer": <AnswerQuestion gameId={gameId!} />,
-          "/question_answer_show": <ShowQuestionAnswer gameId={gameId!} />,
-        }}
-      />
-    </PageTemplate>
-  );
+const AbcdWithCategories = () => {
+  const { miniGameStatus} = useGame();
+  return <PageTemplate squares key={miniGameStatus}>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default AbcdWithCategories;
+
+const render = (miniGameStatus?: string) => {
+  switch (miniGameStatus) {
+    case AbcdActions.PowerPlayExplainStart:
+      return <CenteredInstruction
+        title="Obejrzyj prezentację zagrywek na monitorze na środku sali"
+        secondaryText="Zasady zagrywek..."
+      />;
+    case AbcdActions.PowerPlayExplainStop:
+      return <SelectPowerPlay />;
+    case AbcdActions.PowerPlayStart:
+      return <SelectPowerPlay />;
+    case AbcdActions.PowerPlayApplyStart:
+      return <ShowAppliedPowerPlay />;
+    case AbcdActions.PowerPlayApplyStop:
+      return <ShowAppliedPowerPlay />;
+    case AbcdActions.CategorySelectStart:
+      return <SelectCategory />;
+    case AbcdActions.CategoryShowStart:
+      return <ShowCategory />;
+    case AbcdActions.CategoryShowStop:
+      return <ShowCategory />;
+    case AbcdActions.QuestionShowStart:
+    case AbcdActions.QuestionShowStop:
+      return <ShowQuestion />;
+    case AbcdActions.QuestionAnswerStart:
+      return <AnswerQuestion />;
+    case AbcdActions.QuestionAnswerShowStart:
+      return <ShowQuestionAnswer />;
+    case AbcdActions.QuestionAnswerShowStop:
+      return <ShowQuestionAnswer />;
+    default:
+      return null;
+  }
+}

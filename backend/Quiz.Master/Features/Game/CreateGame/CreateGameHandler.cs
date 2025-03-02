@@ -8,12 +8,13 @@ using GameStatus = Quiz.Master.Core.Models.GameStatus;
 
 namespace Quiz.Master.Features.Game.CreateGame;
 
-public enum GameLanguage {
+public enum GameLanguage
+{
     Polish,
     English
 }
 
-public record CreateGameCommand(uint GameSize, string GameIdentifier, GameLanguage Language) : ICommand;
+public record CreateGameCommand(uint GameSize, string GameIdentifier, string RoomCode, GameLanguage Language) : ICommand;
 
 public class CreateGameHandler : ICommandHandler<CreateGameCommand>
 {
@@ -30,16 +31,35 @@ public class CreateGameHandler : ICommandHandler<CreateGameCommand>
     public async ValueTask<NoResult?> HandleAsync(CreateGameCommand request, CancellationToken cancellationToken = default)
     {
         var gameDefinitionId = await LoadGameDefinitionAsync(request, cancellationToken);
+
+        var room = await storage.FindRoomByCodeAsync(request.RoomCode, cancellationToken);
+
+        if (room is null)
+        {
+            return NoResult.Instance;
+        }
+
+        if (room.PlayerDeviceIds.Count < request.GameSize)
+        {
+            return NoResult.Instance;
+        }
+
         var game = new Core.Models.Game
         {
+            RoomCode = request.RoomCode,
             GameSize = request.GameSize,
             GameDefinitionId = gameDefinitionId,
             Status = GameStatus.GameCreated,
             CreatedAt = DateTime.UtcNow,
         };
-        await storage.InsertGameAsync(game, cancellationToken);
 
+        await storage.InsertGameAsync(game, cancellationToken);
         var gameId = game.Id.ToString();
+
+        room.IsOpen = false;
+        room.GameId = game.Id.ToString();
+        await storage.UpdateRoomAsync(room);
+
         await publisher.PublishAsync(new NewGameCreation(gameId), cancellationToken: cancellationToken);
 
         return NoResult.Instance;

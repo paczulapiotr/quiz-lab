@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    animation: zoomInOut 10s infinite ease-in-out;
+  }
+}
+
+@keyframes zoomInOut {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05) rotate(3deg);
+  }
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}

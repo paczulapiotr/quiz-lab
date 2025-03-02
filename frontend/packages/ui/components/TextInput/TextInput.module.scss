@@ -1,0 +1,29 @@
+    .input {
+        margin-top: auto;
+        margin-bottom: 1rem;
+        display: flex;
+        width: 100%;
+
+        .text {
+            flex: 1;
+            padding: 1rem 4rem;
+            font-size: 2rem;
+        }
+
+        .button {
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+
+        &.small {
+            .text {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .button {
+                border-width: 0;
+                font-size: 1.5rem;
+            }
+        }
+    }

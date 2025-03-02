@@ -1,13 +1,13 @@
 import TutorialVideo from "../temp/TutorialVideo";
-import { useParams } from "react-router";
 import { useEffect } from "react";
 import { PageTemplate } from "@repo/ui/components";
 import { GameStatus } from "@repo/ui/services/types";
 import { useUpdateGameStatus } from "@repo/ui/api/mutations/useUpdateGameStatus";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 const MiniGameStarting = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { mutate } = useUpdateGameStatus();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const MiniGameStarting = () => {
 
   return (
     <PageTemplate>
-      <TutorialVideo title="Zasady rundy..." />
+      <TutorialVideo />
     </PageTemplate>
   );
 };

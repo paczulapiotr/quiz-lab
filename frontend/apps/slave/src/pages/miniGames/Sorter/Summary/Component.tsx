@@ -4,35 +4,30 @@ import {
   SorterState,
   SorterDefinition,
 } from "@repo/ui/api/queries/minigames/sorter";
-import { useGetMiniGame } from "@repo/ui/api/queries/useGetMiniGame";
 import { useMemo } from "react";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
-type Props = {
-  gameId?: string;
-};
-
-const Component = ({ gameId }: Props) => {
-  const { data } = useGetMiniGame<SorterState, SorterDefinition>(gameId);
+const Component = () => {
+  const {
+    miniGameDefinition: definition,
+    miniGameState: state,
+    you,
+  } = useGame<SorterState, SorterDefinition>();
 
   const { total, correct } = useMemo(() => {
-    const roundDef = data?.definition?.rounds.find(
-      (x) => x.id == data.state?.currentRoundId,
+    const roundDef = definition?.rounds.find(
+      (x) => x.id == state?.currentRoundId,
     );
     const t =
       (roundDef?.leftCategory.items.length ?? 0) +
       (roundDef?.rightCategory.items.length ?? 0);
     const c =
-      data?.state?.rounds
-        .find((x) => x.roundId == data?.state?.currentRoundId)
-        ?.answers.find((x) => x.playerId == data.playerId)?.correctAnswers ?? 0;
+      state?.rounds
+        .find((x) => x.roundId == state?.currentRoundId)
+        ?.answers.find((x) => x.playerId == you?.id)?.correctAnswers ?? 0;
 
     return { total: t, correct: c };
-  }, [
-    data?.definition?.rounds,
-    data?.playerId,
-    data?.state?.currentRoundId,
-    data?.state?.rounds,
-  ]);
+  }, [definition?.rounds, state?.currentRoundId, state?.rounds, you?.id]);
 
   return (
     <div className={styles.summary}>

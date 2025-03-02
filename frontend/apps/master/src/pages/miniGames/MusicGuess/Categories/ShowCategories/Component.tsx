@@ -15,6 +15,7 @@ const Component = ({ categories }: Props) => {
           <Tile text={c.text} key={c.id} />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Music.CategorySelectionSeconds} />
     </>
   );

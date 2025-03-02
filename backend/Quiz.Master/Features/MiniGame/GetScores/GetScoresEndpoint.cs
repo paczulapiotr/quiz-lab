@@ -11,7 +11,7 @@ public class GetScoresEndpoint : ICarterModule
     {
         app.MapGet("/api/game/{gameId}/mini-game/score", async ([FromRoute] Guid gameId, IHttpContextAccessor httpContextAccessor, IQueryHandler<GetScoresQuery, GetScoresResult> commandHandler) =>
         {
-            var deviceId = httpContextAccessor.GetDeviceId();
+            var deviceId = httpContextAccessor.GetUniqueId()!;
             var Game = await commandHandler.HandleAsync(new GetScoresQuery(gameId, deviceId));
 
             return Results.Ok(Game);

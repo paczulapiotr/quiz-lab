@@ -9,6 +9,7 @@ namespace Quiz.Master.Features.MiniGame.GetMiniGame;
 public record GetMiniGameResult(
     Guid MiniGameId, 
     MiniGameType MiniGameType, 
+    string? MiniGameStatus,
     string? PlayerName, 
     string? PlayerId, 
     string? PlayerDeviceId, 
@@ -19,7 +20,6 @@ public record GetMiniGameQuery(Guid GameId, string PlayerDeviceId) : IQuery<GetM
 
 public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMiniGameQuery, GetMiniGameResult>
 {
-
     public async ValueTask<GetMiniGameResult?> HandleAsync(GetMiniGameQuery request, CancellationToken cancellationToken = default)
     {
         var game = await storage.FindGameAsync(request.GameId, cancellationToken);
@@ -46,6 +46,7 @@ public class GetMiniGameHandler(IDatabaseStorage storage) : IQueryHandler<GetMin
             : new GetMiniGameResult(
                 miniGame.Id,
                 miniGame.Type,
+                miniGame.MiniGameStatus,
                 player?.Name,
                 player?.Id.ToString(),
                 player?.DeviceId,

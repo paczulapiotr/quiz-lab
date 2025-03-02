@@ -1,9 +1,9 @@
 import { HeaderTile, Tile, Timer } from "@repo/ui/components";
-import styles from "./Component.module.scss";
-import { useParams } from "react-router";
 import { useUpdateMiniGame } from "@repo/ui/api/mutations/useUpdateMiniGame";
 import Times from "@repo/ui/config/times";
 import { MusicGuessActions } from "@repo/ui/minigames/actions";
+import { useGame } from "@repo/ui/contexts/GameContext";
+import styles from "./Component.module.scss";
 
 type Props = {
   answers: {
@@ -21,7 +21,7 @@ type Props = {
 };
 
 const Component = ({ answers, players }: Props) => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useGame();
   const { mutate } = useUpdateMiniGame();
 
   const onTimeUp = () =>
@@ -46,6 +46,7 @@ const Component = ({ answers, players }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.AnswerShowSeconds} onTimeUp={onTimeUp} />
     </>
   );

@@ -1,0 +1,29 @@
+@mixin ellipsis_animation {
+    &::after {
+        display: inline-block;
+        width: 1em;
+        text-align: left;
+        content: "";
+        animation: ellipsis steps(4, end) 3s infinite;
+
+        @keyframes ellipsis {
+
+            0%,
+            100% {
+                content: "";
+            }
+
+            25% {
+                content: ".";
+            }
+
+            50% {
+                content: "..";
+            }
+
+            75% {
+                content: "...";
+            }
+        }
+    }
+}

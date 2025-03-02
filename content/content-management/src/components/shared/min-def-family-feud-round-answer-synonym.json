@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_min_def_family_feud_round_answer_synonyms",
+  "info": {
+    "displayName": "MinDef.FamilyFeud.Round.Answer.Synonym",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

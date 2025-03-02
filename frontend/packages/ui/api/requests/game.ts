@@ -5,6 +5,8 @@ import { GameStatus } from "@repo/ui";
 export type GetCurrentGameResponse = {
   gameId: string;
   gameSize: number;
+  gameStatus: GameStatus;
+  miniGameId?: string;
   players: { id: string; name: string; deviceId: string }[];
   yourName?: string;
   yourDeviceId?: string;
@@ -15,7 +17,7 @@ export type GetCurrentGameResponse = {
 export const getGame = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetCurrentGameResponse>>(
-      `/game/${gameId}`,
+      `/game/${gameId}`
     )
   ).data;
 
@@ -35,7 +37,7 @@ export type GetScoresResponse = {
 export const getScores = async (gameId: string) =>
   (
     await instance.get<never, AxiosResponse<GetScoresResponse>>(
-      `/game/${gameId}/mini-game/score`,
+      `/game/${gameId}/mini-game/score`
     )
   ).data;
 
@@ -47,7 +49,7 @@ export const updateGameStatus = async ({
 }: UpdateGameStatusRequest) =>
   await instance.post<never, never, Pick<UpdateGameStatusRequest, "status">>(
     `/game/${gameId}/status`,
-    { status },
+    { status }
   );
 
 export type JoinGameRequest = { playerName: string; gameId: string };
@@ -64,3 +66,28 @@ export const joinGame = async (playerName: string, gameId: string) =>
       gameId,
     })
   ).data;
+
+export type GameName = {
+  name: string;
+  identifier: string;
+  locale: string;
+  createdAt: string;
+};
+
+export const searchGameNames = async () => {
+  return (await instance.get<GameName[]>("/game/definitions")).data;
+};
+
+export enum GameLanguage {
+  PL = 0,
+  EN = 1,
+}
+
+export const createGame = async (gameSize: number, gameIdentifier: string, roomCode: string, locale: GameLanguage) => {
+  return (await instance.post("/game/create", {
+    gameSize,
+    gameIdentifier,
+    roomCode,
+    locale
+  })).data;
+}

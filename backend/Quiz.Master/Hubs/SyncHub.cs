@@ -4,28 +4,9 @@ using Quiz.Common.Hubs;
 
 namespace Quiz.Master.Hubs;
 
-internal partial class SyncHub : Hub
+internal partial class SyncHub : SyncHubBase
 {
-    private readonly ILogger<SyncHub> _logger;
-    private readonly IHubConnection _hubConnection;
-    private readonly IPublisher _publisher;
-
-    public SyncHub(ILogger<SyncHub> logger, IHubConnection hubConnection, IPublisher publisher)
+    public SyncHub(IHubConnection hubConnection): base(hubConnection)
     {
-        _logger = logger;
-        _hubConnection = hubConnection;
-        _publisher = publisher;
-    }
-
-    public override async Task OnConnectedAsync()
-    {
-        await _hubConnection.Connected(Context.ConnectionId);
-        await base.OnConnectedAsync();
-    }
-
-    public override async Task OnDisconnectedAsync(Exception? exception)
-    {
-        await _hubConnection.Disconnected(Context.ConnectionId);
-        await base.OnDisconnectedAsync(exception);
     }
 }

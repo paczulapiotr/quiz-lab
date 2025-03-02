@@ -1,0 +1,40 @@
+.board {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .answers {
+
+        overflow: hidden;
+        color: white;
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+
+        li {
+            border: 1px solid white;
+            background-color: black;
+        }
+
+        .highlight {
+            animation: pulse 1.5s forwards;
+            border-color: green;
+            
+        }
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        font-weight: initial;
+    }
+
+    50% {
+        transform: scale(1.1);
+        font-weight: bold;
+    }
+}

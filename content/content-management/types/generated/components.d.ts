@@ -68,6 +68,84 @@ export interface SharedMinDefAbcdRoundCategoryQuestionAnswer
   };
 }
 
+export interface SharedMinDefFamilyFeud extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_family_feuds';
+  info: {
+    description: '';
+    displayName: 'MinDef.FamilyFeud';
+  };
+  attributes: {
+    rounds: Schema.Attribute.Component<
+      'shared.min-def-family-feud-round',
+      true
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefFamilyFeudRound extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_family_feud_rounds';
+  info: {
+    description: '';
+    displayName: 'MinDef.FamilyFeud.Round';
+  };
+  attributes: {
+    answers: Schema.Attribute.Component<
+      'shared.min-def-family-feud-round-answer',
+      true
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedMinDefFamilyFeudRoundAnswer
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_family_feud_round_answers';
+  info: {
+    description: '';
+    displayName: 'MinDef.FamilyFeud.Round.Answer';
+  };
+  attributes: {
+    answer: Schema.Attribute.String & Schema.Attribute.Required;
+    points: Schema.Attribute.Integer & Schema.Attribute.Required;
+    synonyms: Schema.Attribute.Component<
+      'shared.min-def-family-feud-round-answer-synonym',
+      true
+    > &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
+export interface SharedMinDefFamilyFeudRoundAnswerSynonym
+  extends Struct.ComponentSchema {
+  collectionName: 'components_shared_min_def_family_feud_round_answer_synonyms';
+  info: {
+    description: '';
+    displayName: 'MinDef.FamilyFeud.Round.Answer.Synonym';
+  };
+  attributes: {
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedMinDefLetters extends Struct.ComponentSchema {
   collectionName: 'components_shared_min_def_letters';
   info: {
@@ -342,6 +420,10 @@ declare module '@strapi/strapi' {
       'shared.min-def-abcd-round-category': SharedMinDefAbcdRoundCategory;
       'shared.min-def-abcd-round-category-question': SharedMinDefAbcdRoundCategoryQuestion;
       'shared.min-def-abcd-round-category-question-answer': SharedMinDefAbcdRoundCategoryQuestionAnswer;
+      'shared.min-def-family-feud': SharedMinDefFamilyFeud;
+      'shared.min-def-family-feud-round': SharedMinDefFamilyFeudRound;
+      'shared.min-def-family-feud-round-answer': SharedMinDefFamilyFeudRoundAnswer;
+      'shared.min-def-family-feud-round-answer-synonym': SharedMinDefFamilyFeudRoundAnswerSynonym;
       'shared.min-def-letters': SharedMinDefLetters;
       'shared.min-def-letters-round': SharedMinDefLettersRound;
       'shared.min-def-music': SharedMinDefMusic;

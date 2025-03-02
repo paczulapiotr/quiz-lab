@@ -3,13 +3,14 @@ import Component from "./Component";
 import { useEffect } from "react";
 import { SorterActions } from "@repo/ui/minigames/actions";
 import Times from "@repo/ui/config/times";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 type Props = {
-  gameId?: string;
   finished?: boolean;
 };
 
-const Summary = ({ gameId,  finished }: Props) => {
+const Summary = ({ finished }: Props) => {
+  const { gameId} = useGame();
   const { mutate } = useUpdateMiniGame();
 
   useEffect(() => {
@@ -20,12 +21,12 @@ const Summary = ({ gameId,  finished }: Props) => {
             gameId: gameId!,
             action: SorterActions.RoundSummary,
           }),
-        Times.Sorter.RoundStartWaitSeconds,
+        Times.Sorter.RoundStartWaitSeconds * 1000,
       );
     }
-  }, [gameId, mutate, finished]);
+  }, [mutate, finished, gameId]);
 
-  return <Component gameId={gameId} />;
+  return <Component />;
 };
 
 export default Summary;

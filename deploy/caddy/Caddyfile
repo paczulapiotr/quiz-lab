@@ -1,0 +1,22 @@
+:4000 {
+    handle_path /slave_ui* {
+        root * ./slave_ui/dist
+        try_files {path} index.html
+        file_server
+    }
+    
+    handle_path /master_ui* {
+        root * ./master_ui/dist
+        try_files {path} index.html
+        file_server
+    }
+
+    handle_path /cms* {
+        reverse_proxy localhost:1337
+    }
+
+    handle_path /* {
+        reverse_proxy localhost:5999
+    }
+
+}

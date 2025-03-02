@@ -26,6 +26,7 @@ const Component = ({ selections, score }: Props) => {
           />
         ))}
       </div>
+      <div style={{ flex: 1 }} />
       <Timer startSeconds={Times.Abdc.CategoryShowSeconds} />
     </>
   );

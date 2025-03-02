@@ -12,16 +12,20 @@ using ILettersAndPhrasesEventService = Quiz.Master.MiniGames.Handlers.LettersAnd
 using LettersAndPhrasesEventService = Quiz.Master.Game.MiniGames.LettersAndPhrases.MiniGameEventService;
 using ISorterEventService = Quiz.Master.MiniGames.Handlers.Sorter.IMiniGameEventService;
 using SorterEventService = Quiz.Master.Game.MiniGames.Sorter.MiniGameEventService;
+using IFamilyFeudEventService = Quiz.Master.MiniGames.Handlers.FamilyFeud.IMiniGameEventService;
+using FamilyFeudEventService = Quiz.Master.Game.MiniGames.FamilyFeud.MiniGameEventService;
 using Quiz.Master.Services.Lights;
 using Quiz.Master.Services.ContentManagement;
 using AbcdConfiguration = Quiz.Master.MiniGames.Models.AbcdCategories.Configuration;
 using MusicConfiguration = Quiz.Master.MiniGames.Models.MusicGuess.Configuration;
 using LettersConfiguration = Quiz.Master.MiniGames.Models.LettersAndPhrases.Configuration;
 using SorterConfiguration = Quiz.Master.MiniGames.Models.Sorter.Configuration;
+using FamilyFeudConfiguration = Quiz.Master.MiniGames.Models.FamilyFeud.Configuration;
 using Quiz.Master.MiniGames.Handlers.AbcdWithCategories;
 using Quiz.Master.MiniGames.Handlers.MusicGuess;
 using Quiz.Master.MiniGames.Handlers.LettersAndPhrases;
 using Quiz.Master.MiniGames.Handlers.Sorter;
+using Quiz.Master.MiniGames.Handlers.FamilyFeud;
 
 namespace Quiz.Master;
 
@@ -44,6 +48,7 @@ public static class DependencyInjection
         services.Configure<MusicConfiguration>(configuration.GetSection("Game:Music"));
         services.Configure<LettersConfiguration>(configuration.GetSection("Game:Letters"));
         services.Configure<SorterConfiguration>(configuration.GetSection("Game:Sorter"));
+        services.Configure<FamilyFeudConfiguration>(configuration.GetSection("Game:FamilyFeud"));
 
         // AbcdWithCategories
         services.AddTransient<IAbcdWithCategoriesEventService, AbcdWithCategoriesEventService>();
@@ -60,6 +65,10 @@ public static class DependencyInjection
         // Sorter
         services.AddTransient<ISorterEventService, SorterEventService>();
         services.AddTransient<SorterHandler>();
+
+        // FamilyFeud
+        services.AddTransient<IFamilyFeudEventService, FamilyFeudEventService>();
+        services.AddTransient<FamilyFeudHandler>();
 
         services.AddTransient<IGameEngine, GameEngine>();
         services.AddHandlers();

@@ -16,8 +16,8 @@ public abstract class QueueDefinition<TMessage>
 {
     private static readonly IDictionary<string, object?> _queueDefaultArguments = new Dictionary<string, object?>
     {
-        { "x-message-ttl", 60_000 }, // 1 minute
-        { "x-expires", 4 * 60 * 60_000 } // 4 hours
+        { "x-message-ttl", 1 * 60_000 }, // 1 minute
+        { "x-expires", 5 * 60_000 } // 5 minutes
     };
     private string _queueSufix;
 
@@ -45,7 +45,7 @@ public abstract class QueueDefinition<TMessage>
             builder.Append(_queueSufix);
         }
 
-        if(!string.IsNullOrWhiteSpace(queueIdentifier))
+        if (!string.IsNullOrWhiteSpace(queueIdentifier))
         {
             builder.Append('-');
             builder.Append(queueIdentifier);

@@ -1,13 +1,10 @@
 import { useJoinGameMutation } from "@repo/ui/api/mutations/useJoinGameMutation";
-import { useGetGame } from "@repo/ui/api/queries/useGetGame";
-import { useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { useState } from "react";
 import styles from "./JoinGame.module.scss";
-import { useLocalSyncConsumer } from "@repo/ui/hooks";
-import { GameStatus } from "@repo/ui";
-import { PageTemplate, TileButton, Tile, Timer } from "@repo/ui/components";
+import { PageTemplate, Tile, Timer, TextInput } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
 import { Keyboard } from "@/components/Keyboard";
+import { useGame } from "@repo/ui/contexts/GameContext";
 
 type Props = {
   starting?: boolean;
@@ -15,11 +12,9 @@ type Props = {
 
 const JoinGame = ({ starting = false }: Props) => {
   const [playerName, setPlayerName] = useState("");
-  const { gameId } = useParams<{ gameId: string }>();
-
   const { mutateAsync } = useJoinGameMutation();
-  const { data, isLoading, refetch } = useGetGame(gameId);
-  const joined = data?.yourDeviceId != null;
+  const { gameId, you, players } = useGame();
+  const joined = you != null;
 
   const joinGame = async () => {
     const resp = await mutateAsync({ playerName, gameId: gameId! });
@@ -31,27 +26,6 @@ const JoinGame = ({ starting = false }: Props) => {
     }
   };
 
-  useLocalSyncConsumer(
-    "GameStatusUpdate",
-    useCallback(
-      (message) => {
-        switch (message?.status) {
-          case GameStatus.GameJoined:
-            refetch();
-            break;
-          default:
-            break;
-        }
-      },
-      [refetch],
-    ),
-  );
-
-  const playerNames: { id: string; name: string }[] = [
-    ...(data?.players ?? []),
-    ...(data ? Array(data.gameSize - data.players.length).fill(null) : []),
-  ];
-
   return (
     <PageTemplate>
       <div className={styles.header}>
@@ -60,40 +34,29 @@ const JoinGame = ({ starting = false }: Props) => {
             {starting ? "Rozpoczynanie gry" : "Czekanie na graczy"}
           </p>
         ) : (
-          <div className={styles.input}>
-            <input
-              maxLength={40}
-              className={styles.playerName}
-              type="text"
-              placeholder="Podaj nazwę gracza"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-            />
-            <TileButton
-              text={`Dołącz`}
-              blue
-              onClick={joinGame}
-              className={styles.button}
-            />
-          </div>
+          <TextInput
+            placeholder="Podaj nazwę gracza"
+            buttonText="Dołącz"
+            value={playerName}
+            onChange={setPlayerName}
+            onClick={joinGame}
+          />
         )}
       </div>
-      {!isLoading ? (
-        <div className={styles.grid}>
-          {playerNames.map((player, index) =>
-            player == null ? (
-              <Tile text="..." key={index} className={styles.emptySpot} />
-            ) : (
-              <Tile blue key={`${player?.id}_${index}`} text={player.name} />
-            ),
-          )}
-        </div>
-      ) : null}
+      <div className={styles.grid}>
+        {players.map((player, index) =>
+          player == null ? (
+            <Tile text="..." key={index} className={styles.emptySpot} />
+          ) : (
+            <Tile blue key={`${player?.id}_${index}`} text={player.name} />
+          ),
+        )}
+      </div>
       {starting ? (
         <div style={{ marginTop: "auto" }}>
           <Timer startSeconds={Times.GameStartingSeconds} />
         </div>
-      ) : (
+      ) : joined ? null : (
         <div style={{ marginTop: "auto" }}>
           <Keyboard value={playerName} onChange={(e) => setPlayerName(e)} />
         </div>
