@@ -17,6 +17,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddStorage(connectionString, databaseName);
 builder.Services.AddCarter();
 builder.Services.AddMvcCore();
+builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -69,6 +70,7 @@ var app = builder.Build();
 app.UseQuizCommonServices();
 await app.UseMessageBroker();
 app.MapCarter();
+app.MapRazorPages();
 app.MapHub<SyncHub>("/sync").RequireCors("SignalR");
 app.UseCors();
 app.UseSwagger();

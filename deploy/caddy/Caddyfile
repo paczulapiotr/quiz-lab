@@ -11,11 +11,12 @@
         file_server
     }
 
-    handle_path /backend* {
-        reverse_proxy localhost:5999
-    }
-
     handle_path /cms* {
         reverse_proxy localhost:1337
     }
+
+    handle_path /* {
+        reverse_proxy localhost:5999
+    }
+
 }

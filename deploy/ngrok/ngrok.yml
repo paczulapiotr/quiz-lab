@@ -6,3 +6,6 @@ tunnels:
     proto: http
     addr: 4000
     domain: welcome-alien-above.ngrok-free.app
+  strapi:
+    proto: http
+    addr: 1337
