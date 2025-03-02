@@ -12,8 +12,10 @@ import { SimpleModal } from "./SimpleModal";
 import { EraserCanvas } from "./EraserCanvas";
 import AudioPlayer from "./AudioPlayer";
 import Animate from "./Animate";
+import { TextInput } from "./TextInput";
 
 export {
+  TextInput,
   Animate,
   EraserCanvas,
   SimpleModal,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TileButton, Timer } from "@repo/ui/components";
+import { TextInput, Timer } from "@repo/ui/components";
 import MainBoard from "@repo/ui/components/minigames/FamilyFeud/MainBoard";
 import { useBoardItems } from "@repo/ui/hooks/minigames/FamilyFeud/useBoardItems";
 import styles from "./Component.module.scss";
@@ -13,29 +13,21 @@ type Props = {
 const Component = ({ onAnswer }: Props) => {
   const [answer, setAnswer] = useState("");
   const { answers, question, youAreGuessing } = useBoardItems();
-  const sendAnswer = () => onAnswer(answer);
-
+  
   return (
     <div className={styles.container}>
       <MainBoard answers={answers} question={question} />
       {youAreGuessing ? (
         <>
-          <div className={styles.input}>
-            <input
-              maxLength={40}
-              className={styles.playerName}
-              type="text"
-              placeholder="Podaj odpowiedź"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-            />
-            <TileButton
-              text={`Wyślij`}
-              blue
-              onClick={sendAnswer}
-              className={styles.button}
-            />
-          </div>
+          <TextInput
+            placeholder="Podaj odpowiedź"
+            buttonText="Wyślij"
+            onClick={onAnswer}
+            value={answer}
+            onChange={(v) => setAnswer(v)}
+            small
+          />
+
           <Keyboard value={answer} onChange={(v) => setAnswer(v)} />
         </>
       ) : (

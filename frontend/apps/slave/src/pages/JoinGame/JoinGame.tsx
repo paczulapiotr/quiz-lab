@@ -1,7 +1,7 @@
 import { useJoinGameMutation } from "@repo/ui/api/mutations/useJoinGameMutation";
 import { useState } from "react";
 import styles from "./JoinGame.module.scss";
-import { PageTemplate, TileButton, Tile, Timer } from "@repo/ui/components";
+import { PageTemplate, Tile, Timer, TextInput } from "@repo/ui/components";
 import Times from "@repo/ui/config/times";
 import { Keyboard } from "@/components/Keyboard";
 import { useGame } from "@repo/ui/contexts/GameContext";
@@ -34,22 +34,13 @@ const JoinGame = ({ starting = false }: Props) => {
             {starting ? "Rozpoczynanie gry" : "Czekanie na graczy"}
           </p>
         ) : (
-          <div className={styles.input}>
-            <input
-              maxLength={40}
-              className={styles.playerName}
-              type="text"
-              placeholder="Podaj nazwę gracza"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-            />
-            <TileButton
-              text={`Dołącz`}
-              blue
-              onClick={joinGame}
-              className={styles.button}
-            />
-          </div>
+          <TextInput
+            placeholder="Podaj nazwę gracza"
+            buttonText="Dołącz"
+            value={playerName}
+            onChange={setPlayerName}
+            onClick={joinGame}
+          />
         )}
       </div>
       <div className={styles.grid}>

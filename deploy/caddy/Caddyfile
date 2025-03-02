@@ -12,17 +12,10 @@
     }
 
     handle_path /backend* {
-        reverse_proxy localhost:5999 {
-            header_up Upgrade {upstream_upgrade}
-            header_up Connection {upstream_connection}
-        }
+        reverse_proxy localhost:5999
     }
 
     handle_path /cms* {
-        reverse_proxy localhost:1337 {
-            header_up Upgrade {upstream_upgrade}
-            header_up Connection {upstream_connection}
-        }
+        reverse_proxy localhost:1337
     }
 }
-
