@@ -24,11 +24,11 @@ const Component = ({ onAnswer }: Props) => {
             buttonText="Wyślij"
             onClick={onAnswer}
             value={answer}
-            onChange={(v) => setAnswer(v)}
+            onChange={setAnswer}
             small
           />
 
-          <Keyboard value={answer} onChange={(v) => setAnswer(v)} />
+          <Keyboard value={answer} onChange={setAnswer} />
         </>
       ) : (
         <div style={{ flex: 1 }} />

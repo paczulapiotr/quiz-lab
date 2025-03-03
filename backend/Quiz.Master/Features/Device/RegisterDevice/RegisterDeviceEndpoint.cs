@@ -5,7 +5,7 @@ using Quiz.Master.Persistance.Repositories.Abstract;
 
 namespace Quiz.Master.Features.Device.RegisterDevice;
 
-public record RegisterDeviceRequestDto(string? UniqueId, string RoomCode, bool IsHost = false);
+public record RegisterDeviceRequestDto(string? UniqueId, string? RoomCode, bool IsHost = false);
 public record RegisterDeviceResponseDto(string? RoomCode, string? UniqueId, bool Ok);
 
 public class RegisterDeviceEndpoint : ICarterModule
@@ -19,7 +19,13 @@ public class RegisterDeviceEndpoint : ICarterModule
              string? errorCode = null;
              if (dto.IsHost)
              {
-                 (room, errorCode) = await repository.RegisterHostAsync(uniqueId, dto.RoomCode, token);
+                 var roomCode = string.IsNullOrWhiteSpace(dto.RoomCode) ? IdGenerator.New : dto.RoomCode;
+                 (room, errorCode) = await repository.RegisterHostAsync(uniqueId, roomCode, token);
+             }
+             else if (string.IsNullOrWhiteSpace(dto.RoomCode))
+             {
+                 logger.LogError("Error registering device {uniqueId} for roomCode {roomCode}: {errorCode}", uniqueId, dto.RoomCode, "RoomCode is required");
+                 return new RegisterDeviceResponseDto(null, null, false);
              }
              else
              {
@@ -33,7 +39,7 @@ public class RegisterDeviceEndpoint : ICarterModule
              }
 
              return room != null
-                ? new RegisterDeviceResponseDto(dto.RoomCode, uniqueId, true)
+                ? new RegisterDeviceResponseDto(room.Code, uniqueId, true)
                 : new RegisterDeviceResponseDto(null, null, false);
          })
          .WithName("Register Device")

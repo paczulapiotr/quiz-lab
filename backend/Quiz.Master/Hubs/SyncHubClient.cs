@@ -52,7 +52,7 @@ internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
         var refresh = payload.Status == GameStatus.GameStarting || payload.Status == GameStatus.GameJoined;
         var targetIds = await GetTargetIds(payload.GameId, refresh);
 
-        await SendAsync(
+        _ = SendAsync(
                 SyncDefinitions.SendGameStatusUpdate,
                 payload,
                 targetIds,
@@ -62,7 +62,7 @@ internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
     public async Task MiniGameNotification(MiniGameNotificationSyncMessage payload, CancellationToken cancellationToken = default)
     {
         var targetIds = await GetTargetIds(payload.GameId);
-        await SendAsync(
+        _ = SendAsync(
                    SyncDefinitions.SendMiniGameNotification,
                    payload,
                    targetIds,
@@ -72,7 +72,7 @@ internal class SyncHubClient : SyncHubClientBase<SyncHub>, ISyncHubClient
     public async Task MiniGameUpdated(MiniGameUpdateSyncMessage payload, CancellationToken cancellationToken = default)
     {
         var targetIds = await GetTargetIds(payload.GameId);
-        await SendAsync(
+        _ = SendAsync(
                   SyncDefinitions.SendMiniGameUpdate,
                   payload,
                   targetIds,

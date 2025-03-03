@@ -10,14 +10,14 @@ public record MiniGameUpdate(string GameId, string Action, string? CorrelationId
 
 public class MiniGameUpdateDefinition : QueueDefinition<MiniGameUpdate>
 {
-    public MiniGameUpdateDefinition(string UniqueId = "") : base(ExchangeType.Topic, queueSufix: UniqueId)
+    public MiniGameUpdateDefinition(string UniqueId = "", bool persistant = true) : base(ExchangeType.Topic, queueSufix: UniqueId, persistant)
     {
     }
 }
 
 public class MiniGameUpdateSingleDefinition : MiniGameUpdateDefinition
 {
-    public MiniGameUpdateSingleDefinition(string UniqueId = "") : base(UniqueId + "-single")
+    public MiniGameUpdateSingleDefinition(string UniqueId = "") : base(UniqueId + "-single", persistant: false)
     {
     }
 }

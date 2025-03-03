@@ -14,12 +14,19 @@ public enum ExchangeType
 public abstract class QueueDefinition<TMessage>
 : IQueueDefinition<TMessage> where TMessage : IMessage
 {
+    private static readonly IDictionary<string, object?> _persistantQueueDefaultArguments = new Dictionary<string, object?>
+    {
+        { "x-message-ttl", 1 * 60_000 }, // 1 minute
+    };
+
     private static readonly IDictionary<string, object?> _queueDefaultArguments = new Dictionary<string, object?>
     {
         { "x-message-ttl", 1 * 60_000 }, // 1 minute
-        { "x-expires", 5 * 60_000 } // 5 minutes
+        { "x-expires", 15 * 60_000 } // 15 minutes
     };
+
     private string _queueSufix;
+    private readonly bool _persistant;
 
     private string NameBase => typeof(TMessage).Name.ToLowerInvariant();
 
@@ -28,9 +35,10 @@ public abstract class QueueDefinition<TMessage>
     public Type MessageType => typeof(TMessage);
     public string QueueName { private set; get; }
 
-    protected QueueDefinition(ExchangeType exchangeType, string queueSufix = "")
+    protected QueueDefinition(ExchangeType exchangeType, string queueSufix = "", bool persistant = false)
     {
         _queueSufix = queueSufix;
+        this._persistant = persistant;
         ExchangeType = exchangeType;
         ExchangeName = $"{NameBase}-exchange";
         QueueName = CreateQueueName();
@@ -82,7 +90,7 @@ public abstract class QueueDefinition<TMessage>
         QueueName = CreateQueueName(routingKey);
 
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
-        await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: _queueDefaultArguments, cancellationToken: cancellationToken);
+        await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: _persistant ? _persistantQueueDefaultArguments : _queueDefaultArguments, cancellationToken: cancellationToken);
         await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: MapRoutingKey(routingKey), arguments: null, cancellationToken: cancellationToken);
 
         return (ExchangeName, QueueName);

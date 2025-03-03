@@ -9,9 +9,7 @@ public record NewGameCreation(string GameId, string? CorrelationId = null) : Mes
 
 public class NewGameCreationDefinition : QueueDefinition<NewGameCreation>
 {
-    public NewGameCreationDefinition(string UniqueId = "") : base(ExchangeType.Direct, queueSufix: UniqueId)
+    public NewGameCreationDefinition(string UniqueId = "") : base(ExchangeType.Direct, queueSufix: UniqueId, persistant: true)
     {
     }
-
-
 }

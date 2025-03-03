@@ -46,7 +46,7 @@ internal class HubConnection : IHubConnection
             {
                 return;
             }
-            await Task.Delay(100, cancellationToken);
+            await Task.Delay(100);
         }
     }
 }

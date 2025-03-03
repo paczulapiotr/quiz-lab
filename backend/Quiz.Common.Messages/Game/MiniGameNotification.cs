@@ -10,14 +10,7 @@ public record MiniGameNotification(string GameId, string MiniGameType, string Ac
 
 public class MiniGameNotificationDefinition : QueueDefinition<MiniGameNotification>
 {
-    public MiniGameNotificationDefinition(string UniqueId = "") : base(ExchangeType.Fanout, queueSufix: UniqueId)
-    {
-    }
-}
-
-public class MiniGameNotificationDefinitionSingleDefinition : MiniGameNotificationDefinition
-{
-    public MiniGameNotificationDefinitionSingleDefinition(string UniqueId = "") : base(UniqueId + "-single")
+    public MiniGameNotificationDefinition(string UniqueId = "") : base(ExchangeType.Fanout, queueSufix: UniqueId, persistant: true)
     {
     }
 }

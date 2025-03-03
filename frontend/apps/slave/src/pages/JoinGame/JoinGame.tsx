@@ -58,7 +58,7 @@ const JoinGame = ({ starting = false }: Props) => {
         </div>
       ) : joined ? null : (
         <div style={{ marginTop: "auto" }}>
-          <Keyboard value={playerName} onChange={(e) => setPlayerName(e)} />
+          <Keyboard value={playerName} onChange={setPlayerName} />
         </div>
       )}
     </PageTemplate>

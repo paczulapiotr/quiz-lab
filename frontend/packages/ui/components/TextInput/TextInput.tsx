@@ -21,10 +21,11 @@ const TextInput = ({
   value: _value,
 }: Props) => {
   const [value, setValue] = useState("");
+  const v = _value ?? value;
 
   const handleClick = useCallback(() => {
-    onClick(value);
-  }, [onClick, value]);
+    onClick(v);
+  }, [onClick, v]);
 
   return (
     <div className={classNames(styles.input, { [styles.small]: small })}>
@@ -33,7 +34,7 @@ const TextInput = ({
         className={styles.text}
         type="text"
         placeholder={placeholder}
-        value={_value ?? value}
+        value={v}
         onChange={(e) => {
           setValue(e.target.value);
           onChange?.(e.target.value);

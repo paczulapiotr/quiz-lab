@@ -4,6 +4,7 @@ import { useRoom } from "@repo/ui/contexts/RoomContext";
 import { useState } from "react";
 import styles from "./CreateGame.module.scss";
 import classNames from "classnames";
+import { Tile } from "@repo/ui/components";
 
 export type Props = { className?: string };
 
@@ -36,6 +37,7 @@ const CreateGame = ({ className }: Props) => {
     <div className={classNames(styles.input, className)}>
       {data && (
         <>
+          <Tile blue text={"Room: " + room?.code} />
           <select
             disabled={posting}
             className={styles.select}
@@ -71,7 +73,7 @@ const CreateGame = ({ className }: Props) => {
             onClick={onSelect}
             disabled={posting}
           >
-            {"Wybierz"}
+            {"Create game"}
           </button>
         </>
       )}

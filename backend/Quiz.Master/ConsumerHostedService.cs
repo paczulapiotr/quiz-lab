@@ -11,7 +11,7 @@ public class ConsumerHostedService(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting consumer hosted service");
-        await Task.WhenAll(consumers.Select(c => c.ConsumeAsync(cancellationToken)));
+        await Task.WhenAll(consumers.Select(c => c.ConsumeAsync()));
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
