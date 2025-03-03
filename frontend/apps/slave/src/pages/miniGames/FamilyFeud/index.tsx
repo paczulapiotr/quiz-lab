@@ -12,7 +12,7 @@ const FamilyFeud = () => {
   const { data } = useGetScore(gameId);
 
   return (
-    <PageTemplate squares>
+    <PageTemplate squares key={miniGameStatus}>
       <ScoreTile score={data?.miniGameScore} />
       {render(miniGameStatus)}
     </PageTemplate>

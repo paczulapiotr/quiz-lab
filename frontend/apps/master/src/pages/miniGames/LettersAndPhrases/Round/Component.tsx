@@ -1,7 +1,6 @@
 import { Tile, Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
 import { IncorrectLetters } from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
-import { memo } from "react";
 import styles from "./Component.module.scss";
 
 type Props = {
@@ -43,4 +42,4 @@ const Round = ({
   );
 };
 
-export default memo(Round);
+export default Round;

@@ -7,7 +7,7 @@ import { useGame } from "@repo/ui/contexts/GameContext";
 
 const LettersAndPhrases = () => {
   const { miniGameStatus } = useGame();
-  return <PageTemplate squares>{render(miniGameStatus)}</PageTemplate>;
+  return <PageTemplate squares key={miniGameStatus}>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default LettersAndPhrases;

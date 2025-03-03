@@ -106,7 +106,7 @@ public abstract class QueueDefinition<TMessage>
     {
         ExchangeType.Fanout => "",
         ExchangeType.Topic => $"{NameBase}.{(string.IsNullOrWhiteSpace(routingKey) ? "#" : routingKey)}",
-        ExchangeType.Direct => NameBase,
+        ExchangeType.Direct => $"{NameBase}{(string.IsNullOrWhiteSpace(routingKey) ? "" : "." + routingKey)}",
         _ => throw new ArgumentOutOfRangeException(nameof(ExchangeType), ExchangeType, null)
     };
 }

@@ -8,7 +8,7 @@ import { useGame } from "@repo/ui/contexts/GameContext";
 
 const MusicGuess = () => {
   const { miniGameStatus } = useGame();
-  return <PageTemplate squares>{render(miniGameStatus)}</PageTemplate>;
+  return <PageTemplate squares key={miniGameStatus}>{render(miniGameStatus)}</PageTemplate>;
 };
 
 export default MusicGuess;

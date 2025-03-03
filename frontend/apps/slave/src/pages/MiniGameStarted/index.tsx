@@ -5,7 +5,6 @@ import { MiniGameType } from "@repo/ui/api/requests/minigames/types";
 import LettersAndPhrases from "../miniGames/LettersAndPhrases";
 import Sorter from "../miniGames/Sorter";
 import FamilyFeud from "../miniGames/FamilyFeud";
-import { memo } from "react";
 import { useGame } from "@repo/ui/contexts/GameContext";
 
 
@@ -34,4 +33,4 @@ const MiniGameStarted = () => {
   return renderMiniGame();
 };
 
-export default memo(MiniGameStarted);
+export default MiniGameStarted;

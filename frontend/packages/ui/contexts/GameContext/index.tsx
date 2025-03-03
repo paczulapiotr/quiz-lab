@@ -11,6 +11,7 @@ import { useGetGame } from "../../api/queries/useGetGame";
 import { useLocalSyncConsumer } from "../../hooks";
 import { useGetMiniGame } from "../../api/queries/useGetMiniGame";
 import { useRoom } from "../RoomContext";
+import { useGetScore } from "../../api/queries/useGetScore";
 
 export const GameContext = createContext<GameContextType>({
   gameId: undefined,
@@ -28,6 +29,7 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
   const { room } = useRoom();
   const { data: game, refetch: refetchGame } = useGetGame(gameId);
   const { data: miniGame, refetch: refetchMiniGame } = useGetMiniGame(gameId);
+  const { refetch } = useGetScore(gameId);
 
   const miniGameState = miniGame?.state;
   const miniGameStatus = miniGame?.miniGameStatus;
@@ -49,7 +51,14 @@ export const GameProvider = ({ children }: PropsWithChildren) => {
     false
   );
 
-  useLocalSyncConsumer("MiniGameNotification", () => refetchMiniGame(), false);
+  useLocalSyncConsumer(
+    "MiniGameNotification",
+    () => {
+      refetchMiniGame();
+      refetch();
+    },
+    false
+  );
 
   useEffect(() => {
     if (room?.gameId) {

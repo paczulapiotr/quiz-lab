@@ -3,7 +3,6 @@ import { ScoreTile, Timer } from "@repo/ui/components";
 import { Phrase } from "@repo/ui/components/minigames/LettersAndPhrases/Phrase";
 import { IncorrectLetters } from "@repo/ui/components/minigames/LettersAndPhrases/IncorrectLetters";
 import styles from './Component.module.scss'
-import { memo } from "react";
 import Times from "@repo/ui/config/times";
 
 type Props = {
@@ -53,4 +52,4 @@ const Component = ({
   );
 };
 
-export default memo(Component);
+export default Component;
