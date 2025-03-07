@@ -30,150 +30,39 @@ services:
     restart: always
     build:
       context: ./backend
-      dockerfile: ./Quiz.Master/Dockerfile.debug
-    ports:
-      - "5999:8080"
+      dockerfile: ./Quiz.Master/Dockerfile
     environment:
-      - ASPNETCORE_URLS=http://+:8080;
-      - Cors=http://localhost:6030,http://localhost:5888
+      - ASPNETCORE_URLS=http://+:5999;
+      - Cors=http://localhost:4000
       - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
       - Mongo__ConnectionString=mongodb://quiz-mongodb:27017
-      - ContentManagement__BaseUrl=http://host.docker.internal:1337/graphql
+      - ContentManagement__BaseUrl=http://strapi:1337/graphql
+      - ContentManagement__Token=<strapi-token>
     depends_on:
       - quiz-rabbitmq
-
-  ui-master:
-    container_name: ui-master
+      - quiz-mongodb
+  strapi:
+    container_name: strapi
     restart: always
     build:
-      context: ./frontend
-      dockerfile: ./apps/master/Dockerfile
-      args:
-        - VITE_LOCAL_API_URL=http://localhost:5999
+      context: ./content/content-management
+      dockerfile: ./Dockerfile
     ports:
-      - "6030:80"
-
-  slave-000:
-    container_name: slave-000
+      - "1337:1337"
+    volumes:
+      - strapi_database:/app/.tmp
+      - strapi_public:/app/public
+  reverse-proxy:
+    container_name: caddy
     restart: always
     build:
-      context: ./backend
-      dockerfile: ./Quiz.Slave/Dockerfile.debug
+      context: ./deploy/caddy
+      dockerfile: ./docker/Dockerfile
     ports:
-      - "6020:8080"
-    environment:
-      - ASPNETCORE_URLS=http://+:8080;
-      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
-      - Cors=http://localhost:6010,http://localhost:5777
-      - MasterUrl=http://master:8080/
-      - DeviceId=Slave000
-    depends_on:
-      - quiz-rabbitmq
-
-  slave-001:
-    container_name: slave-001
-    restart: always
-    build:
-      context: ./backend
-      dockerfile: ./Quiz.Slave/Dockerfile.debug
-    ports:
-      - "6021:8080"
-    environment:
-      - ASPNETCORE_URLS=http://+:8080;
-      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
-      - Cors=http://localhost:6011
-      - MasterUrl=http://master:8080/
-      - DeviceId=Slave001
-    depends_on:
-      - quiz-rabbitmq
-      - slave-000
-
-  slave-002:
-    container_name: slave-002
-    restart: always
-    build:
-      context: ./backend
-      dockerfile: ./Quiz.Slave/Dockerfile.debug
-    ports:
-      - "6022:8080"
-    environment:
-      - ASPNETCORE_URLS=http://+:8080;
-      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
-      - Cors=http://localhost:6012
-      - MasterUrl=http://master:8080/
-      - DeviceId=Slave002
-    depends_on:
-      - quiz-rabbitmq
-      - slave-000
-
-  slave-003:
-    container_name: slave-003
-    restart: always
-    build:
-      context: ./backend
-      dockerfile: ./Quiz.Slave/Dockerfile.debug
-    ports:
-      - "6023:8080"
-    environment:
-      - ASPNETCORE_URLS=http://+:8080;
-      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
-      - Cors=http://localhost:6013
-      - MasterUrl=http://master:8080/
-      - DeviceId=Slave003
-    depends_on:
-      - quiz-rabbitmq
-      - slave-000
-
-  ui-000:
-    container_name: ui-000
-    restart: always
-    build:
-      context: ./frontend
-      dockerfile: ./apps/slave/Dockerfile
-      args:
-        - VITE_LOCAL_API_URL=http://localhost:6020
-    ports:
-      - "6010:80"
-
-  ui-001:
-    container_name: ui-001
-    restart: always
-    build:
-      context: ./frontend
-      dockerfile: ./apps/slave/Dockerfile
-      args:
-        - VITE_LOCAL_API_URL=http://localhost:6021
-    ports:
-      - "6011:80"
-    depends_on:
-      - ui-000
-
-  ui-002:
-    container_name: ui-002
-    restart: always
-    build:
-      context: ./frontend
-      dockerfile: ./apps/slave/Dockerfile
-      args:
-        - VITE_LOCAL_API_URL=http://localhost:6022
-    ports:
-      - "6012:80"
-    depends_on:
-      - ui-000
-
-  ui-003:
-    container_name: ui-003
-    restart: always
-    build:
-      context: ./frontend
-      dockerfile: ./apps/slave/Dockerfile
-      args:
-        - VITE_LOCAL_API_URL=http://localhost:6023
-    ports:
-      - "6013:80"
-    depends_on:
-      - ui-000
+      - "4000:4000"
 
 volumes:
   mongodb_data:
+  strapi_database:
+  strapi_public:
 
