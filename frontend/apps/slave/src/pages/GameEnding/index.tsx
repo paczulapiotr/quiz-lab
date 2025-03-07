@@ -11,7 +11,7 @@ const GameEnding = () => {
   const { data } = useGetScore(gameId);
 
   return (
-    <PageTemplate>
+    <PageTemplate key={"game_ending"}>
       <ScoreTile score={data?.totalScore} />
       <CenteredInstruction
         title="Podsumowanie gry"

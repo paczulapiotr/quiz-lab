@@ -31,9 +31,9 @@ const render = (gameStatus: GameStatus | undefined) => {
     case GameStatus.MiniGameEnding:
       return <MiniGameEnding key={gameStatus} />;
     case GameStatus.GameEnding:
-      return <GameEnding key={GameStatus.GameEnding} />;
+      return <GameEnding key={gameStatus} />;
     case GameStatus.GameEnded:
-      return <GameEnding key={GameStatus.GameEnding} />;
+      return <GameEnding key={gameStatus} />;
     default:
       return null;
   }

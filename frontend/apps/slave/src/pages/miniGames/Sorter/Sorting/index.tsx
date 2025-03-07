@@ -9,13 +9,18 @@ import { useMemo } from "react";
 import { useSendPlayerInteraction } from "@repo/ui/api/mutations/useSendPlayerInteraction";
 import { SorterInteractions } from "@repo/ui/minigames/actions";
 import { useGame } from "@repo/ui/contexts/GameContext";
+import Times from "@repo/ui/config/times";
 
 type Props = {
   started?: boolean;
 };
 
-const Sorting = ({ started}: Props) => {
-  const { gameId, miniGameState: state, miniGameDefinition: definition } = useGame<SorterState, SorterDefinition>();
+const Sorting = ({ started }: Props) => {
+  const {
+    gameId,
+    miniGameState: state,
+    miniGameDefinition: definition,
+  } = useGame<SorterState, SorterDefinition>();
   const { mutateAsync } = useSendPlayerInteraction();
 
   const { items, left, right, leftId, rightId } = useMemo(() => {
@@ -58,6 +63,7 @@ const Sorting = ({ started}: Props) => {
 
   return (
     <Component
+      timerSeconds={started ? Times.Sorter.AnswerSeconds : Times.Sorter.RoundStartWaitSeconds}
       items={started ? items : []}
       leftAnswer={left ?? ""}
       rightAnswer={right ?? ""}

@@ -10,12 +10,15 @@ public class GameEngineHostedService(
     IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
 
-    private CancellationTokenSource? cancellationTokenSource = null!;
+    private CancellationTokenSource? _mainCancellationTokenSource = null!;
     private Task? backgroundTask;
     private List<(Task task, CancellationTokenSource tokenSource)> instanceTasks = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        _mainCancellationTokenSource = new CancellationTokenSource();
+        var token = _mainCancellationTokenSource.Token;
+
         logger.LogInformation("GameEngineHostedService is starting.");
         backgroundTask = Task.Run(async () =>
         {
@@ -31,11 +34,9 @@ public class GameEngineHostedService(
                         logger.LogInformation("GameEngineHostedService - status - disconnected");
                     }
                 }
-
             });
 
-
-            while (!cancellationToken.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
@@ -47,12 +48,13 @@ public class GameEngineHostedService(
                     }
 
                     var gameId = Guid.Parse(message.GameId);
+                    var gameToken = _mainCancellationTokenSource.Token;
 
                     // Initialize game engine 
                     using var scope = serviceScopeFactory.CreateScope();
                     var gameEngine = scope.ServiceProvider.GetRequiredService<IGameEngine>();
-                    var (token, source) = CreateToken(cancellationToken);
-                    var gameTask = gameEngine.Run(gameId, token);
+                    var (t, source) = CreateToken(gameToken);
+                    var gameTask = gameEngine.Run(gameId, t);
 
                     ManageGameTask(gameTask, source);
                 }
@@ -63,7 +65,7 @@ public class GameEngineHostedService(
             }
 
             logger.LogInformation("GameEngineHostedService background task is stopping.");
-        }, cancellationToken);
+        }, token);
 
         await Task.CompletedTask;
     }
@@ -81,7 +83,7 @@ public class GameEngineHostedService(
 
         if (backgroundTask != null)
         {
-            cancellationTokenSource?.Cancel();
+            _mainCancellationTokenSource?.Cancel();
 
             try
             {

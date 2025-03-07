@@ -14,7 +14,7 @@ where TMessage : class, IMessage
     protected readonly IConnection _connection;
     protected readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
     protected readonly ILogger logger;
-    
+
     public bool IsConnected => _connection.IsOpen;
 
     public OneTimeConsumer(IConnection connection, IQueueConsumerDefinition<TMessage> queueDefinition, ILogger logger)
@@ -24,10 +24,12 @@ where TMessage : class, IMessage
         this.logger = logger;
     }
 
-    protected async Task<IChannel> CreateChannelAsync() {
-        var channel =  await _connection.CreateChannelAsync();
-        channel.ChannelShutdownAsync += async (sender, args) => {
-            
+    protected async Task<IChannel> CreateChannelAsync()
+    {
+        var channel = await _connection.CreateChannelAsync();
+        channel.ChannelShutdownAsync += async (sender, args) =>
+        {
+
             logger.LogInformation($"Channel shutdown for exchange: {_queueDefinition.ExchangeName}, queue: {_queueDefinition.QueueName}, reason: {args.ReplyText}");
             await Task.CompletedTask;
         };
@@ -86,6 +88,7 @@ where TMessage : class, IMessage
             await channel.BasicCancelAsync(consumerTag);
             return result;
         }
+
         catch (Exception ex)
         {
             logger.LogError($"Error while processing message of type {typeof(TMessage).Name}", ex);

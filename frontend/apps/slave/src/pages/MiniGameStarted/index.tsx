@@ -14,15 +14,15 @@ const MiniGameStarted = () => {
   const renderMiniGame = () => {
     switch (miniGameType) {
       case MiniGameType.AbcdWithCategories:
-        return <AbcdWithCategories />;
+        return <AbcdWithCategories key={miniGameType}/>;
       case MiniGameType.MusicGuess:
-        return <MusicGuess />;
+        return <MusicGuess key={miniGameType} />;
       case MiniGameType.LettersAndPhrases:
-        return <LettersAndPhrases />;
+        return <LettersAndPhrases key={miniGameType} />;
       case MiniGameType.Sorter:
-        return <Sorter />;
+        return <Sorter key={miniGameType} />;
       case MiniGameType.FamilyFeud:
-        return <FamilyFeud  />;
+        return <FamilyFeud key={miniGameType} />;
       default:
         return (
           <PageTemplate>Unknown mini game type: {miniGameType}</PageTemplate>

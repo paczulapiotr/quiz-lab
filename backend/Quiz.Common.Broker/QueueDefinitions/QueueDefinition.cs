@@ -22,7 +22,7 @@ public abstract class QueueDefinition<TMessage>
     private static readonly IDictionary<string, object?> _queueDefaultArguments = new Dictionary<string, object?>
     {
         { "x-message-ttl", 1 * 60_000 }, // 1 minute
-        { "x-expires", 15 * 60_000 } // 15 minutes
+        { "x-expires", 30 * 60_000 } // 30 minutes
     };
 
     private string _queueSufix;

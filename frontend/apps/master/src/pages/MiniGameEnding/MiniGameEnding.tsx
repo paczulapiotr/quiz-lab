@@ -26,7 +26,7 @@ const MiniGameEnding = () => {
   }, [gameId, mutate]);
 
   return (
-    <PageTemplate squares>
+    <PageTemplate squares key={"mini_game_ending"}>
       <HeaderTile title="Podsumowanie rundy" />
       <div className={styles.grid}>
         {data?.playerScores.map((player) => (

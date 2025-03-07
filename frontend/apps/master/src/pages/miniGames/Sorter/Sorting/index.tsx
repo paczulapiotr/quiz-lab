@@ -26,7 +26,7 @@ const Sorting = ({ started }: Props) => {
     }
   }, [gameId, mutate, started]);
 
-  return <Component />;
+  return <Component started={started} />;
 };
 
 export default Sorting;

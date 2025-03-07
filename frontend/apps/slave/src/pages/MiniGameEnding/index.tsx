@@ -7,7 +7,7 @@ const MiniGameEnding = () => {
   const { data } = useGetScore(gameId);
 
   return (
-    <PageTemplate>
+    <PageTemplate key={"mini_game_ending"}>
       <CenteredInstruction
         title={`Zdobyte punkty: ${data?.miniGameScore}`}
         secondaryText="Podsumowanie rundy"

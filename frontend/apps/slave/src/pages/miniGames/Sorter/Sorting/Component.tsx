@@ -2,8 +2,10 @@ import React, { useState, useRef } from "react";
 import ItemSorter, { Item } from "@repo/ui/components/ItemSorter";
 import classNames from "classnames";
 import styles from "./Component.module.scss";
+import { Timer } from "@repo/ui/components";
 
 export type Props = {
+  timerSeconds: number;
   leftAnswer: string;
   rightAnswer: string;
   onLeftAnswer: (item: Item) => void;
@@ -11,7 +13,14 @@ export type Props = {
   items: Item[];
 };
 
-const Component = ({ items, leftAnswer, rightAnswer, onLeftAnswer, onRightAnswer }: Props) => {
+const Component = ({
+  timerSeconds,
+  items,
+  leftAnswer,
+  rightAnswer,
+  onLeftAnswer,
+  onRightAnswer,
+}: Props) => {
   const [highlightedLeft, setHighlightedLeft] = useState<
     "green" | "red" | null
   >(null);
@@ -97,6 +106,7 @@ const Component = ({ items, leftAnswer, rightAnswer, onLeftAnswer, onRightAnswer
         onAssignLeft={handleAssignLeft}
         onAssignRight={handleAssignRight}
       />
+      <Timer startSeconds={timerSeconds} />
     </div>
   );
 };

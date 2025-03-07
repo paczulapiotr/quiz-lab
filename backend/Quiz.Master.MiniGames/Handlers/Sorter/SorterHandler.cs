@@ -69,7 +69,7 @@ public class SorterHandler(IMiniGameEventService eventService, IMiniGameReposito
 
         var timedToken = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            new CancellationTokenSource(30_000_000).Token)
+            new CancellationTokenSource(options.Value.TimeForAnswerMs).Token)
             .Token;
 
         while (!timedToken.IsCancellationRequested)

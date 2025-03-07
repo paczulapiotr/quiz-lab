@@ -23,6 +23,7 @@ const Times = {
   },
   Sorter: {
     RoundStartWaitSeconds: 5,
+    AnswerSeconds: 30,
   },
   FamilyFeud: {
     QuestionShowSeconds: 5,
