@@ -5,6 +5,7 @@ namespace Quiz.Common.Broker.Consumer;
 public interface IConsumer : IAsyncDisposable
 {
     Task ConsumeAsync(CancellationToken cancellationToken = default);
+    Task RegisterAsync(CancellationToken cancellationToken = default);
 }
 
 public interface IOneTimeConsumer<TMessage> where TMessage : IMessage

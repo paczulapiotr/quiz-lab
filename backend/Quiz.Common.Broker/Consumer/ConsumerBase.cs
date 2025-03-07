@@ -21,11 +21,16 @@ where TMessage : class, IMessage
 
     public async Task ConsumeAsync(CancellationToken cancellationToken = default)
     {
+        if (_queueRouteName is null)
+        {
+            throw new InvalidOperationException("Queue route name is not set.");
+        }
+
         _channel = await CreateChannelAsync();
 
         var consumer = await CreateAsyncConsumer(_channel, ProcessMessageAsync, cancellationToken: cancellationToken);
 
-        _consumeTag = await _channel!.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+        _consumeTag = await _channel!.BasicConsumeAsync(_queueRouteName, false, consumer, cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
@@ -48,4 +53,9 @@ where TMessage : class, IMessage
     }
 
     protected abstract Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken = default);
+
+    public Task RegisterAsync(CancellationToken cancellationToken = default)
+    {
+        return base.RegisterAsync(cancellationToken: cancellationToken);
+    }
 }

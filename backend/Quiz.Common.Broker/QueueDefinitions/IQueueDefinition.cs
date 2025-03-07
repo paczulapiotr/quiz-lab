@@ -21,7 +21,6 @@ public interface IQueuePublisherDefinition<TMessage> : IQueuePublisherDefinition
 
 public interface IQueueConsumerDefinition : IQueueExchange
 {
-    public string QueueName { get; }
     Task<(string exchange, string queue)> RegisterConsumerAsync(IChannel channel, string? routingKey = null, CancellationToken cancellationToken = default);
 }
 

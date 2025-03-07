@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Quiz.Common.Broker.Consumer;
 using Quiz.Common.Broker.Publisher;
 using Quiz.Common.Broker.QueueDefinitions;
 using RabbitMQ.Client;
@@ -13,7 +14,7 @@ public static class MessageBrokerBuilderExtensions
     {
         var serviceProvider = app.ApplicationServices;
         var publisherDefinitions = serviceProvider.GetServices<IQueuePublisherDefinition>();
-        var consumerDefinitions = serviceProvider.GetServices<IQueueConsumerDefinition>();
+        var consumers = serviceProvider.GetServices<IConsumer>();
         var logger = serviceProvider.GetRequiredService<ILogger<IApplicationBuilder>>();
 
         while (!cancellationToken.IsCancellationRequested)
@@ -27,9 +28,9 @@ public static class MessageBrokerBuilderExtensions
                     await def.RegisterPublisherAsync(channel, cancellationToken: cancellationToken);
                 }
 
-                foreach (var def in consumerDefinitions)
+                foreach (var consumer in consumers)
                 {
-                    await def.RegisterConsumerAsync(channel, cancellationToken: cancellationToken);
+                    await consumer.RegisterAsync(cancellationToken);
                 }
                 break;
             }

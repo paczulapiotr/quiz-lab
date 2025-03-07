@@ -33,7 +33,6 @@ public abstract class QueueDefinition<TMessage>
     public ExchangeType ExchangeType { get; init; }
     public string ExchangeName { get; init; }
     public Type MessageType => typeof(TMessage);
-    public string QueueName { private set; get; }
 
     protected QueueDefinition(ExchangeType exchangeType, string queueSufix = "", bool persistant = false)
     {
@@ -41,10 +40,9 @@ public abstract class QueueDefinition<TMessage>
         this._persistant = persistant;
         ExchangeType = exchangeType;
         ExchangeName = $"{NameBase}-exchange";
-        QueueName = CreateQueueName();
     }
 
-    private string CreateQueueName(string? queueIdentifier = null)
+    public string CreateQueueName(string? queueIdentifier = null)
     {
         var builder = new StringBuilder(NameBase);
         if (!string.IsNullOrWhiteSpace(_queueSufix))
@@ -87,13 +85,13 @@ public abstract class QueueDefinition<TMessage>
             _ => throw new ArgumentOutOfRangeException(nameof(ExchangeType), ExchangeType, null),
         };
 
-        QueueName = CreateQueueName(routingKey);
+        var queueName = CreateQueueName(routingKey);
 
         await channel.ExchangeDeclareAsync(exchange: ExchangeName, type: exchange, durable: true, autoDelete: false, arguments: null, cancellationToken: cancellationToken);
-        await channel.QueueDeclareAsync(queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: _persistant ? _persistantQueueDefaultArguments : _queueDefaultArguments, cancellationToken: cancellationToken);
-        await channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: MapRoutingKey(routingKey), arguments: null, cancellationToken: cancellationToken);
+        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: _persistant ? _persistantQueueDefaultArguments : _queueDefaultArguments, cancellationToken: cancellationToken);
+        await channel.QueueBindAsync(queue: queueName, exchange: ExchangeName, routingKey: MapRoutingKey(routingKey), arguments: null, cancellationToken: cancellationToken);
 
-        return (ExchangeName, QueueName);
+        return (ExchangeName, queueName);
     }
 
     public QueueDefinition<TMessage> ToConsumer(string queueName = "")

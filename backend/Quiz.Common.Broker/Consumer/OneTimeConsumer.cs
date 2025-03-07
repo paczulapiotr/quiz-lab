@@ -11,6 +11,7 @@ namespace Quiz.Common.Broker.Consumer;
 public class OneTimeConsumer<TMessage> : IOneTimeConsumer<TMessage>
 where TMessage : class, IMessage
 {
+    protected string? _queueRouteName = null;
     protected readonly IConnection _connection;
     protected readonly IQueueConsumerDefinition<TMessage> _queueDefinition;
     protected readonly ILogger logger;
@@ -30,7 +31,7 @@ where TMessage : class, IMessage
         channel.ChannelShutdownAsync += async (sender, args) =>
         {
 
-            logger.LogInformation($"Channel shutdown for exchange: {_queueDefinition.ExchangeName}, queue: {_queueDefinition.QueueName}, reason: {args.ReplyText}");
+            logger.LogInformation($"Channel shutdown for exchange: {_queueDefinition.ExchangeName}, queue: {_queueRouteName}, reason: {args.ReplyText}");
             await Task.CompletedTask;
         };
         return channel;
@@ -81,7 +82,12 @@ where TMessage : class, IMessage
 
         try
         {
-            consumerTag = await channel.BasicConsumeAsync(_queueDefinition.QueueName, false, consumer, cancellationToken);
+            if(_queueRouteName is null)
+            {
+                throw new InvalidOperationException("Queue not registered");
+            }
+
+            consumerTag = await channel.BasicConsumeAsync(_queueRouteName, false, consumer, cancellationToken);
             logger.LogInformation("Created consumer tag: {0} for message: {1}", consumerTag, typeof(TMessage).Name);
             var result = await tcs.Task;
             logger.LogInformation("Message consumed of type {0}", typeof(TMessage).Name);
@@ -143,6 +149,7 @@ where TMessage : class, IMessage
     {
         using var channel = await CreateChannelAsync();
         var (exchange, queue) = await _queueDefinition.RegisterConsumerAsync(channel, routingKey, cancellationToken);
+        _queueRouteName = queue;
         logger.LogInformation($"Consumer registered for exchange: '{exchange}' and queue: '{queue}'");
     }
 }
