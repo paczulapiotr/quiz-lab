@@ -68,6 +68,7 @@ builder.Services.AddQuizHub<SyncHub, ISyncHubClient, SyncHubClient>();
 
 var app = builder.Build();
 app.UseQuizCommonServices();
+await app.WaitForBrokerConnection();
 await app.UseMessageBroker();
 app.MapCarter();
 app.MapRazorPages();

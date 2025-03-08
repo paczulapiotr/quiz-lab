@@ -10,6 +10,44 @@ namespace Quiz.Common.Broker.Builder;
 
 public static class MessageBrokerBuilderExtensions
 {
+    public static async Task WaitForBrokerConnection(this IApplicationBuilder app, CancellationToken cancellationToken = default) {
+        var serviceProvider = app.ApplicationServices;
+        var connectionFactory = serviceProvider.GetRequiredService<ConnectionFactory>();
+        var logger = serviceProvider.GetRequiredService<ILogger<IApplicationBuilder>>();
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                var connection = await connectionFactory.CreateConnectionAsync(cancellationToken: cancellationToken);
+                if (!connection.IsOpen)
+                {
+                    logger.LogWarning("Connection is not open. Retrying...");
+                    await Task.Delay(5000, cancellationToken);
+                    continue;
+                }
+
+                using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
+                if (!channel.IsOpen)
+                {
+                    logger.LogWarning("Channel is not open. Retrying...");
+                    await Task.Delay(5000, cancellationToken);
+                    continue;
+                }
+                
+                logger.LogInformation("Connection to the message broker established.");
+                break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while waiting for the connection.");
+                await Task.Delay(5000, cancellationToken);
+            }
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+    
     public static async Task UseMessageBroker(this IApplicationBuilder app, CancellationToken cancellationToken = default)
     {
         var serviceProvider = app.ApplicationServices;
