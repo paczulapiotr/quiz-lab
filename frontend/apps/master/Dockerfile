@@ -22,9 +22,6 @@ COPY --from=builder /app/out/json/ .
 RUN npm install
 
 # Build the project and its dependencies
-ARG VITE_LOCAL_API_URL
-ENV VITE_LOCAL_API_URL=$VITE_LOCAL_API_URL
-
 COPY --from=builder /app/out/full/ .
 RUN npx turbo build
 

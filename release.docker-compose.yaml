@@ -1,0 +1,62 @@
+services:
+  quiz-rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: quiz-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  quiz-mongodb:
+    image: mongo:8.0.4
+    container_name: quiz-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # services
+  master:
+    container_name: master
+    image: ppacz/quiz-master:0.1
+    restart: always
+    environment:
+      - ASPNETCORE_URLS=http://+:5999;
+      - Cors=http://<domain>
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@quiz-rabbitmq:5672/
+      - Mongo__ConnectionString=mongodb://quiz-mongodb:27017
+      - ContentManagement__BaseUrl=http://strapi:1337/graphql
+      - ContentManagement__Token=<strapi-token>
+    depends_on:
+      - quiz-rabbitmq
+      - quiz-mongodb
+  strapi:
+    container_name: strapi
+    image: ppacz/quiz-strapi:0.1
+    restart: always
+    ports:
+      - "1337:1337"
+    volumes:
+      - strapi_database:/app/.tmp
+      - strapi_public:/app/public
+  reverse-proxy:
+    container_name: caddy
+    image: ppacz/quiz-reverse-proxy:0.1
+    restart: always
+    ports:
+      - "4000:4000"
+
+volumes:
+  mongodb_data:
+  strapi_database:
+  strapi_public:
+

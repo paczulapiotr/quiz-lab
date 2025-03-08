@@ -37,7 +37,7 @@ export const LocalSyncServiceProvider = ({ children }: PropsWithChildren) => {
   const [connected, setConnected] = useState(false);
   const queueSyncService = useRef<QueueSyncService>(
     new QueueSyncService(
-      import.meta.env.VITE_LOCAL_API_URL + `/sync?uniqueId=${room!.uniqueId}`,
+      `/sync?uniqueId=${room!.uniqueId}`,
       LISTEN_TO_MESSAGES,
       () => {
         setConnected(true);
