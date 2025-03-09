@@ -27,7 +27,7 @@ services:
   # services
   master:
     container_name: master
-    image: ppacz/quiz-master:0.1
+    image: ppacz/quiz-master:0.2
     restart: always
     environment:
       - ASPNETCORE_URLS=http://+:5999;
