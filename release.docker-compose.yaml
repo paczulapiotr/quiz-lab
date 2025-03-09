@@ -27,7 +27,7 @@ services:
   # services
   master:
     container_name: master
-    image: ppacz/quiz-master:0.2
+    image: ppacz/quiz-master:0.3
     restart: always
     environment:
       - ASPNETCORE_URLS=http://+:5999;
@@ -41,7 +41,7 @@ services:
       - quiz-mongodb
   strapi:
     container_name: strapi
-    image: ppacz/quiz-strapi:0.1
+    image: ppacz/quiz-strapi:0.3
     restart: always
     ports:
       - "1337:1337"
@@ -50,7 +50,7 @@ services:
       - strapi_public:/app/public
   reverse-proxy:
     container_name: caddy
-    image: ppacz/quiz-reverse-proxy:0.1
+    image: ppacz/quiz-reverse-proxy:0.3
     restart: always
     ports:
       - "4000:4000"

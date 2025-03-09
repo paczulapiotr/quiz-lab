@@ -3,14 +3,29 @@
         root * ./slave_ui/dist
         try_files {path} index.html
         file_server
+        # Set cache headers for static assets
+        header {
+            Cache-Control "public, max-age=2592000, immutable"
+        }
     }
     
     handle_path /master_ui* {
         root * ./master_ui/dist
         try_files {path} index.html
         file_server
+        # Set cache headers for static assets
+        header {
+            Cache-Control "public, max-age=2592000, immutable"
+        }
     }
 
+    handle_path /cms/files/* {
+        reverse_proxy strapi:1337
+        header {
+            Cache-Control "public, max-age=2592000, immutable"
+        }
+    }
+    
     handle_path /cms* {
         reverse_proxy strapi:1337
     }

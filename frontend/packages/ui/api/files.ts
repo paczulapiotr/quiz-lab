@@ -1,3 +1,3 @@
 export const fileUrl = (filePath: string) => {
-  return "/cms" + filePath;
+  return "/cms/files" + filePath;
 };
